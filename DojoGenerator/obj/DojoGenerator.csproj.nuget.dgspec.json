@@ -1,0 +1,77 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/alexmalafeev/projects/OpenApiGenerator/DojoGenerator/DojoGenerator.csproj": {}
+  },
+  "projects": {
+    "/Users/alexmalafeev/projects/OpenApiGenerator/DojoGenerator/DojoGenerator.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/alexmalafeev/projects/OpenApiGenerator/DojoGenerator/DojoGenerator.csproj",
+        "projectName": "DojoGenerator",
+        "projectPath": "/Users/alexmalafeev/projects/OpenApiGenerator/DojoGenerator/DojoGenerator.csproj",
+        "packagesPath": "/Users/alexmalafeev/.nuget/packages/",
+        "outputPath": "/Users/alexmalafeev/projects/OpenApiGenerator/DojoGenerator/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/alexmalafeev/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {},
+          "https://registry.paymentsense.tech/repository/nuget-hosted/": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "dependencies": {
+            "Microsoft.CodeAnalysis.Analyzers": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[3.3.2, )"
+            },
+            "Microsoft.CodeAnalysis.CSharp": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[3.8.0, )"
+            },
+            "Microsoft.Extensions.Logging": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.400/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

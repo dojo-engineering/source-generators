@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "dgSpecHash": "fR0bLcZjf6CBDGLEEoyppmziVntvhd2+oKX9b/8gQ5aZPG/Xy8fc07yT3vbpSEQOd3WfWYpLcLBuiWjsi4GYJQ==",
+  "success": true,
+  "projectFilePath": "/Users/alexmalafeev/projects/OpenApiGenerator/DojoGenerator/DojoGenerator.csproj",
+  "expectedPackageFiles": [
+    "/Users/alexmalafeev/.nuget/packages/microsoft.codeanalysis.analyzers/3.3.2/microsoft.codeanalysis.analyzers.3.3.2.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/microsoft.codeanalysis.common/3.8.0/microsoft.codeanalysis.common.3.8.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/microsoft.codeanalysis.csharp/3.8.0/microsoft.codeanalysis.csharp.3.8.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/microsoft.extensions.dependencyinjection/5.0.0/microsoft.extensions.dependencyinjection.5.0.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/5.0.0/microsoft.extensions.dependencyinjection.abstractions.5.0.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/microsoft.extensions.logging/5.0.0/microsoft.extensions.logging.5.0.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/microsoft.extensions.logging.abstractions/5.0.0/microsoft.extensions.logging.abstractions.5.0.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/microsoft.extensions.options/5.0.0/microsoft.extensions.options.5.0.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/microsoft.extensions.primitives/5.0.0/microsoft.extensions.primitives.5.0.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/system.buffers/4.5.1/system.buffers.4.5.1.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/system.collections.immutable/5.0.0/system.collections.immutable.5.0.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/system.diagnostics.diagnosticsource/5.0.0/system.diagnostics.diagnosticsource.5.0.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/system.memory/4.5.4/system.memory.4.5.4.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/system.numerics.vectors/4.4.0/system.numerics.vectors.4.4.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/system.reflection.metadata/5.0.0/system.reflection.metadata.5.0.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/system.runtime.compilerservices.unsafe/5.0.0/system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/system.text.encoding.codepages/4.5.1/system.text.encoding.codepages.4.5.1.nupkg.sha512",
+    "/Users/alexmalafeev/.nuget/packages/system.threading.tasks.extensions/4.5.4/system.threading.tasks.extensions.4.5.4.nupkg.sha512"
+  ],
+  "logs": []
+}
