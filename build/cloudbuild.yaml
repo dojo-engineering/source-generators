@@ -2,7 +2,9 @@ steps:
   - name: gcr.io/cloud-builders/git
     id: 'write package version'
     entrypoint: '/bin/bash'
-    args: ['build/writeversion.sh']
+    env:
+     - "TAG_NAME=$TAG_NAME"
+    args: ['build/writeversion.sh', '$TAG_NAME']
 
   - name: gcr.io/cloud-builders/gsutil
     id: 'nexus-nuget-config'
