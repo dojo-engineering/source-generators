@@ -9,8 +9,4 @@
     <description>This library contains source generators used in PaymentSense DOJO</description>
     <copyright>$copyright$</copyright>
   </metadata>
-
-  <files>
-	  <file src="bin\**\*.*" include="bin\**\*.*" />
-  </files>
 </package>
