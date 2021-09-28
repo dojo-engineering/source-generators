@@ -37,14 +37,14 @@ namespace DojoGenerator
             if (method.IsGenericMethod)
             {
                 List<string> args = new();
-                bdr.Append("<");
+                bdr.Append('<');
                 foreach(var arg in method.TypeArguments)
                 {
                     args.Add(arg.ToString());
                 }
 
                 bdr.AppendJoin(", ", args);
-                bdr.Append(">");
+                bdr.Append('>');
             }
 
             bdr.Append(GetParametersDefinition(method));
@@ -59,13 +59,13 @@ namespace DojoGenerator
             foreach(var param in method.Parameters) {
                 bdr.Clear();
                 bdr.Append(param.Type.ToString());
-                bdr.Append(" ");
+                bdr.Append(' ');
                 bdr.Append(param.Name);
                 if(param.HasExplicitDefaultValue)
                 {
                     bdr.Append(" = ");
                     if(param.ExplicitDefaultValue is null){
-                        bdr.Append("null");
+                        bdr.Append("default(").Append(param.Type.ToString()).Append(')');
                     }
                     else if(param.ExplicitDefaultValue is string) {
                         bdr.Append('\"').Append(param.ExplicitDefaultValue).Append('\"');
