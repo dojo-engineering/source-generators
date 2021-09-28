@@ -5,10 +5,28 @@ There are several generators in this project: AutoInterface and AutoException
 
 ## AutoInterface
 The purpose of this generator is to save you from some boilerplate code. In many cases we add an interface to a class, just to make it testable.
-Every interface added like this polutes a solution, and adds some maitanance cost. 
+Every interface added like this polutes a solution, and adds some maitanance cost. The beeter approach is to automatically extract an interface with source generator, the interface will always be up to date with the actual implementation.
 
 ### How to use:
-For example you have this class and interface:
+
+1. Make you class partial.
+2. Add AutoInterface attribute. This will automatically generate an interface and include all public methods.
+3. Delete manually created interface.
+
+This code:
+```
+// Foo.cs
+[AutoInterface]
+public partial class Foo
+{
+    public ReturnType Method1()
+    {
+      // ...
+    }
+}
+```
+
+Will generate code quivalent to:
 ```
 // IFoo.cs
 public class IFoo
@@ -25,21 +43,6 @@ public class Foo : IFoo
     }
 }
 ```
-
-You can delete file with an interface, and change you class like this:
-```
-// Foo.cs
-[AutoInterface]
-public partial class Foo
-{
-    public ReturnType Method1()
-    {
-      // ...
-    }
-}
-```
-
-That will automatically generate an interface for all public methods.
 
 ## AutoException
 
