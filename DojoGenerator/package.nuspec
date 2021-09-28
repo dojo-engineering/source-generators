@@ -5,7 +5,7 @@
     <version>0.0.1</version>
     <authors>RemotePayments</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="expression">Apache License 2.0</license>
+    <license type="expression">Apache-2.0</license>
     <description>This library contains source generators used in PaymentSense DOJO</description>
     <copyright>$copyright$</copyright>
   </metadata>
