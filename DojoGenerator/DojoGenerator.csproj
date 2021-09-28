@@ -4,6 +4,13 @@
     <NuspecProperties>version=$(Version)</NuspecProperties>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild> <!-- Generates a package at build -->
     <IncludeBuildOutput>false</IncludeBuildOutput> <!-- Do not include the generator as a lib dependency -->
+    <PackageId>DojoGenerator</PackageId>
+    <Version>$(Version)</Version>
+    <Authors>RemotePayments</Authors>
+    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+    <PackageLicense>Apache-2.0</PackageLicense>
+    <Description>This library contains source generators used in PaymentSense DOJO</Description>
+    <Copyright>$copyright$</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,7 +22,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <ProjectReference Include="../DojoGenerator.Attributes/DojoGenerator.Attributes.csproj" />
   </ItemGroup>
 
