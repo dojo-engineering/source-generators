@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <ProjectReference Include="../DojoGenerator.Attributes/DojoGenerator.Attributes.csproj" Copy />
   </ItemGroup>
 
 </Project>
