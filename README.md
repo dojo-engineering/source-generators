@@ -43,6 +43,10 @@ public class Foo : IFoo
 }
 ```
 
+You can also see generated code.
+![How it works](https://media.giphy.com/media/DobQpPeWBJqWMPn53U/giphy.gif?cid=790b7611cc049fdc53d7c174ebee7b670d95860885590fb8&rid=giphy.gif&ct=g)
+
+
 ## AutoException
 
 Most of our exceptions are basic boilerplate and contain only standard constructors.
