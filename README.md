@@ -4,13 +4,12 @@ There are several generators in this project: AutoInterface and AutoException
 
 
 ## AutoInterface
-The purpose of this generator is to save you from some boilerplate code. In many cases we add an interface to a class, just to make it testable.
-Every interface added like this polutes a solution, and adds some maitanance cost. The beeter approach is to automatically extract an interface with source generator, the interface will always be up to date with the actual implementation.
+The purpose of this generator is to save you from some boilerplate code. In many cases, we add an interface to a class to make it testable. However, every interface added like this pollutes a solution and adds some maintenance cost. The better approach is to automatically extract an interface with the source generator; the interface will always be up-to-date with the actual implementation.
 
 ### How to use:
 
-1. Make you class partial.
-2. Add AutoInterface attribute. This will automatically generate an interface and include all public methods.
+1. Make your class partial.
+2. Add AutoInterface attribute. It will automatically generate an interface and include all public methods.
 3. Delete manually created interface.
 
 This code:
@@ -46,8 +45,8 @@ public class Foo : IFoo
 
 ## AutoException
 
-Most of our exceptions are basic boilerplate, and contains only standard constructors.
-Instead you can use AutoException attribute:
+Most of our exceptions are basic boilerplate and contain only standard constructors.
+Instead, you can use AutoException attribute:
 
 ```
 using DojoGenerator.Attributes;
@@ -61,8 +60,7 @@ namespace DojoGeneratorTest.Sample
 }
 ```
 
-
-Which will generate code euivalent to this one:
+Which will generate code equivalent to this one:
 ```
 using System;
 using System.Runtime.Serialization;
