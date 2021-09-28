@@ -43,4 +43,45 @@ That will automatically generate an interface for all public methods.
 
 ## AutoException
 
-TBD
+Most of our exceptions are basic bolilerplate, and contains only standard constructors, here small fix for it:
+
+This code:
+```
+using System;
+using System.Runtime.Serialization;
+
+namespace DojoGeneratorTest.Sample
+{   
+    public partial class TestException : Exception
+    {
+        public TestException()
+        {
+        }
+
+        public TestException(string message) : base(message)
+        {
+        }
+
+        public TestException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected TestException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+    }
+}
+```
+
+Can be generated automatically like this:
+```
+using DojoGenerator.Attributes;
+
+namespace DojoGeneratorTest.Sample
+{
+    [AutoException]
+    public partial class TestException
+    {
+    }
+}
+```
