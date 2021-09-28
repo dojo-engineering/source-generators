@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/DojoGenerator.Tests/DojoGenerator.Tests.csproj",
+                "${workspaceFolder}/src/DojoGenerators.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/DojoGenerator.Tests/DojoGenerator.Tests.csproj",
+                "${workspaceFolder}/src/DojoGenerators.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -32,7 +32,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/DojoGenerator.Tests/DojoGenerator.Tests.csproj",
+                "${workspaceFolder}/src/DojoGenerators.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

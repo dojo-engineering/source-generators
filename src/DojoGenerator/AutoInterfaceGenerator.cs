@@ -99,14 +99,21 @@ namespace DojoGenerator
                 var isPartial = classNode.IsPartial();
                 if(!isPartial)
                 {
+                    context.ReportDiagnostic(Diagnostic.Create(
+                        new DiagnosticDescriptor(
+                            "CG1001",
+                            "AutoInterface.Failed",
+                            "Mark {0} class as partial",
+                            "Dojo.CodeGeneration",
+                            DiagnosticSeverity.Warning,
+                            true),
+                        classNode.GetLocation()));
                 }
                 else
                 {
                     var classDefinition = new ClassDefinition();
 
                     var symbolModel = semanticModel.GetDeclaredSymbol(classNode) as ITypeSymbol;
-                    var baseType = symbolModel.BaseType;
-                    var className = symbolModel.Name;
 
                     classDefinition.Name = GetInterfaceName(symbolModel);
                     classDefinition.Namespace = GetNamespaceFullName(symbolModel.ContainingNamespace);

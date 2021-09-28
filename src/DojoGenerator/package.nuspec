@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>Remote.Payments.SourceGenerators</id>
+    <version>0.0.1</version>
+    <authors>RemotePayments</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">Apache License</license>
+    <description>This library contains source generators used in PaymentSense DOJO</description>
+    <copyright>$copyright$</copyright>
+  </metadata>
+
+  <files>
+	  <file src="bin\**\*.*" include="bin\**\*.*" />
+  </files>
+</package>

@@ -52,7 +52,7 @@ namespace Level1.Level2
     }}
 }}";
             // Act
-            var actual = GeneratorTestHelper.GenerateFromSource<AutoExceptionGenerator>(userSource);
+            var actual = GeneratorTestHelper.GenerateFromSource<AutoInterfaceGenerator>(userSource);
 
             // Assert
             GeneratorTestHelper.CompareSources(expectedSource, actual);

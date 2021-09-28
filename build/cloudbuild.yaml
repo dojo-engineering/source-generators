@@ -1,0 +1,19 @@
+steps:
+  - name: gcr.io/cloud-builders/git
+    id: 'write package version'
+    entrypoint: '/bin/bash'
+    args: ['build/writeversion.sh']
+
+  - name: gcr.io/cloud-builders/gsutil
+    id: 'nexus-nuget-config'
+    args: ["cp", "gs://firefly-devops-2018-configuration/NuGet.config", "."]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-test-pack-and-push package'
+    entrypoint: 'bash'
+    args: ['-c', 'docker build  -f ./build/Dockerfile  --build-arg="VERSION_SUFFIX=$_VERSION_SUFFIX" --build-arg="NEXUS_URL=$_NEXUS" --build-arg="NEXUS_KEY=$$NEXUS_KEY" .']
+    secretEnv: ['NEXUS_KEY']
+availableSecrets:
+    secretManager:
+    - versionName: projects/1023193059051/secrets/remotepayments-nexus-key/versions/1
+      env: 'NEXUS_KEY'
