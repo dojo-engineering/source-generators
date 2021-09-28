@@ -8,9 +8,23 @@ The purpose of this generator is to save you from some boilerplate code. In many
 
 ### How to use:
 
-1. Make your class partial.
-2. Add AutoInterface attribute. It will automatically generate an interface and include all public methods.
-3. Delete manually created interface.
+
+1. Add nuget package
+```
+dotnet add package DojoGenerator
+```
+
+2. Modify .csproj file like this:
+```
+<PackageReference Include="DojoGenerator" Version="0.0.9">
+  <IncludeAssets>all</IncludeAssets>
+  <PrivateAssets>analyzers</PrivateAssets>
+</PackageReference>
+```
+
+3. Make your class partial.
+4. Add AutoInterface attribute. It will automatically generate an interface and include all public methods.
+5. Delete manually created interface.
 
 This code:
 ```
@@ -71,7 +85,7 @@ using System;
 using System.Runtime.Serialization;
 
 namespace DojoGeneratorTest.Sample
-{   
+{
     public partial class TestException : Exception
     {
         public TestException()
