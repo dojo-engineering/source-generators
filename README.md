@@ -43,9 +43,23 @@ That will automatically generate an interface for all public methods.
 
 ## AutoException
 
-Most of our exceptions are basic bolilerplate, and contains only standard constructors, here small fix for it:
+Most of our exceptions are basic boilerplate, and contains only standard constructors.
+Instead you can use AutoException attribute:
 
-This code:
+```
+using DojoGenerator.Attributes;
+
+namespace DojoGeneratorTest.Sample
+{
+    [AutoException]
+    public partial class TestException
+    {
+    }
+}
+```
+
+
+Which will generate code euivalent to this one:
 ```
 using System;
 using System.Runtime.Serialization;
@@ -73,15 +87,3 @@ namespace DojoGeneratorTest.Sample
 }
 ```
 
-Can be generated automatically like this:
-```
-using DojoGenerator.Attributes;
-
-namespace DojoGeneratorTest.Sample
-{
-    [AutoException]
-    public partial class TestException
-    {
-    }
-}
-```
