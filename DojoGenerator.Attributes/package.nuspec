@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package >
   <metadata>
-    <id>DojoGenerator</id>
+    <id>DojoGenerator.Attributes</id>
     <version>0.0.1</version>
     <authors>RemotePayments</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
