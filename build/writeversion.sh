@@ -1,26 +1,47 @@
 #!/bin/bash
-echo "Fetch git tags"
-$(git fetch -t --depth=5000)
 
-echo "Getting git tag version"
-GIT_TAG=$(git describe --tags --always --long --match 'v?.?')
+GIT_REGEX='^v[0-9]+\.[0-9]+\.[0-9]+$'
 
-echo "git tag is:" $GIT_TAG
+echo "git regex: " $GIT_REGEX
 
-MINOR_VERSION=$(echo $GIT_TAG | grep -P '(?<=v\d.\d-)\d+(?=-[a-z]+[0-9]+)' -o)
+if [ "$1" != "" ]; then
+    echo GIT_TAG: $1
+    GIT_TAG=$1
+else
+    echo "Git Tag missing!"
+fi
 
-echo "minor version is:" $MINOR_VERSION
+if [[ $GIT_TAG =~ $GIT_REGEX ]]; then
+    echo "git tag is:" $GIT_TAG
 
-MAJOR_VERSION=$(echo $GIT_TAG | grep -P '(?<=v)(\d.\d)' -o)
+    TAG_NUMBERS=$(echo "$GIT_TAG" | sed 's/v//' )
 
-echo "major version is: " $MAJOR_VERSION
+    echo "git tag version is:" $TAG_NUMBERS
 
-FULL_VERSION="$MAJOR_VERSION.$MINOR_VERSION"
+    IFS='.' read -r -a VERSIONS <<< "$TAG_NUMBERS"
 
-echo "full version is: " $FULL_VERSION
+    PATCH_VERSION=${VERSIONS[2]}
 
-SOURCE_FILE="nuget-version"
-echo "Writing version to $SOURCE_FILE file"
-echo $FULL_VERSION > $SOURCE_FILE
+    echo "patch version is:" $PATCH_VERSION
 
-echo "Check the version saved in file is:" $(cat $SOURCE_FILE)
+    MINOR_VERSION=${VERSIONS[1]}
+
+    echo "minor version is:" $MINOR_VERSION
+
+    MAJOR_VERSION=${VERSIONS[0]}
+
+    echo "major version is: "$MAJOR_VERSION
+
+    FULL_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
+
+    echo "full version is: " $FULL_VERSION
+
+    SOURCE_FILE="nuget-version"
+    echo "Writing version to $SOURCE_FILE file"
+    echo $FULL_VERSION > $SOURCE_FILE
+
+    echo "Check the version saved in file is:" $(cat $SOURCE_FILE)
+else
+    echo "Invalid GIT tag! Expected format 'v[0..999*].[0..999*].[0..999*]'"
+    exit -1
+fi
