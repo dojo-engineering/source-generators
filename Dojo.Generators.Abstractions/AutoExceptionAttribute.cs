@@ -1,6 +1,6 @@
 using System;
 
-namespace DojoGenerator.Attributes
+namespace Dojo.Generators
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class AutoExceptionAttribute : Attribute

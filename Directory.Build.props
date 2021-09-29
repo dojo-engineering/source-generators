@@ -5,4 +5,10 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>PaymentSense</Authors>
+    <PackageLicense>Apache-2.0</PackageLicense>
+    <Copyright>© PaymentSense. All rights reserved.</Copyright>
+  </PropertyGroup>
 </Project>

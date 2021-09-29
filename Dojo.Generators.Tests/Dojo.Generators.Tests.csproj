@@ -17,8 +17,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
-    <ProjectReference Include="../DojoGenerator/DojoGenerator.csproj"/>
-    <ProjectReference Include="../DojoGenerator.Attributes/DojoGenerator.Attributes.csproj" />
+    <ProjectReference Include="../Dojo.AutoGenerators/Dojo.AutoGenerators.csproj"/>
+    <ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

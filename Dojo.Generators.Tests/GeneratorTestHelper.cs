@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
-namespace DojoGenerator.Tests
+namespace Dojo.Generators.Tests
 {
     public static class GeneratorTestHelper
     {

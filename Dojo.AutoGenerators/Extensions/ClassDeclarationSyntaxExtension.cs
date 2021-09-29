@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace DojoGenerator
+namespace Dojo.AutoGenerators
 {
     public static class ClassDeclarationSyntaxExtension
     {

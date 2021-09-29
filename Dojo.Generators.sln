@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DojoGenerator", "DojoGenerator\DojoGenerator.csproj", "{114B4796-4112-4D5F-A835-E6621F5A7BB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dojo.AutoGenerators", "Dojo.AutoGenerators\Dojo.AutoGenerators.csproj", "{114B4796-4112-4D5F-A835-E6621F5A7BB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DojoGenerator.Attributes", "DojoGenerator.Attributes\DojoGenerator.Attributes.csproj", "{25C635B3-3854-4948-9B6E-24B9E6CBDFA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dojo.Generators.Abstractions", "Dojo.Generators.Abstractions\Dojo.Generators.Abstractions.csproj", "{25C635B3-3854-4948-9B6E-24B9E6CBDFA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DojoGenerator.Tests", "DojoGenerator.Tests\DojoGenerator.Tests.csproj", "{E1958C7C-F072-4A81-8E49-5CDAC048264E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dojo.Generators.Tests", "Dojo.Generators.Tests\Dojo.Generators.Tests.csproj", "{E1958C7C-F072-4A81-8E49-5CDAC048264E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

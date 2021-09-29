@@ -1,6 +1,7 @@
 using Xunit;
+using Dojo.AutoGenerators;
 
-namespace DojoGenerator.Tests
+namespace Dojo.Generators.Tests
 {
     public class AutoExceptionTests
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace DojoGenerator
+namespace Dojo.AutoGenerators
 {
     internal class ClassWithAttributeSyntaxReceiver : ISyntaxReceiver
     {
