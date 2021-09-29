@@ -31,9 +31,9 @@ if [ -f "$VERSION_FILE" ]; then
         echo "Targeting version: $NUGET_FULL_VER"
 
         dotnet pack --no-build --output nupkgs -p:Version=$NUGET_FULL_VER -c Release
-        dotnet nuget push /src/nupkgs/DojoGenerator.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
+        dotnet nuget push /src/nupkgs/Dojo.AutoGenerators.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
 
-        dotnet nuget push /src/nupkgs/DojoGenerator.Attributes.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
+        dotnet nuget push /src/nupkgs/Dojo.Generators.Abstractions.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
 
     fi
 else

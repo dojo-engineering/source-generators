@@ -68,7 +68,7 @@ Most of our exceptions are basic boilerplate and contain only standard construct
 Instead, you can use AutoException attribute:
 
 ```
-using DojoGenerator.Attributes;
+using Dojo.Generators;
 
 namespace DojoGeneratorTest.Sample
 {
