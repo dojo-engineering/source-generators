@@ -6,8 +6,9 @@ There are several generators in this project: AutoInterface and AutoException
 ## AutoInterface
 The purpose of this generator is to save you from some boilerplate code. In many cases, we add an interface to a class to make it testable. However, every interface added like this pollutes a solution and adds some maintenance cost. The better approach is to automatically extract an interface with the source generator; the interface will always be up-to-date with the actual implementation.
 
-### How to use:
+> In case you are using Visual Studio 2019 syntax highlighting can be broken. In order to fix this, please follow the following: http://stevetalkscode.co.uk/debug-source-generators-with-vs2019-1610
 
+### How to use:
 
 1. Add nuget package
 ``` CMD
