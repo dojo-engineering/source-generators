@@ -10,12 +10,12 @@ The purpose of this generator is to save you from some boilerplate code. In many
 
 
 1. Add nuget package
-```
+``` CMD
 dotnet add package DojoGenerator
 ```
 
 2. Modify .csproj file like this:
-```
+``` XML
 <PackageReference Include="DojoGenerator" Version="0.0.9">
   <IncludeAssets>all</IncludeAssets>
   <PrivateAssets>analyzers</PrivateAssets>
@@ -27,7 +27,7 @@ dotnet add package DojoGenerator
 5. Delete manually created interface.
 
 This code:
-```
+``` C#
 // Foo.cs
 [AutoInterface]
 public partial class Foo
@@ -40,7 +40,7 @@ public partial class Foo
 ```
 
 Will generate code quivalent to:
-```
+``` C#
 // IFoo.cs
 public class IFoo
 {
@@ -67,7 +67,7 @@ You can also see generated code.
 Most of our exceptions are basic boilerplate and contain only standard constructors.
 Instead, you can use AutoException attribute:
 
-```
+``` C#
 using Dojo.Generators;
 
 namespace DojoGeneratorTest.Sample
@@ -80,7 +80,7 @@ namespace DojoGeneratorTest.Sample
 ```
 
 Which will generate code equivalent to this one:
-```
+``` C#
 using System;
 using System.Runtime.Serialization;
 
