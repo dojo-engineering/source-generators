@@ -43,7 +43,7 @@ namespace Dojo.AutoGenerators
                     args.Add(arg.ToString());
                 }
 
-                bdr.AppendJoin(", ", args);
+                bdr.Append(string.Join(", ", args));
                 bdr.Append('>');
             }
 
