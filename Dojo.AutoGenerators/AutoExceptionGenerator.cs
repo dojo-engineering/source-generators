@@ -25,7 +25,7 @@ namespace Dojo.AutoGenerators
             foreach (var classNode in syntaxReceiver.CandidateClasses)
             {
                 var semanticModel = context.Compilation.GetSemanticModel(classNode.GetReference().SyntaxTree);
-
+                
                 var isPartial = classNode.IsPartial();
                 if (isPartial)
                 {

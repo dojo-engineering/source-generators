@@ -17,8 +17,9 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
-    <ProjectReference Include="../Dojo.AutoGenerators/Dojo.AutoGenerators.csproj"/>
+    <ProjectReference Include="../Dojo.AutoGenerators/Dojo.AutoGenerators.csproj" />
     <ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
+    <ProjectReference Include="..\Dojo.AppSettingsGenerators\Dojo.AppSettingsGenerators.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,5 +27,9 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+  <None Include="TestFiles\**" CopyToOutputDirectory="PreserveNewest" LinkBase="TestFiles\" />
+</ItemGroup>
 
 </Project>
