@@ -1,21 +1,26 @@
-﻿using System.Reflection.Metadata;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-using Dojo.AutoGenerators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Dojo.AppSettingsGenerators
+namespace Dojo.AutoGenerators
 {
-
     [Generator]
     public class AppSettingsGenerator : ISourceGenerator
     {
+        private static readonly DiagnosticDescriptor MissingSettingsFilesError = new(id: "CG1002",
+            title: "Couldn't find specified settings files",
+            messageFormat: "Couldn't find specified settings files: '{0}'. Make sure they are added as AdditionalFiles to the project.",
+            category: "Dojo.SourceGenerators",
+            DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
         private const string SettingsAttributeName = "AutoAppSettings";
         private class PropertyDefinition
         {
@@ -135,7 +140,7 @@ namespace Dojo.AppSettingsGenerators
 
             if (name.EndsWith("s"))
             {
-                name = name[..^1];
+                name = name.Substring(0, name.Length - 1);
             }
 
             return $"{name}Settings";
@@ -163,15 +168,17 @@ namespace Dojo.AppSettingsGenerators
 
             return false;
         }
-        
+
         private void GenerateSettingsGroup(GeneratorExecutionContext context, SettingsGroup fileGroup)
         {
             Dictionary<string, Tuple<string, JTokenType>> properties = new();
+            var foundSettingFiles = false;
 
             foreach (var file in context.AdditionalFiles)
             {
                 if (IsPathInFileGroup(file.Path, fileGroup))
                 {
+                    foundSettingFiles = true;
                     var appsettings = DeserializeToDictionary(file.GetText()?.ToString());
 
                     foreach (var child in appsettings.Children<JToken>())
@@ -199,18 +206,23 @@ namespace Dojo.AppSettingsGenerators
                 }
             }
 
+            if(!foundSettingFiles){
+                context.ReportDiagnostic(Diagnostic.Create(MissingSettingsFilesError, null, string.Join(", ", fileGroup.FileList)));
+                return;
+            }
+
             string settingsNamespace = fileGroup.Namespace;
             var rootProperties = new StringBuilder();
             var rootPropertiesInitializers = new StringBuilder();
 
             foreach (var prop in properties)
             {
-                rootProperties.AppendLine($"        private {prop.Value.Item1} {prop.Key} {{get;}}");
+                rootProperties.AppendLine($"        public {prop.Value.Item1} {prop.Key} {{get;}}");
                 if (prop.Value.Item2 == JTokenType.Object)
                 {
                     rootPropertiesInitializers.AppendLine($@"
             this.{prop.Key} = new {prop.Value.Item1}();
-            configuration.Bind(this.{prop.Key});");
+            configuration.GetSection(""{prop.Key}"").Bind(this.{prop.Key});");
                 }
                 else if (prop.Value.Item2 == JTokenType.String)
                 {
@@ -244,11 +256,12 @@ namespace Dojo.AppSettingsGenerators
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 
 namespace {settingsNamespace}
 {{
-    [GeneratedCode(""Dojo.SourceGenerator"", ""1.0.0"")]
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
     public partial class {fileGroup.ClassName}
     {{
 {rootProperties}
@@ -266,8 +279,8 @@ namespace {settingsNamespace}
 }}");
             context.AddSource($"{fileGroup.ClassName}.g.cs",
                 SourceText.From(rootBuild.ToString(), Encoding.UTF8));
-            
-            
+
+
             foreach (var classDefinition in _classes.Values)
             {
                 var propertiesBuilder = new StringBuilder();
@@ -287,7 +300,7 @@ using System.CodeDom.Compiler;
 
 namespace {settingsNamespace}
 {{
-    [GeneratedCode(""Dojo.SourceGenerator"", ""1.0.0"")]
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
     public partial class {classDefinition.Name}
     {{
 {propertiesBuilder}
@@ -314,7 +327,7 @@ namespace {settingsNamespace}
             public string ClassName { get; set; }
             public string Namespace { get; set; }
         }
-        
+
         private static IEnumerable<SettingsGroup> GetSettingFileGroups(GeneratorExecutionContext context)
         {
             var syntaxReceiver = context.SyntaxReceiver as ClassWithAttributeSyntaxReceiver;

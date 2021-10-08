@@ -1,6 +1,8 @@
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
-using Dojo.AppSettingsGenerators;
+using Dojo.AutoGenerators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -27,25 +29,128 @@ namespace Dojo.Generators.Tests
     public class AppSettingsGeneratorTests
     {
         [Fact]
-        public void SimpleException_Generate()
+        public void SimpleStringValue_Generate()
         {
             // Arrange
+            const string actualSettins = @"
+{
+    SettingString: ""value""
+}
+";
             const string expectedSource = @"";
-            var content = new AdditionalTextContent("appsettings.json", File.ReadAllText("./TestFiles/appsettings.json"));
+            var content = new AdditionalTextContent("appsettings.json", actualSettins);
             const string source = @"
 namespace Level1.Level2 {
     [AutoAppSettings(""appsettings.json"")]
     partial class MySettings{}
 }
-"; 
-            // Act
+";
 
+            var expected = @$"
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
+
+namespace Level1.Level2
+{{
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
+    public partial class MySettings
+    {{
+        public string SettingString {{get;}}
+
+
+        public AppSettings(IConfiguration configuration)
+        {{
+            if (configuration == null)
+            {{
+                throw new ArgumentNullException(nameof(configuration));
+            }}
+
+
+            this.SettingString = configuration[""SettingString""];
+
+        }}
+    }}
+}}";
+            // Act
             Compilation comp = GeneratorTestHelper.CreateCompilation(source);
             var newComp = GeneratorTestHelper.RunGenerators(comp, new(){content}, out var _, new AppSettingsGenerator());
-
-
+            var syntaxTries = newComp.SyntaxTrees.ToList();
+    
             // Assert
-           // GeneratorTestHelper.CompareSources(expectedSource, actual);
+            GeneratorTestHelper.CompareSources(expected, syntaxTries[1].ToString());
+        }
+        
+        [Fact]
+        public void SimpleObjectValue_Generate()
+        {
+            // Arrange
+            const string actualSettins = @"
+{
+    SettingObject: {""name"": ""value""}
+}
+";
+            const string expectedSource = @"";
+            var content = new AdditionalTextContent("appsettings.json", actualSettins);
+            const string source = @"
+namespace Level1.Level2 {
+    [AutoAppSettings(""appsettings.json"")]
+    partial class MySettings{}
+}
+";
+
+            var expected1 = @$"
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
+
+namespace Level1.Level2
+{{
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
+    public partial class MySettings
+    {{
+        public SettingObjectSettings SettingObject {{get;}}
+
+
+        public AppSettings(IConfiguration configuration)
+        {{
+            if (configuration == null)
+            {{
+                throw new ArgumentNullException(nameof(configuration));
+            }}
+
+
+            this.SettingObject = new SettingObjectSettings();
+            configuration.GetSection(""SettingObject"").Bind(this.SettingObject);
+
+        }}
+    }}
+}}";
+            var expected2 = $@"
+using System;
+using System.CodeDom.Compiler;
+
+namespace Level1.Level2
+{{
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
+    public partial class SettingObjectSettings
+    {{
+        public string name {{ get; set; }}
+
+    }}
+}}";
+            // Act
+            Compilation comp = GeneratorTestHelper.CreateCompilation(source);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, new(){content}, out var _, new AppSettingsGenerator());
+            var syntaxTries = newComp.SyntaxTrees.ToList();
+    
+            // Assert
+            GeneratorTestHelper.CompareSources(expected1, syntaxTries[1].ToString());
+            GeneratorTestHelper.CompareSources(expected2, syntaxTries[2].ToString());
         }
     }
 }

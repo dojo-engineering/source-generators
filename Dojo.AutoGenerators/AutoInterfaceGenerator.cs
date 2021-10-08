@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
@@ -143,12 +144,16 @@ namespace Dojo.AutoGenerators
                         // begin creating the source we'll inject into the users compilation
             var sourceBuilder = new StringBuilder(@$"
 using System;
+using System.CodeDom.Compiler;
+
 namespace {classDefinition.Namespace}
 {{
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
     public partial class {classDefinition.Name}: I{classDefinition.Name}
     {{
     }}
 
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
     public interface I{classDefinition.Name}
     {{
 ");

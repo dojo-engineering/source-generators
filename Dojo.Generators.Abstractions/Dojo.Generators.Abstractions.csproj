@@ -4,7 +4,6 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild> <!-- Generates a package at build -->
     <IncludeBuildOutput>true</IncludeBuildOutput>
     <PackageId>Dojo.Generators.Abstractions</PackageId>
-    <Version>$(Version)</Version>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <Description>This library contains source generators used in PaymentSense DOJO</Description>
   </PropertyGroup>

@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dojo.Generators.Tests", "Do
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dojo.OpenApiGenerator", "Dojo.OpenApiGenerator\Dojo.OpenApiGenerator.csproj", "{92D34561-3DEC-48B4-922E-3B9C41546605}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary1", "ClassLibrary1\ClassLibrary1.csproj", "{CB805F95-0487-41D1-BF4A-C00D0EE10597}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{CB805F95-0487-41D1-BF4A-C00D0EE10597}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

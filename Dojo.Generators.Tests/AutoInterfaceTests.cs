@@ -1,3 +1,4 @@
+using System.Reflection;
 using Xunit;
 using Dojo.AutoGenerators;
 
@@ -44,12 +45,16 @@ namespace Level1.Level2
 
             string expectedSource = $@"
 using System;
+using System.CodeDom.Compiler;
+
 namespace Level1.Level2
 {{
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
     public partial class TestFoo: ITestFoo
     {{
     }}
 
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
     public interface ITestFoo
     {{
         {expected};

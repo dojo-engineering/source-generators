@@ -1,3 +1,4 @@
+using System.Reflection;
 using Xunit;
 using Dojo.AutoGenerators;
 
@@ -20,31 +21,33 @@ namespace Level1.Level2
     }
 }";
 
-            const string expectedSource = @"
+            string expectedSource = @$"
 using System;
+using System.CodeDom.Compiler;
 using System.Runtime.Serialization;
 
 namespace Level1.Level2
-{
+{{
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
     public partial class TestException : Exception
-    {
+    {{
         public TestException()
-        {
-        }
+        {{
+        }}
 
         public TestException(string message) : base(message)
-        {
-        }
+        {{
+        }}
 
         public TestException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
+        {{
+        }}
 
         protected TestException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-    }
-}";
+        {{
+        }}
+    }}
+}}";
             // Act
             var actual = GeneratorTestHelper.GenerateFromSource<AutoExceptionGenerator>(userSource);
 
