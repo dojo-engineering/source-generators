@@ -1,8 +1,8 @@
-using Dojo.Generators.Abstractions;
+// using Dojo.Generators.Abstractions;
 
 namespace ClassLibrary1
 {
-    [AutoAppSettings("appsettings.json")]
+    // [AutoAppSettings("appsettings.json")]
     public partial class AppSettings
     {
     }
