@@ -7,7 +7,7 @@ namespace Dojo.AutoGenerators
     {
         public static bool IsPartial(this ClassDeclarationSyntax classDeclaration)
         {
-            return classDeclaration.Modifiers.Any(m=>m.Text == "partial");
+            return classDeclaration.Modifiers.Any(m => m.Text == "partial");
         }
     }
 }

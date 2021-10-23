@@ -2,14 +2,19 @@ using System;
 
 namespace Dojo.Generators.Abstractions
 {
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 
-    public class AutoAppSettingsAttribute: Attribute
+    public class AutoAppSettingsAttribute : Attribute
     {
-        public string FileName { get; set; }
-        public AutoAppSettingsAttribute(string fileName)
+        public AutoAppSettingsAttribute(string fileName = null)
         {
-            this.FileName = fileName;
+            FileName = fileName;
         }
+        
+        public string FileName { get; set; }
+
+        public bool UseConventionalTypes { get; set; }
+
+        public string[] ExcludedSections { get; set; } = new[] { "Logging" };
     }
 }

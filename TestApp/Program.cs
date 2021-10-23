@@ -28,6 +28,9 @@ namespace ClassLibrary1
     {
         public static void Main()
         {
+            var ab = new TestApp.AppSettings();
+            string email = ab.RemotePaymentsSAAuth.Email;
+
             // var configuration = new ConfigurationBuilder()
             //     .AddJsonFile("./appsettings.json", optional: true, reloadOnChange: true)
             //     .Build();

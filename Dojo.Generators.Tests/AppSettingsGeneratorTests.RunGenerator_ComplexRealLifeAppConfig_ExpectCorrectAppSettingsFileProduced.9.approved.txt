@@ -1,0 +1,26 @@
+﻿using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+
+namespace Level1.Level2
+{
+    [GeneratedCode("Dojo.SourceGenerator", "1.1.0.0")]
+    public partial class ConnecteTransactionAddedSettings
+    {
+        public string Topic { get; set; }
+
+        public string Subscription { get; set; }
+
+        public string ProjectId { get; set; }
+
+        public bool SkipTopicEnvironmentNameSuffixing { get; set; }
+
+        public bool SkipCreationOfSubscription { get; set; }
+
+        public bool EnableExponentialBackOff { get; set; }
+
+        public int MinimumBackOffSeconds { get; set; }
+
+        public int MaximumBackOffSeconds { get; set; }
+    }
+}

@@ -1,0 +1,14 @@
+﻿using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+
+namespace Level1.Level2
+{
+    [GeneratedCode("Dojo.SourceGenerator", "1.1.0.0")]
+    public partial class PubSubSettings
+    {
+        public RemotePaymentIntentSettings RemotePaymentIntent { get; set; }
+
+        public ConnecteTransactionAddedSettings ConnecteTransactionAdded { get; set; }
+    }
+}

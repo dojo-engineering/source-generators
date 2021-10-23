@@ -13,16 +13,43 @@
     <!-- Package the generator in the analyzer directory of the nuget package -->
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="$(OutputPath)\Dojo.Generators.Abstractions.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Abstractions.dll" Visible="false" />
+  </ItemGroup>
 
-    <!-- Package the Newtonsoft.Json dependency alongside the generator assembly -->
-    <None Include="$(PkgNewtonsoft_Json)\lib\netstandard1.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  <ItemGroup>
+    <None Remove="AppSettingsGenerator\Templates\AppSettingsExtender.template" />
+    <None Remove="AppSettingsGenerator\Templates\ClassDefinition.template" />
+    <None Remove="AppSettingsGenerator\Templates\NestedClassCreation.template" />
+    <None Remove="AppSettingsGenerator\Templates\NestedClassInjection.template" />
+    <None Remove="AppSettingsGenerator\Templates\Property.template" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="AppSettingsGenerator\Templates\AppSettingsExtender.template" />
+    <EmbeddedResource Include="AppSettingsGenerator\Templates\NestedClassInjection.template" />
+    <EmbeddedResource Include="AppSettingsGenerator\Templates\NestedClassCreation.template" />
+    <EmbeddedResource Include="AppSettingsGenerator\Templates\ClassDefinition.template" />
+    <EmbeddedResource Include="AppSettingsGenerator\Templates\Property.template" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" PrivateAssets="all" GeneratePathProperty="true" />
     <ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+    <PropertyGroup>
+	    <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+    </PropertyGroup>
+
+    <Target Name="GetDependencyTargetPaths">
+	    <ItemGroup>
+		    <TargetPathWithTargetPlatformMoniker Include="$(PKGNewtonsoft_Json)\lib\netstandard2.0\Newtonsoft.Json.dll" IncludeRuntimeDependency="false" />
+	    </ItemGroup>
+    </Target>
 
 </Project>

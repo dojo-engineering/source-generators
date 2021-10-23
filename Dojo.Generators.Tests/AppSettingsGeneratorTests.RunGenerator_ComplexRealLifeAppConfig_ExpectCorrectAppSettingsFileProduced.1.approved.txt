@@ -1,0 +1,32 @@
+﻿using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+
+namespace Level1.Level2
+{
+    [GeneratedCode("Dojo.SourceGenerator", "1.1.0.0")]
+    public partial class AppSettings
+    {
+        public GcpSettings Gcp { get; set; }
+
+        public MongoDbSettings MongoDb { get; set; }
+
+        public RemotePaymentsExternalApiSettings RemotePaymentsExternalApi { get; set; }
+
+        public IEnumerable<ServiceAccountSettings> ServiceAccounts { get; set; }
+
+        public RemotePaymentsExternalAuthApiSettings RemotePaymentsExternalAuthApi { get; set; }
+
+        public RemotePaymentsSAAuthSettings RemotePaymentsSAAuth { get; set; }
+
+        public PubSubSettings PubSub { get; set; }
+
+        public ReadinessSettings Readiness { get; set; }
+
+        public string JAEGER_AGENT_HOST { get; set; }
+
+        public string JAEGER_AGENT_PORT { get; set; }
+
+        public string JAEGER_SERVICE_NAME { get; set; }
+    }
+}
