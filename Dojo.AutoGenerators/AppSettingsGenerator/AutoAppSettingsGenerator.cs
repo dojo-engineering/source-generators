@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using Dojo.AutoGenerators.Utils;
 using Microsoft.CodeAnalysis;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Dojo.AutoGenerators.AppSettingsGenerator

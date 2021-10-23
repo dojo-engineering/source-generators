@@ -18,7 +18,6 @@
   <ItemGroup>
     <None Remove="AppSettingsGenerator\Templates\AppSettingsExtender.template" />
     <None Remove="AppSettingsGenerator\Templates\ClassDefinition.template" />
-    <None Remove="AppSettingsGenerator\Templates\NestedClassCreation.template" />
     <None Remove="AppSettingsGenerator\Templates\NestedClassInjection.template" />
     <None Remove="AppSettingsGenerator\Templates\Property.template" />
   </ItemGroup>
@@ -26,7 +25,6 @@
   <ItemGroup>
     <EmbeddedResource Include="AppSettingsGenerator\Templates\AppSettingsExtender.template" />
     <EmbeddedResource Include="AppSettingsGenerator\Templates\NestedClassInjection.template" />
-    <EmbeddedResource Include="AppSettingsGenerator\Templates\NestedClassCreation.template" />
     <EmbeddedResource Include="AppSettingsGenerator\Templates\ClassDefinition.template" />
     <EmbeddedResource Include="AppSettingsGenerator\Templates\Property.template" />
   </ItemGroup>
