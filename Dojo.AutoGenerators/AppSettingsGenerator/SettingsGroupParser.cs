@@ -16,7 +16,7 @@ namespace Dojo.AutoGenerators.AppSettingsGenerator
 
         private static readonly DiagnosticDescriptor OnlyStringLiteralsSupportedForExcludedSections = new(
           id: "CG1003",
-          title: "Only string literals are supported.",
+          title: "Only string literals are supported",
           messageFormat: $"Only string literals are supported for '{nameof(AutoAppSettingsAttribute.ExcludedSections)}' argument. The value is ignored.",
           category: "Dojo.SourceGenerators",
           DiagnosticSeverity.Warning,

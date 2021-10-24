@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-		<!--<ProjectReference Include="..\Dojo.AutoGenerators\Dojo.AutoGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />-->
+      <ProjectReference Include="..\Dojo.AutoGenerators\Dojo.AutoGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
       <ProjectReference Include="..\Dojo.Generators.Abstractions\Dojo.Generators.Abstractions.csproj" />
     </ItemGroup>
 
