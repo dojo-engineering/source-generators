@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Dojo.AutoGenerators.AppSettingsGenerator
+﻿namespace Dojo.AutoGenerators.AppSettingsGenerator
 {
     internal record SettingsGroup
     {
@@ -13,5 +11,7 @@ namespace Dojo.AutoGenerators.AppSettingsGenerator
         public bool GenerateConventionalTypes { get; set; } = false;
 
         public string[] ExcludedSections { get; set; } = new[] { "Logging" };
+
+        public bool IsExplicitAttributeSpecified { get; set; } = false;
     }
 }

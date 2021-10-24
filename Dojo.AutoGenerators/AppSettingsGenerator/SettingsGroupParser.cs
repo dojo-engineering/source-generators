@@ -44,7 +44,8 @@ namespace Dojo.AutoGenerators.AppSettingsGenerator
                         FileName = parseRes.Filename,
                         ClassName = symbolModel.Name,
                         Namespace = symbolModel.ContainingNamespace.ToString(),
-                        GenerateConventionalTypes = parseRes.GenerateConventionalTypes
+                        GenerateConventionalTypes = parseRes.GenerateConventionalTypes,
+                        IsExplicitAttributeSpecified = true
                     });
                 }
             }
@@ -58,6 +59,7 @@ namespace Dojo.AutoGenerators.AppSettingsGenerator
                     ClassName = "AppSettings",
                     Namespace = TryGetProjectDefaultNamespace(context),
                     GenerateConventionalTypes = true,
+                    IsExplicitAttributeSpecified = false
                 });
             }
 
