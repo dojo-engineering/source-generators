@@ -15,7 +15,7 @@ namespace Dojo.AutoGenerators.AppSettingsGenerator
         private static readonly DiagnosticDescriptor MissingSettingsFilesError = new(
             id: "CG1002",
             title: "Couldn't find specified settings files",
-            messageFormat: "Couldn't find specified settings files: '{0}' neither in the project nor in the 'AdditionalFiles'" +
+            messageFormat: "Couldn't find specified settings files: '{0}' neither in the project nor in the 'AdditionalFiles'. " +
                 "Make sure the settings file is added as 'AdditionalFiles' to the project. " +
                 "See here: https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Using%20Additional%20Files.md.",
             category: "Dojo.SourceGenerators",
