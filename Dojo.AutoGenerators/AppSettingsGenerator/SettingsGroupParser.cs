@@ -142,13 +142,19 @@ namespace Dojo.AutoGenerators.AppSettingsGenerator
                     XPathDocument xPath = new XPathDocument(fileStream);
                     XPathNavigator navigator = xPath.CreateNavigator();
 
-                    var result = navigator.SelectSingleNode("Project/PropertyGroup/RootNamespace");
-                    if (result != null)
+                    string result;
+
+                    var explicitNamespace = navigator.SelectSingleNode("Project/PropertyGroup/RootNamespace");
+                    if (explicitNamespace != null)
                     {
-                        return result.Value;
+                        result = explicitNamespace.Value;
+                    }
+                    else
+                    {
+                        result = Path.GetFileNameWithoutExtension(project);
                     }
 
-                    return Path.GetFileNameWithoutExtension(project);
+                    return $"{result}.AppSettings";
                 }
             }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -36,12 +37,12 @@ namespace Dojo.AutoGenerators.AppSettingsGenerator
         public void Execute(GeneratorExecutionContext context)
         {
             // Uncomment this for debugging
-#if DEBUG
-            //if (!Debugger.IsAttached)
-            //{
-            //    Debugger.Launch();
-            //}
-#endif
+//#if DEBUG
+//            if (!Debugger.IsAttached)
+//            {
+//                Debugger.Launch();
+//            }
+//#endif
 
             List<SettingsGroup> fileGroups = SettingsGroupParser.GetSettingFileGroups(context, SettingsAttributeName);
 
@@ -88,7 +89,9 @@ namespace Dojo.AutoGenerators.AppSettingsGenerator
 
                 if (filePaths.Any())
                 {
-                    return File.ReadAllText(filePaths.Single());
+                    // appsettings.json files can be copied to build output, and so on
+                    // so we just take the closest to the root
+                    return File.ReadAllText(filePaths.OrderBy(x => x.Length).First());
                 }
             }
 
