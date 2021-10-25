@@ -1,0 +1,36 @@
+﻿using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+
+namespace Level1.Level2
+{
+    [GeneratedCode("Dojo.SourceGenerator", "1.1.0.0")]
+    public partial class GeneralSettings
+    {
+        public string Environment { get; set; }
+
+        public string AccountIdHeaderName { get; set; }
+
+        public string LocationIdHeaderName { get; set; }
+
+        public string ApiKeyIdHeaderName { get; set; }
+
+        public string ApiKeyScopeHeaderName { get; set; }
+
+        public string ServiceAccountHeaderName { get; set; }
+
+        public string AuthenticationTypeHeaderName { get; set; }
+
+        public string AllowedServiceAccountsSuffix { get; set; }
+
+        public string AllowedSaAudience { get; set; }
+
+        public string AllowedBearerAudience { get; set; }
+
+        public string JwtTokenExpiryClockTolerance { get; set; }
+
+        public TimeSpan CacheTimeout { get; set; }
+
+        public string ForbiddenRequestHeaders { get; set; }
+    }
+}

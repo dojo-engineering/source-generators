@@ -1,0 +1,14 @@
+﻿using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+
+namespace Level1.Level2
+{
+    [GeneratedCode("Dojo.SourceGenerator", "1.1.0.0")]
+    public partial class RemotePaymentsSAAuthSettings
+    {
+        public string SecretKeyName { get; set; }
+
+        public string Email { get; set; }
+    }
+}

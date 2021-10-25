@@ -1,0 +1,42 @@
+﻿using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Level1.Level2
+{
+    [GeneratedCode("Dojo.SourceGenerator", "1.1.0.0")]
+    public static class AppSettingsExtender
+    {
+        public static AppSettings AddAppSettings(this IServiceCollection services, IConfiguration configuration)
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            var rootObject = new AppSettings();
+            configuration.Bind(rootObject);
+
+            services.AddSingleton(rootObject);
+
+            // Only 1 level classes are injected!
+            services.AddSingleton(rootObject.Gcp);
+            services.AddSingleton(rootObject.MongoDb);
+            services.AddSingleton(rootObject.RemotePaymentsExternalApi);
+            services.AddSingleton(rootObject.RemotePaymentsExternalAuthApi);
+            services.AddSingleton(rootObject.RemotePaymentsSAAuth);
+            services.AddSingleton(rootObject.PubSub);
+            services.AddSingleton(rootObject.Readiness);
+            
+            return rootObject;
+        }
+    }
+}

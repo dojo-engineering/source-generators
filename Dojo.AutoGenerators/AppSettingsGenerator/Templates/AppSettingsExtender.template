@@ -1,0 +1,36 @@
+﻿using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace {settingsNamespace}
+{
+    [GeneratedCode("Dojo.SourceGenerator", "{assemblyVersion}")]
+    public static class {className}Extender
+    {
+        public static {className} AddAppSettings(this IServiceCollection services, IConfiguration configuration)
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            var rootObject = new {className}();
+            configuration.Bind(rootObject);
+
+            services.AddSingleton(rootObject);
+
+            // Only 1 level classes are injected!
+            {nestedClassesInjection}
+            
+            return rootObject;
+        }
+    }
+}

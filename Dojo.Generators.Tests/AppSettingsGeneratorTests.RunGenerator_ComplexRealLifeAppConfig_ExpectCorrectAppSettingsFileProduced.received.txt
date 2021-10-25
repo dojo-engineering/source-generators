@@ -1,0 +1,59 @@
+﻿using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
+
+namespace Level1.Level2
+{
+    [GeneratedCode("Dojo.SourceGenerator", "1.1.0.0")]
+    public partial class AppSettings
+    {
+        public GcpSettings Gcp { get; }
+        public MongoDbSettings MongoDb { get; }
+        public RemotePaymentsExternalApiSettings RemotePaymentsExternalApi { get; }
+        public IEnumerable<ServiceAccountSettings> ServiceAccounts { get; }
+        public RemotePaymentsExternalAuthApiSettings RemotePaymentsExternalAuthApi { get; }
+        public RemotePaymentsSAAuthSettings RemotePaymentsSAAuth { get; }
+        public PubSubSettings PubSub { get; }
+        public ReadinessSettings Readiness { get; }
+        public string JAEGER_AGENT_HOST { get; }
+        public string JAEGER_AGENT_PORT { get; }
+        public string JAEGER_SERVICE_NAME { get; }
+
+        public AppSettings(IConfiguration configuration)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            this.Gcp = new GcpSettings();
+            configuration.GetSection("Gcp").Bind(this.Gcp);
+            this.MongoDb = new MongoDbSettings();
+            configuration.GetSection("MongoDb").Bind(this.MongoDb);
+            this.RemotePaymentsExternalApi = new RemotePaymentsExternalApiSettings();
+            configuration.GetSection("RemotePaymentsExternalApi").Bind(this.RemotePaymentsExternalApi);
+            this.ServiceAccounts = configuration
+                .GetSection("ServiceAccounts")
+                .GetChildren()
+                .Select(x => new ServiceAccountSettings
+                {
+                    ServiceAccounts = x.GetValue<string>("ServiceAccounts"),
+                    ServiceAccounts = x.GetValue<string>("ServiceAccounts"),
+                })
+                .ToList();
+            this.RemotePaymentsExternalAuthApi = new RemotePaymentsExternalAuthApiSettings();
+            configuration.GetSection("RemotePaymentsExternalAuthApi").Bind(this.RemotePaymentsExternalAuthApi);
+            this.RemotePaymentsSAAuth = new RemotePaymentsSAAuthSettings();
+            configuration.GetSection("RemotePaymentsSAAuth").Bind(this.RemotePaymentsSAAuth);
+            this.PubSub = new PubSubSettings();
+            configuration.GetSection("PubSub").Bind(this.PubSub);
+            this.Readiness = new ReadinessSettings();
+            configuration.GetSection("Readiness").Bind(this.Readiness);
+             this.JAEGER_AGENT_HOST = configuration["JAEGER_AGENT_HOST"];
+             this.JAEGER_AGENT_PORT = configuration["JAEGER_AGENT_PORT"];
+             this.JAEGER_SERVICE_NAME = configuration["JAEGER_SERVICE_NAME"];
+        }
+    }
+}
