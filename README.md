@@ -106,7 +106,7 @@ namespace DojoGeneratorTest.Sample
 ## AutoSettingsGenerator
 The purpose of this generator is to generate settings POCOs from `appsetting.json` file. Additionally, extension code 
 for `IServiceCollection` class is generated, that can be used for easy settings injection. All first level settings classes are auto-injected 
-after calling hte `AddAppSettings` auto-generated code.
+after calling the `AddAppSettings` auto-generated code.
 
 ### How to use:
 1. Add nuget package
