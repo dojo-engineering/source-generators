@@ -66,5 +66,55 @@ namespace Level1.Level2
             // Assert
             GeneratorTestHelper.CompareSources(expectedSource, actual);
         }
+
+
+        [Fact]
+        public void MethodOverloadSignature_Generate()
+        {
+            // Arrange
+            string userSource = $@"
+using System;
+using System.Text;
+namespace Level1.Level2
+{{
+    [AutoInterface]
+    public partial class TestFoo
+    {{
+        public void Do()
+        {{
+            return null;
+        }}
+
+        public void Do(int a, bool b)
+        {{
+            return null;
+        }}
+    }}
+";
+
+            string expectedSource = $@"
+using System;
+using System.CodeDom.Compiler;
+
+namespace Level1.Level2
+{{
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
+    public partial class TestFoo: ITestFoo
+    {{
+    }}
+
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
+    public interface ITestFoo
+    {{
+        void Do();
+        void Do(int a, bool b);
+    }}
+}}";
+            // Act
+            var actual = GeneratorTestHelper.GenerateFromSource<AutoInterfaceGenerator>(userSource);
+
+            // Assert
+            GeneratorTestHelper.CompareSources(expectedSource, actual);
+        }
     }
 }
