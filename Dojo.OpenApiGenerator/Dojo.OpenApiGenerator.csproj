@@ -21,4 +21,8 @@
     <ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Templates\" />
+  </ItemGroup>
+
 </Project>
