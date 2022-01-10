@@ -1,5 +1,4 @@
 ﻿using Dojo.Generators.Abstractions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dojo.OpenApiGenerator.TestWebApi.Controllers

@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dojo.OpenApiGenerator", "Do
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "TestApp\TestApp.csproj", "{CB805F95-0487-41D1-BF4A-C00D0EE10597}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dojo.OpenApiGenerator.TestWebApi", "Dojo.OpenApiGenerator.TestWebApi\Dojo.OpenApiGenerator.TestWebApi.csproj", "{7CCBC350-2B13-4C2A-AF63-756E2ABEAF64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dojo.OpenApiGenerator.TestWebApi", "Dojo.OpenApiGenerator.TestWebApi\Dojo.OpenApiGenerator.TestWebApi.csproj", "{7CCBC350-2B13-4C2A-AF63-756E2ABEAF64}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,68 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "GeneratedHelloWorld",
+    "version": "v1",
+    "description": ""
+  },
+  "paths": {
+    "/hello-generated": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelloFromSource"
+                },
+                "examples": {}
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelloFromSource"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "summary": "HelloFromSource",
+        "operationId": ""
+      },
+      "parameters": []
+    },
+    "": {
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "HelloFromSource": {
+        "title": "HelloFromSource",
+        "type": "object",
+        "properties": {
+          "Message": {
+            "type": "string"
+          },
+          "Number": {
+            "type": "integer"
+          },
+          "DateTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "responses": {}
+  }
+}

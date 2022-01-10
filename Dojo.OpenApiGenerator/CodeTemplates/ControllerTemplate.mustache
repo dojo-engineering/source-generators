@@ -1,0 +1,33 @@
+﻿using System;
+using System.CodeDom.Compiler;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+
+namespace {{ProjectNamespace}}.Controllers
+{
+    [GeneratedCode("Dojo.OpenApiGenerator", "{Assembly.GetExecutingAssembly().GetName().Version}")]
+    public class {{Title}}Controller : ControllerBase
+    {
+        {{#Paths}}
+        {{#Operations}}
+        [{{HttpMethod}}]
+        {{#ResponseTypes}}
+        {{#ResponseModelTypes}}
+        [ProducesResponseType(typeof({{TypeFullName}}), {{HttpStatusCode}})]
+        {{/ResponseModelTypes}}
+        {{^ResponseModelTypes}}
+        [ProducesResponseType({{HttpStatusCode}})]
+        {{/ResponseModelTypes}}
+        {{#ContentTypesStringList}}
+        [Produces({{&ContentTypesStringList}})]
+        {{/ContentTypesStringList}}
+        {{/ResponseTypes}}
+        [Route("{{Route}}")]
+        public virtual IActionResult {{OperationName}}()
+        {
+            return Ok("Hello from {{OperationName}}");
+        }
+        {{/Operations}}     
+        {{/Paths}}
+    }
+}

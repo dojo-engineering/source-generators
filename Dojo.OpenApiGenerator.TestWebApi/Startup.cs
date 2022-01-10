@@ -1,17 +1,11 @@
+using Dojo.OpenApiGenerator.TestWebApi.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dojo.OpenApiGenerator.TestWebApi.Controllers;
 
 namespace Dojo.OpenApiGenerator.TestWebApi
 {
@@ -27,8 +21,9 @@ namespace Dojo.OpenApiGenerator.TestWebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //var assembly = typeof(HelloWorldController).Assembly;
-            services.AddControllers();//.AddApplicationPart(assembly).AddControllersAsServices();
+            var assembly = typeof(GeneratedHelloWorldController).Assembly;
+            services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(assembly));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dojo.OpenApiGenerator.TestWebApi", Version = "v1" });
