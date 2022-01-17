@@ -1,12 +1,12 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "GeneratedHelloWorld",
-    "version": "v1",
+    "title": "HelloWorld",
+    "version": "2020-10-14",
     "description": ""
   },
   "paths": {
-    "/hello-generated": {
+    "/hello-generated/{number}": {
       "get": {
         "responses": {
           "200": {
@@ -25,20 +25,31 @@
               }
             }
           },
-          "201": {
-            "description": "Success"
-          },
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Server Error"
           }
         },
         "summary": "HelloFromSource",
-        "operationId": ""
+        "operationId": "",
+        "parameters": []
       },
-      "parameters": []
+      "parameters": [
+        {
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": "number",
+          "in": "path",
+          "required": true
+        }
+      ]
     },
     "": {
       "parameters": []
@@ -49,18 +60,28 @@
       "HelloFromSource": {
         "title": "HelloFromSource",
         "type": "object",
+        "description": "",
         "properties": {
           "Message": {
             "type": "string"
           },
           "Number": {
-            "type": "integer"
+            "type": "integer",
+            "format": "int64"
           },
           "DateTime": {
             "type": "string",
             "format": "date-time"
+          },
+          "Email": {
+            "type": "string",
+            "format": "email"
           }
-        }
+        },
+        "required": [
+          "Message",
+          "Email"
+        ]
       }
     },
     "responses": {}

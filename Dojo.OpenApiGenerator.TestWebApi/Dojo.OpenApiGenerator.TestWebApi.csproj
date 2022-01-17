@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Dojo.Generators.Abstractions\Dojo.Generators.Abstractions.csproj" />
-    <ProjectReference Include="..\Dojo.OpenApiGenerator\Dojo.OpenApiGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Dojo.OpenApiGenerator\Dojo.OpenApiGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
   </ItemGroup>
 
 </Project>

@@ -10,24 +10,26 @@ namespace Dojo.OpenApiGenerator.Models
         public string Namespace { get; set; }
         public IEnumerable<ApiModelProperty> Properties { get; set; }
 
-        public static ApiModel Create(string name, OpenApiSchema openApiSchema, string projectNamespace)
+        public static ApiModel Create(OpenApiSchema openApiSchema, string projectNamespace)
         {
             var model = new ApiModel
             {
-                Name = name,
-                TypeName = $"{name}ApiModelGenerated",
+                Name = openApiSchema.Title,
+                TypeName = $"{openApiSchema.Title}GeneratedApiModel",
                 IsBuiltInType = openApiSchema.Type != OpenApiSchemaTypes.Object,
                 Namespace = $"{projectNamespace}.Models"
             };
 
             if (model.IsBuiltInType)
             {
-                model.Type = GetBuiltInType(openApiSchema.Type, openApiSchema.Format);
+                model.ResolveType(openApiSchema.Type, openApiSchema.Format);
             }
             else
             {
-                model.Properties = openApiSchema.Properties.Select(x => ApiModelProperty.Create(x.Key, x.Value));
+                model.Properties = openApiSchema.Properties.Select(x => ApiModelProperty.Create(x.Key, x.Value, openApiSchema.Required));
             }
+
+            //SetRequiredProperties(model, openApiSchema.Required);
 
             return model;
         }
@@ -36,8 +38,10 @@ namespace Dojo.OpenApiGenerator.Models
         {
             var model = new ApiModel
             {
-                Type = GetBuiltInType(openApiSchemaType, openApiSchemaFormat)
+                IsBuiltInType = true
             };
+
+            model.ResolveType(openApiSchemaType, openApiSchemaFormat);
 
             return model;
         }
@@ -46,5 +50,16 @@ namespace Dojo.OpenApiGenerator.Models
         {
             return IsBuiltInType ? Type.FullName : $"{Namespace}.{TypeName}";
         }
+
+        //private static void SetRequiredProperties(ApiModel apiModel, ISet<string> requiredProperties)
+        //{
+        //    if (requiredProperties == null || !requiredProperties.Any())
+        //    {
+        //        foreach (var requiredProperty in requiredProperties)
+        //        {
+        //            apiModel.Properties.First(x => x.Name == requiredProperty).IsRequired = true;
+        //        }
+        //    }
+        //}
     }
 }

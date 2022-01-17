@@ -7,7 +7,7 @@ namespace Dojo.OpenApiGenerator.Models
         public string ProjectNamespace { get; set; }
         public string Title { get; set; }
         public string Version { get; set; }
-        public IEnumerable<ApiControllerRoute> Paths { get; set; }
+        public IEnumerable<ApiControllerRoute> Routes { get; set; }
         public IDictionary<string, ApiModel> Models { get; set; }
     }
 }

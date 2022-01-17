@@ -1,0 +1,33 @@
+﻿using System;
+using System.Threading.Tasks;
+using Dojo.OpenApiGenerator.Exceptions;
+using Dojo.OpenApiGenerator.TestWebApi.Models;
+
+namespace Dojo.OpenApiGenerator.TestWebApi.Services
+{
+    public class HelloWorldService : IHelloWorldGeneratedService
+    {
+        public Task<HelloFromSourceGeneratedApiModel> HelloFromSourceAsync(long number)
+        {
+            var result = GetHelloFromSourceGeneratedApiModel(number);
+
+            if (result.Number % 2 == 0)
+            {
+                throw new NotFoundApiException("Hello Source not found!");
+            }
+
+            return Task.FromResult(result);
+        }
+
+        private static HelloFromSourceGeneratedApiModel GetHelloFromSourceGeneratedApiModel(long number)
+        {
+            var now = DateTime.UtcNow;
+            return new HelloFromSourceGeneratedApiModel
+            {
+                DateTime = now,
+                Message = $"Hello from {now}",
+                Number = number
+            };
+        }
+    }
+}

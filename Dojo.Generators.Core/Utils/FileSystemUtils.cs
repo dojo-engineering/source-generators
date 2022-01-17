@@ -1,20 +1,31 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
-namespace Dojo.OpenApiGenerator.Utils
+[assembly: InternalsVisibleTo("Dojo.AutoGenerators")]
+[assembly: InternalsVisibleTo("Dojo.OpenApiGenerator")]
+namespace Dojo.Generators.Core.Utils
 {
-    internal class FileSystemUtil
+    internal class FileSystemUtils
     {
         internal static string FindFile(string folder, string name)
         {
             var extension = Path.GetExtension(name);
-
-            // Since on .netstandard2.0 EnumerationOptions cannot be used
             var files = FindFilesWithExtension(folder, extension);
 
             return files
                 .First(x => x.EndsWith(name, StringComparison.OrdinalIgnoreCase));
+        }
+
+        internal static string[] FindFiles(string folder, string name)
+        {
+            var extension = Path.GetExtension(name);
+            var files = FindFilesWithExtension(folder, extension);
+
+            return files
+                .Where(x => x.EndsWith(name, StringComparison.OrdinalIgnoreCase))
+                .ToArray();
         }
 
         internal static string[] FindFilesWithExtension(string folder, string extension)

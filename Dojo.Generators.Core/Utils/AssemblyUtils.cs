@@ -1,23 +1,25 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
-namespace Dojo.OpenApiGenerator.Utils
+[assembly: InternalsVisibleTo("Dojo.AutoGenerators")]
+namespace Dojo.Generators.Core.Utils
 {
-    public static class AssemblyUtils
+    internal static class AssemblyUtils
     {
         public static string ReadEmbeddedResource(string resourceName)
         {
-            var assembly = Assembly.GetCallingAssembly();
+            Assembly assembly = Assembly.GetCallingAssembly();
 
-            using var stream = assembly.GetManifestResourceStream(resourceName);
+            using Stream stream = assembly.GetManifestResourceStream(resourceName);
             if (stream is null)
             {
                 throw new InvalidOperationException($"Embedded resource not found '{resourceName}'! " +
                     $"Make sure '{resourceName}' marked as embedded resource.");
             }
 
-            using var reader = new StreamReader(stream);
+            using StreamReader reader = new StreamReader(stream);
 
             return reader.ReadToEnd();
         }

@@ -2,10 +2,10 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using Dojo.Generators.Core.Utils;
 using Dojo.OpenApiGenerator.CodeTemplates;
 using Dojo.OpenApiGenerator.Extensions;
 using Dojo.OpenApiGenerator.Models;
-using Dojo.OpenApiGenerator.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.OpenApi.Models;
@@ -40,6 +40,7 @@ namespace Dojo.OpenApiGenerator
             var projectNamespace = context.GetProjectDefaultNamespace();
             var controllerTemplateString = Templates.ReadTemplate(Templates.Controller);
             var modelTemplateString = Templates.ReadTemplate(Templates.Model);
+            var serviceInterfaceTemplateString = Templates.ReadTemplate(Templates.ServiceInterface);
             var stubbleBuilder = new StubbleBuilder().Build();
             var openApiDocument = GetOpenApiDocument(projectDir, "hello-source-generators-api.json");
             var apiModels = GenerateApiModels(openApiDocument, projectNamespace);
@@ -48,13 +49,15 @@ namespace Dojo.OpenApiGenerator
                 ProjectNamespace = projectNamespace,
                 Title = openApiDocument.Info.Title,
                 Version = openApiDocument.Info.Version,
-                Paths = openApiDocument.Paths.Select(x => ApiControllerRoute.Create(x.Key, x.Value, apiModels)),
+                Routes = openApiDocument.Paths.Select(x => ApiControllerRoute.Create(x.Key, x.Value, apiModels)),
                 Models = apiModels
             };
 
             var controllerSourceCode = stubbleBuilder.Render(controllerTemplateString, data);
+            var serviceInterfaceSourceCode = stubbleBuilder.Render(serviceInterfaceTemplateString, data);
 
             context.AddSource($"{data.Title}Controller.g.cs", SourceText.From(controllerSourceCode, Encoding.UTF8));
+            context.AddSource($"I{data.Title}Service.g.cs", SourceText.From(serviceInterfaceSourceCode, Encoding.UTF8));
 
             foreach (var x in data.Models)
             {
@@ -68,7 +71,7 @@ namespace Dojo.OpenApiGenerator
         private static Dictionary<string, ApiModel> GenerateApiModels(OpenApiDocument openApiDocument, string projectNamespace)
         {
             var apiModels =
-                openApiDocument.Components.Schemas.Select(x => ApiModel.Create(x.Key, x.Value, projectNamespace));
+                openApiDocument.Components.Schemas.Select(x => ApiModel.Create(x.Value, projectNamespace));
 
             return apiModels.ToDictionary(x => x.Name);
         }
@@ -76,7 +79,7 @@ namespace Dojo.OpenApiGenerator
         private OpenApiDocument GetOpenApiDocument(string projectDir, string schemaFileName)
         {
             var openApiSchemasDir = $"{projectDir}\\OpenApiSchemas";
-            var schemaFile = FileSystemUtil.FindFile(openApiSchemasDir, schemaFileName);
+            var schemaFile = FileSystemUtils.FindFile(openApiSchemasDir, schemaFileName);
             var schema = File.ReadAllText(schemaFile);
             var openApiReader = new OpenApiStringReader();
 

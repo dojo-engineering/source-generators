@@ -6,6 +6,7 @@ namespace Dojo.OpenApiGenerator.CodeTemplates
     {
         public static string Controller => "ControllerTemplate.mustache";
         public static string Model => "ModelTemplate.mustache";
+        public static string ServiceInterface => "ServiceInterfaceTemplate.mustache";
 
         public static string ReadTemplate(string templateName)
         {

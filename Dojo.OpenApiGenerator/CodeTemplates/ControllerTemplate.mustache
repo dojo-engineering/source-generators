@@ -1,33 +1,71 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.CodeDom.Compiler;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using {{ProjectNamespace}}.Services;
+using Dojo.OpenApiGenerator.Exceptions;
 
 namespace {{ProjectNamespace}}.Controllers
 {
     [GeneratedCode("Dojo.OpenApiGenerator", "{Assembly.GetExecutingAssembly().GetName().Version}")]
-    public class {{Title}}Controller : ControllerBase
+    public class {{Title}}GeneratedController : ControllerBase
     {
-        {{#Paths}}
+        private readonly I{{Title}}GeneratedService  _{{Title}}Service;
+
+        public {{Title}}GeneratedController(I{{Title}}GeneratedService {{Title}}Service){
+            _{{Title}}Service = {{Title}}Service ?? throw new ArgumentNullException(nameof({{Title}}Service));
+        }
+
+        {{#Routes}}
         {{#Operations}}
         [{{HttpMethod}}]
         {{#ResponseTypes}}
-        {{#ResponseModelTypes}}
+        {{#ApiModel}}
         [ProducesResponseType(typeof({{TypeFullName}}), {{HttpStatusCode}})]
-        {{/ResponseModelTypes}}
-        {{^ResponseModelTypes}}
+        {{/ApiModel}}
+        {{^ApiModel}}
         [ProducesResponseType({{HttpStatusCode}})]
-        {{/ResponseModelTypes}}
+        {{/ApiModel}}
         {{#ContentTypesStringList}}
         [Produces({{&ContentTypesStringList}})]
         {{/ContentTypesStringList}}
         {{/ResponseTypes}}
         [Route("{{Route}}")]
-        public virtual IActionResult {{OperationName}}()
-        {
-            return Ok("Hello from {{OperationName}}");
+        public async virtual Task<IActionResult> {{ActionName}}Async({{InputActionParametersString}})
+        {       
+            try
+            {   
+                {{#SuccessResponse}}
+                {{#ApiModel}}
+                return Ok(await _{{Title}}Service.{{ActionName}}Async({{InputServiceCallParametersString}}));
+                {{/ApiModel}}
+                {{^ApiModel}}
+                await _{{Title}}Service.{{ActionName}}Async({{InputServiceCallParametersString}});
+                return Ok();
+                {{/ApiModel}}
+                {{/SuccessResponse}}
+            }
+            {{#UnsuccessfulResponses}}
+            {{#IsBadRequestResponse}}
+            catch (BadRequestApiException e)
+            {
+                return BadRequest(e.Message);
+            }
+            {{/IsBadRequestResponse}}
+            {{#IsNotFoundResponse}}
+            catch (NotFoundApiException e)
+            {
+                return NotFound(e.Message);
+            }
+            {{/IsNotFoundResponse}}
+            {{/UnsuccessfulResponses}}
         }
         {{/Operations}}     
-        {{/Paths}}
+        {{/Routes}}
     }
 }

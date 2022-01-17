@@ -14,9 +14,11 @@
 	<ItemGroup>
 	  <None Remove="CodeTemplates\ControllerTemplate.mustache" />
 	  <None Remove="CodeTemplates\ModelTemplate.mustache" />
+	  <None Remove="CodeTemplates\ServiceInterfaceTemplate.mustache" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Include="CodeTemplates\ServiceInterfaceTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ModelTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ControllerTemplate.mustache" />
 	</ItemGroup>
@@ -37,6 +39,7 @@
 		<PackageReference Include="SharpYaml" Version="1.6.5" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="Stubble.Core" Version="1.9.3" PrivateAssets="all" GeneratePathProperty="true" />
 		<ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
+		<ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" />
 	</ItemGroup>
 
 	<!-- Sections below allow to referrence project directly -->

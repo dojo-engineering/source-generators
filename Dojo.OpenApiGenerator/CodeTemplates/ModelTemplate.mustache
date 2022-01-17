@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom.Compiler;
+using System.ComponentModel.DataAnnotations;
 
 namespace {{Namespace}}
 {
@@ -7,7 +8,11 @@ namespace {{Namespace}}
     public class {{TypeName}}
     {
         {{#Properties}}
+        {{#IsRequired}}
+        [Required]{{/IsRequired}}{{#IsEmail}}
+        [EmailAddress]{{/IsEmail}}
         public {{TypeFullName}} {{Name}} { get; set;}
+
         {{/Properties}}
     }
 }

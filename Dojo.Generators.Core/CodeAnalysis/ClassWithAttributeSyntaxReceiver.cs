@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Dojo.AutoGenerators
+[assembly: InternalsVisibleTo("Dojo.AutoGenerators")]
+namespace Dojo.Generators.Core.CodeAnalysis
 {
     internal class ClassWithAttributeSyntaxReceiver : ISyntaxReceiver
     {

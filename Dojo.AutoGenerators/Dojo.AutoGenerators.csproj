@@ -37,6 +37,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" PrivateAssets="all" GeneratePathProperty="true" />
     <ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
+    <ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" />
   </ItemGroup>
 
   <!-- Sections below allow to referrence project directly -->
