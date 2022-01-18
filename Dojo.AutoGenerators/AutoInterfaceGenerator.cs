@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using Dojo.Generators.Core.CodeAnalysis;
@@ -174,6 +175,15 @@ namespace {classDefinition.Namespace}
 
         public void Initialize(GeneratorInitializationContext context)
         {
+            //#if DEBUG
+            //if (!Debugger.IsAttached)
+            //{
+            //    Debugger.Launch();
+            //}
+            //#endif
+
+            //Debug.WriteLine("Initialize code generator");
+
             context.RegisterForSyntaxNotifications(()=>new ClassWithAttributeSyntaxReceiver("AutoInterface"));
         }
     }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,6 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
+using Stubble.Core;
 using Stubble.Core.Builders;
 
 namespace Dojo.OpenApiGenerator
@@ -21,6 +21,16 @@ namespace Dojo.OpenApiGenerator
     {
         private const string OpenApiFileExtension = ".json";
         private const string ControllerOverrideAttributeName = "AutoControllerOverride";
+
+        private static string _serviceInterfaceTemplateString;
+        private static readonly StubbleVisitorRenderer StubbleBuilder;
+        private static string _controllerTemplateString;
+        private static string _modelTemplateString;
+
+        static AutoApiGenerator()
+        {
+            StubbleBuilder = new StubbleBuilder().Build();
+        }
 
         public void Initialize(GeneratorInitializationContext context)
         {
@@ -62,10 +72,6 @@ namespace Dojo.OpenApiGenerator
         private static void GenerateApiSourceCode(GeneratorExecutionContext context, ICollection<string> apisToOverride, OpenApiDocument openApiDocument)
         {
             var projectNamespace = context.GetProjectDefaultNamespace();
-            var controllerTemplateString = Templates.ReadTemplate(Templates.Controller);
-            var modelTemplateString = Templates.ReadTemplate(Templates.Model);
-            var serviceInterfaceTemplateString = Templates.ReadTemplate(Templates.ServiceInterface);
-            var stubbleBuilder = new StubbleBuilder().Build();
             var apiModels = GenerateApiModels(openApiDocument, projectNamespace);
             var data = new ApiControllerDefinition
             {
@@ -77,19 +83,41 @@ namespace Dojo.OpenApiGenerator
                 CanOverride = apisToOverride.Contains(openApiDocument.Info.Title)
             };
 
-            var controllerSourceCode = stubbleBuilder.Render(controllerTemplateString, data);
-            var serviceInterfaceSourceCode = stubbleBuilder.Render(serviceInterfaceTemplateString, data);
+            GenerateController(context, data);
+            //GenerateServiceInterface(context, data);
+            GenerateModels(context, data);
+        }
 
-            context.AddSource($"{data.Title}Controller.g.cs", SourceText.From(controllerSourceCode, Encoding.UTF8));
-            context.AddSource($"I{data.Title}Service.g.cs", SourceText.From(serviceInterfaceSourceCode, Encoding.UTF8));
+        private static void GenerateModels(GeneratorExecutionContext context, ApiControllerDefinition data)
+        {
+            _modelTemplateString ??= Templates.ReadTemplate(Templates.Model);
 
             foreach (var x in data.Models)
             {
                 var name = x.Key;
                 var apiModel = x.Value;
-                var modelSource = stubbleBuilder.Render(modelTemplateString, apiModel);
+                var modelSource = StubbleBuilder.Render(_modelTemplateString, apiModel);
+
                 context.AddSource($"{name}ApiModel.g.cs", SourceText.From(modelSource, Encoding.UTF8));
             }
+        }
+
+        private static void GenerateController(GeneratorExecutionContext context, ApiControllerDefinition data)
+        {
+            _controllerTemplateString ??= Templates.ReadTemplate(Templates.AbstractController);
+
+            var controllerSourceCode = StubbleBuilder.Render(_controllerTemplateString, data);
+
+            context.AddSource($"{data.Title}ControllerBase.g.cs", SourceText.From(controllerSourceCode, Encoding.UTF8));
+        }
+
+        private static void GenerateServiceInterface(GeneratorExecutionContext context, ApiControllerDefinition data)
+        {
+            _serviceInterfaceTemplateString ??= Templates.ReadTemplate(Templates.ServiceInterface);
+
+            var serviceInterfaceSourceCode = StubbleBuilder.Render(_serviceInterfaceTemplateString, data);
+
+            context.AddSource($"I{data.Title}Service.g.cs", SourceText.From(serviceInterfaceSourceCode, Encoding.UTF8));
         }
 
         private static Dictionary<string, ApiModel> GenerateApiModels(OpenApiDocument openApiDocument, string projectNamespace)

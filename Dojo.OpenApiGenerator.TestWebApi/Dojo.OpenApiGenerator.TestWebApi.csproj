@@ -5,18 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\HelloWorldCustomController.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Controllers\HelloWorldCustomController.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Dojo.AutoGenerators\Dojo.AutoGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     <ProjectReference Include="..\Dojo.Generators.Abstractions\Dojo.Generators.Abstractions.csproj" />
     <ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" />
     <ProjectReference Include="..\Dojo.OpenApiGenerator\Dojo.OpenApiGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />

@@ -12,12 +12,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="CodeTemplates\AbstractControllerTemplate.mustache" />
 	  <None Remove="CodeTemplates\ControllerTemplate.mustache" />
 	  <None Remove="CodeTemplates\ModelTemplate.mustache" />
 	  <None Remove="CodeTemplates\ServiceInterfaceTemplate.mustache" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ServiceInterfaceTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ModelTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ControllerTemplate.mustache" />

@@ -1,21 +1,33 @@
 ﻿using System.Threading.Tasks;
-using Dojo.Generators.Abstractions;
 using Dojo.OpenApiGenerator.TestWebApi.Generated.Controllers;
+using Dojo.OpenApiGenerator.TestWebApi.Generated.Models;
 using Dojo.OpenApiGenerator.TestWebApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dojo.OpenApiGenerator.TestWebApi.Controllers
 {
-    [AutoControllerOverride("HelloWorld")]
-    public class HelloWorldCustomController : HelloWorldController
+    public class HelloWorldCustomController : HelloWorldControllerBase
     {
-        public HelloWorldCustomController(IHelloWorldService helloWorldService) : base(helloWorldService)
+        private readonly IHelloWorldService _helloWorldService;
+
+        public HelloWorldCustomController(IHelloWorldService helloWorldService)
         {
+            _helloWorldService = helloWorldService;
         }
 
-        public override Task<IActionResult> HelloFromSourceAsync(long number)
+        public override Task<IActionResult> HelloFromSourceActionAsync(long number)
         {
             return Task.FromResult<IActionResult>(Ok(number));
+        }
+
+        protected override Task<HelloFromSourceApiModel> HelloFromSourceAsync(long number)
+        {
+            return _helloWorldService.HelloFromSourceAsync(number);
+        }
+
+        protected override Task<string> HelloGenerated2Async()
+        {
+            return _helloWorldService.HelloGenerated2Async();
         }
     }
 }
