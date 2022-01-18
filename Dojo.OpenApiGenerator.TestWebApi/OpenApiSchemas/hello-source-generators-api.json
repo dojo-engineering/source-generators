@@ -37,7 +37,8 @@
         },
         "summary": "HelloFromSource",
         "operationId": "",
-        "parameters": []
+        "parameters": [],
+        "description": ""
       },
       "parameters": [
         {
@@ -53,6 +54,25 @@
     },
     "": {
       "parameters": []
+    },
+    "/hello-generated2": {
+      "get": {
+        "summary": "HelloGenerated2",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-hello-generated2"
+      }
     }
   },
   "components": {

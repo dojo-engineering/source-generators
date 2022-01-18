@@ -1,4 +1,4 @@
-using Dojo.OpenApiGenerator.TestWebApi.Controllers;
+using Dojo.OpenApiGenerator.TestWebApi.Generated.Controllers;
 using Dojo.OpenApiGenerator.TestWebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,9 +22,8 @@ namespace Dojo.OpenApiGenerator.TestWebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var assembly = typeof(HelloWorldGeneratedController).Assembly;
-            services.AddControllers().PartManager.ApplicationParts.Add(new AssemblyPart(assembly));
-            services.AddSingleton<IHelloWorldGeneratedService, HelloWorldService>();
+            services.AddControllers();
+            services.AddSingleton<IHelloWorldService, HelloWorldService>();
 
             services.AddSwaggerGen(c =>
             {

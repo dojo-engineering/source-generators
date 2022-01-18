@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Dojo.AutoGenerators")]
 [assembly: InternalsVisibleTo("Dojo.OpenApiGenerator")]
+[assembly: InternalsVisibleTo("Dojo.Generators.Tests")]
 namespace Dojo.Generators.Core.Utils
 {
     internal class FileSystemUtils

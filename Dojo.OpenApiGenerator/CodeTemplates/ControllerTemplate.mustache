@@ -10,14 +10,14 @@ using Microsoft.AspNetCore.Http;
 using {{ProjectNamespace}}.Services;
 using Dojo.OpenApiGenerator.Exceptions;
 
-namespace {{ProjectNamespace}}.Controllers
+namespace {{ProjectNamespace}}.Generated.Controllers
 {
     [GeneratedCode("Dojo.OpenApiGenerator", "{Assembly.GetExecutingAssembly().GetName().Version}")]
-    public class {{Title}}GeneratedController : ControllerBase
+    public {{#CanOverride}}abstract{{/CanOverride}} class {{Title}}Controller : ControllerBase
     {
-        private readonly I{{Title}}GeneratedService  _{{Title}}Service;
+        private readonly I{{Title}}Service  _{{Title}}Service;
 
-        public {{Title}}GeneratedController(I{{Title}}GeneratedService {{Title}}Service){
+        public {{Title}}Controller(I{{Title}}Service {{Title}}Service){
             _{{Title}}Service = {{Title}}Service ?? throw new ArgumentNullException(nameof({{Title}}Service));
         }
 
@@ -36,10 +36,12 @@ namespace {{ProjectNamespace}}.Controllers
         {{/ContentTypesStringList}}
         {{/ResponseTypes}}
         [Route("{{Route}}")]
-        public async virtual Task<IActionResult> {{ActionName}}Async({{InputActionParametersString}})
-        {       
+        public async {{#CanOverride}}virtual{{/CanOverride}} Task<IActionResult> {{ActionName}}Async({{InputActionParametersString}})
+        {    
+            {{#HasUnsuccessfulResponses}}
             try
-            {   
+            {
+            {{/HasUnsuccessfulResponses}}
                 {{#SuccessResponse}}
                 {{#ApiModel}}
                 return Ok(await _{{Title}}Service.{{ActionName}}Async({{InputServiceCallParametersString}}));
@@ -49,7 +51,9 @@ namespace {{ProjectNamespace}}.Controllers
                 return Ok();
                 {{/ApiModel}}
                 {{/SuccessResponse}}
+            {{#HasUnsuccessfulResponses}}
             }
+            {{/HasUnsuccessfulResponses}}
             {{#UnsuccessfulResponses}}
             {{#IsBadRequestResponse}}
             catch (BadRequestApiException e)

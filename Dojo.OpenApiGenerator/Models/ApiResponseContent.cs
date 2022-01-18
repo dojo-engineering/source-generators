@@ -22,7 +22,7 @@ namespace Dojo.OpenApiGenerator.Models
             OpenApiMediaType openApiMediaType,
             IDictionary<string, ApiModel> apiModels)
         {
-            if (!openApiMediaType.Schema.Reference.Type.HasValue)
+            if (openApiMediaType.Schema.Reference == null || !openApiMediaType.Schema.Reference.Type.HasValue)
             {
                 return ApiModel.Create(openApiMediaType.Schema.Type, openApiMediaType.Schema.Format);
             }

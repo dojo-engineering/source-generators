@@ -4,7 +4,7 @@ namespace Dojo.OpenApiGenerator.Models
 {
     internal interface IHasRouteParameters
     {
-        IEnumerable<ApiRouteParameter> RouteParameters { get; set; }
+        IEnumerable<ApiRouteParameter> RouteParameters { get; }
         bool HasRouteParameters { get; }
     }
 }

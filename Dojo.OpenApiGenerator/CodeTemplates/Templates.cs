@@ -1,4 +1,4 @@
-﻿using Dojo.OpenApiGenerator.Utils;
+﻿using Dojo.Generators.Core.Utils;
 
 namespace Dojo.OpenApiGenerator.CodeTemplates
 {

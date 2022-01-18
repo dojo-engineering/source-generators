@@ -11,14 +11,17 @@ namespace Dojo.OpenApiGenerator.Models
         public IEnumerable<ApiRouteParameter> RouteParameters { get; set; }
         public bool HasRouteParameters => RouteParameters != null && RouteParameters.Any();
 
-        public static ApiControllerRoute Create(string route, OpenApiPathItem openApiPathItem, IDictionary<string, ApiModel> apiModels)
+        public static ApiControllerRoute Create(
+            string route, 
+            OpenApiPathItem openApiPathItem,
+            IDictionary<string, ApiModel> apiModels)
         {
             var routeParameters = openApiPathItem.Parameters.Select(p => new ApiRouteParameter(p)).ToList();
 
             return new ApiControllerRoute
             {
                 Route = BuildRoute(route, routeParameters),
-                Operations = openApiPathItem.Operations.Select(x => ApiControllerAction.Create(x.Key, x.Value, apiModels, routeParameters)),
+                Operations = openApiPathItem.Operations.Select(x => new ApiControllerAction(x.Key, x.Value, apiModels, routeParameters)),
                 RouteParameters = routeParameters
             };
         }

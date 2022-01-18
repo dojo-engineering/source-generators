@@ -5,12 +5,11 @@ namespace Dojo.Generators.Abstractions
     [AttributeUsage(AttributeTargets.Class)]
     public class AutoControllerOverride : Attribute
     {
-        private readonly string _route;
-        public string Route { get; set; }
+        public string ApiName { get; set; }
 
-        public AutoControllerOverride(string route)
+        public AutoControllerOverride(string apiName)
         {
-            _route = route;
+            ApiName = apiName;
         }
     }
 }

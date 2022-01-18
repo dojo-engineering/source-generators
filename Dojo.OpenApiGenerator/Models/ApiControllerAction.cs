@@ -10,31 +10,35 @@ namespace Dojo.OpenApiGenerator.Models
     {
         private const string InputParametersSeparator = ",";
 
-        public string ActionName { get; set; }
-        public string HttpMethod { get; set; }
-        public IEnumerable<ApiResponse> ResponseTypes { get; set; }
-        public ApiResponse SuccessResponse => GetSuccessResponse();
-        public IEnumerable<ApiResponse> UnsuccessfulResponses => GetUnsuccessfulResponses();
-        public IEnumerable<ApiRouteParameter> RouteParameters { get; set; }
-        public string InputActionParametersString => GetInputActionParametersString();
-        public string InputServiceCallParametersString => GetInputServiceCallParametersString();
-        public string InputServiceParametersString => GetInputServiceParametersString();
+        public string ActionName { get; }
+        public string HttpMethod { get; }
+        public IEnumerable<ApiResponse> ResponseTypes { get; }
+        public ApiResponse SuccessResponse { get; }
+        public IEnumerable<ApiResponse> UnsuccessfulResponses { get; }
+        public IEnumerable<ApiRouteParameter> RouteParameters { get; }
+        public string InputActionParametersString { get; }
+        public string InputServiceCallParametersString { get; }
+        public string InputServiceParametersString { get; }
+        public bool HasUnsuccessfulResponses { get; }
+        public bool HasRouteParameters { get; }
 
-        public bool HasRouteParameters => RouteParameters != null && RouteParameters.Any();
-
-        public static ApiControllerAction Create(
+    public ApiControllerAction(
             OperationType operationType, 
             OpenApiOperation operation,
             IDictionary<string, ApiModel> apiModels, 
             IEnumerable<ApiRouteParameter> apiRouteParameters)
         {
-            return new ApiControllerAction
-            {
-                HttpMethod = GetHttpMethodAttributeName(operationType),
-                ActionName = operation.Summary,
-                ResponseTypes = operation.Responses.Select(x => ApiResponse.Create(x.Key, x.Value, apiModels)),
-                RouteParameters = apiRouteParameters
-            };
+            HttpMethod = GetHttpMethodAttributeName(operationType);
+            ActionName = operation.Summary;
+            ResponseTypes = operation.Responses.Select(x => ApiResponse.Create(x.Key, x.Value, apiModels));
+            RouteParameters = apiRouteParameters;
+            HasRouteParameters = RouteParameters != null && RouteParameters.Any();
+            SuccessResponse = GetSuccessResponse();
+            UnsuccessfulResponses = GetUnsuccessfulResponses();
+            HasUnsuccessfulResponses = UnsuccessfulResponses != null && UnsuccessfulResponses.Any();
+            InputActionParametersString = GetInputActionParametersString();
+            InputServiceCallParametersString = GetInputServiceCallParametersString();
+            InputServiceParametersString = GetInputServiceParametersString();
         }
 
         private static string GetHttpMethodAttributeName(OperationType operationType)
@@ -76,7 +80,7 @@ namespace Dojo.OpenApiGenerator.Models
             {
                 if (index > 0)
                 {
-                    actionParameterBuilder.Append(" ,");
+                    actionParameterBuilder.Append($" {InputParametersSeparator}");
                 }
 
                 index++;
@@ -105,7 +109,7 @@ namespace Dojo.OpenApiGenerator.Models
             {
                 if (index > 0)
                 {
-                    actionParameterBuilder.Append(" ,");
+                    actionParameterBuilder.Append($" {InputParametersSeparator}");
                 }
 
                 index++;
@@ -130,7 +134,7 @@ namespace Dojo.OpenApiGenerator.Models
             {
                 if (index > 0)
                 {
-                    actionParameterBuilder.Append(" ,");
+                    actionParameterBuilder.Append($" {InputParametersSeparator}");
                 }
 
                 index++;
@@ -149,7 +153,7 @@ namespace Dojo.OpenApiGenerator.Models
 
             if (isRequired)
             {
-                constraint += $", {ActionConstraints.BindRequired}]";
+                constraint += $"{InputParametersSeparator} {ActionConstraints.BindRequired}]";
             }
             else
             {

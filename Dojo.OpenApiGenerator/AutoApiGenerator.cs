@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Dojo.Generators.Core.CodeAnalysis;
 using Dojo.Generators.Core.Utils;
 using Dojo.OpenApiGenerator.CodeTemplates;
 using Dojo.OpenApiGenerator.Extensions;
@@ -17,6 +19,9 @@ namespace Dojo.OpenApiGenerator
     [Generator]
     public class AutoApiGenerator : ISourceGenerator
     {
+        private const string OpenApiFileExtension = ".json";
+        private const string ControllerOverrideAttributeName = "AutoControllerOverride";
+
         public void Initialize(GeneratorInitializationContext context)
         {
             //#if DEBUG
@@ -27,22 +32,40 @@ namespace Dojo.OpenApiGenerator
             //#endif
 
             //Debug.WriteLine("Initialize code generator");
+            context.RegisterForSyntaxNotifications(() => new ClassWithAttributeSyntaxReceiver(ControllerOverrideAttributeName));
         }
 
         public void Execute(GeneratorExecutionContext context)
         {
-            GenerateApiSourceCode(context);
+            var apisToOverride = new List<string>();
+            var syntaxReceiver = context.SyntaxReceiver as ClassWithAttributeSyntaxReceiver;
+            foreach (var candidateClass in syntaxReceiver.CandidateClasses)
+            {
+                var autoControllerOverrideRoute = candidateClass.AttributeLists.Select(a => a.Attributes.First(x => x.Name.ToFullString() == ControllerOverrideAttributeName)).First();
+                apisToOverride.Add(autoControllerOverrideRoute.ArgumentList.Arguments.First().ToFullString().Trim('"'));
+            }
+
+            GenerateApisSourceCode(context, apisToOverride);
         }
 
-        private void GenerateApiSourceCode(GeneratorExecutionContext context)
+        private void GenerateApisSourceCode(GeneratorExecutionContext context, ICollection<string> apisToOverride)
         {
             var projectDir = context.GetProjectDir();
+            var openApiDocuments = GetOpenApiDocuments(projectDir);
+
+            foreach (var openApiDocument in openApiDocuments)
+            {
+                GenerateApiSourceCode(context, apisToOverride, openApiDocument);
+            }
+        }
+
+        private static void GenerateApiSourceCode(GeneratorExecutionContext context, ICollection<string> apisToOverride, OpenApiDocument openApiDocument)
+        {
             var projectNamespace = context.GetProjectDefaultNamespace();
             var controllerTemplateString = Templates.ReadTemplate(Templates.Controller);
             var modelTemplateString = Templates.ReadTemplate(Templates.Model);
             var serviceInterfaceTemplateString = Templates.ReadTemplate(Templates.ServiceInterface);
             var stubbleBuilder = new StubbleBuilder().Build();
-            var openApiDocument = GetOpenApiDocument(projectDir, "hello-source-generators-api.json");
             var apiModels = GenerateApiModels(openApiDocument, projectNamespace);
             var data = new ApiControllerDefinition
             {
@@ -50,7 +73,8 @@ namespace Dojo.OpenApiGenerator
                 Title = openApiDocument.Info.Title,
                 Version = openApiDocument.Info.Version,
                 Routes = openApiDocument.Paths.Select(x => ApiControllerRoute.Create(x.Key, x.Value, apiModels)),
-                Models = apiModels
+                Models = apiModels,
+                CanOverride = apisToOverride.Contains(openApiDocument.Info.Title)
             };
 
             var controllerSourceCode = stubbleBuilder.Render(controllerTemplateString, data);
@@ -76,14 +100,18 @@ namespace Dojo.OpenApiGenerator
             return apiModels.ToDictionary(x => x.Name);
         }
 
-        private OpenApiDocument GetOpenApiDocument(string projectDir, string schemaFileName)
+        private IEnumerable<OpenApiDocument> GetOpenApiDocuments(string projectDir)
         {
-            var openApiSchemasDir = $"{projectDir}\\OpenApiSchemas";
-            var schemaFile = FileSystemUtils.FindFile(openApiSchemasDir, schemaFileName);
-            var schema = File.ReadAllText(schemaFile);
-            var openApiReader = new OpenApiStringReader();
+            var openApiSchemasDir = $"{projectDir}\\{Constants.OpenApiSchemasFolder}";
+            var schemaFiles = FileSystemUtils.FindFilesWithExtension(openApiSchemasDir, OpenApiFileExtension);
 
-            return openApiReader.Read(schema, out _);
+            foreach (var schemaFile in schemaFiles)
+            {
+                var schema = File.ReadAllText(schemaFile);
+                var openApiReader = new OpenApiStringReader();
+
+                yield return openApiReader.Read(schema, out _);
+            }
         }
     }
 }

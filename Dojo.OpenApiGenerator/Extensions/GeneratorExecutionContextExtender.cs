@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Xml.XPath;
-using Dojo.OpenApiGenerator.Utils;
+using Dojo.Generators.Core.Utils;
 using Microsoft.CodeAnalysis;
 
 namespace Dojo.OpenApiGenerator.Extensions
@@ -18,7 +18,7 @@ namespace Dojo.OpenApiGenerator.Extensions
         public static string GetProjectDefaultNamespace(this GeneratorExecutionContext context)
         {
             var projectDir = context.GetProjectDir();
-            var project = FileSystemUtil.FindFilesWithExtension(projectDir, ".csproj").SingleOrDefault();
+            var project = FileSystemUtils.FindFilesWithExtension(projectDir, ".csproj").SingleOrDefault();
 
             if (project == null)
             {

@@ -21,6 +21,7 @@
 
     <ProjectReference Include="../Dojo.AutoGenerators/Dojo.AutoGenerators.csproj" />
     <ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
+    <ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

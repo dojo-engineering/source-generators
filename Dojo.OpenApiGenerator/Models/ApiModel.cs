@@ -15,7 +15,7 @@ namespace Dojo.OpenApiGenerator.Models
             var model = new ApiModel
             {
                 Name = openApiSchema.Title,
-                TypeName = $"{openApiSchema.Title}GeneratedApiModel",
+                TypeName = $"{openApiSchema.Title}ApiModel",
                 IsBuiltInType = openApiSchema.Type != OpenApiSchemaTypes.Object,
                 Namespace = $"{projectNamespace}.Models"
             };

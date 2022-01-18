@@ -27,7 +27,15 @@
 		<!-- Package the generator in the analyzer directory of the nuget package -->
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(OutputPath)\Dojo.Generators.Abstractions.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Abstractions.dll" Visible="false" />
+		<None Include="$(OutputPath)\Dojo.Generators.Core.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Core.dll" Visible="false" />
+
+		<!-- Package the third pary assemblies longside the generator assembly -->
+		<None Include="$(PKGSharpYaml)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PKGStubble_Core)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PKGMicrosoft_OpenApi)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PKGMicrosoft_OpenApi_Readers)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
+
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
@@ -39,7 +47,7 @@
 		<PackageReference Include="SharpYaml" Version="1.6.5" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="Stubble.Core" Version="1.9.3" PrivateAssets="all" GeneratePathProperty="true" />
 		<ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
-		<ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" />
+		<ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" OutputItemType="Analyzer" />
 	</ItemGroup>
 
 	<!-- Sections below allow to referrence project directly -->
