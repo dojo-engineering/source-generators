@@ -1,4 +1,6 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using System.Collections.Generic;
+using Dojo.OpenApiGenerator.Extensions;
+using Microsoft.OpenApi.Models;
 
 namespace Dojo.OpenApiGenerator.Models
 {
@@ -8,15 +10,19 @@ namespace Dojo.OpenApiGenerator.Models
 
         public string Name { get; set; }
         public ApiModel ApiModel { get; set; }
-
         public bool IsRequired { get; }
+        public abstract ParameterLocation ParameterLocation { get; }
+        public string SourceCodeName { get; }
 
-        protected ApiParameterBase(OpenApiParameter openApiParameter)
+        protected ApiParameterBase(
+            string sourceCodeName, 
+            OpenApiParameter openApiParameter)
         {
             OpenApiParameter = openApiParameter;
             Name = openApiParameter.Name;
             ApiModel = ResolveApiModel();
             IsRequired = openApiParameter.Required;
+            SourceCodeName = sourceCodeName ?? Name.ToSourceCodeName();
         }
 
         protected abstract ApiModel ResolveApiModel();

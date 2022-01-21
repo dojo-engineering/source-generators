@@ -78,9 +78,10 @@
   "components": {
     "schemas": {
       "HelloFromSource": {
-        "title": "HelloFromSource",
         "type": "object",
+        "title": "HelloFromSource",
         "description": "",
+        "additionalProperties": false,
         "properties": {
           "Message": {
             "type": "string"

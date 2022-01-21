@@ -11,7 +11,7 @@ namespace {{Namespace}}
         {{#IsRequired}}
         [Required]{{/IsRequired}}{{#IsEmail}}
         [EmailAddress]{{/IsEmail}}
-        public virtual {{TypeFullName}} {{Name}} { get; set;}
+        public virtual {{&TypeFullName}} {{SourceName}} { get; set;}
 
         {{/Properties}}
     }

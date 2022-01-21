@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dojo.OpenApiGenerator.OpenApi;
+using Microsoft.OpenApi.Models;
 
 namespace Dojo.OpenApiGenerator.Models
 {
@@ -12,11 +13,35 @@ namespace Dojo.OpenApiGenerator.Models
         public string TypeFullName => GetTypeFullName();
         public bool IsBuiltInType { get; set; }
         public bool IsEmail { get; private set; }
+        public IList<Type> InnerTypes { get; private set; }
 
-        protected void ResolveType(string openApiType, string openApiTypeFormat)
+        protected void ResolveType(OpenApiSchema openApiSchema)
         {
+            if (openApiSchema.Type == null)
+            {
+                Type = typeof(object);
+
+                return;
+            }
+
+            var openApiType = openApiSchema.Type;
+            var openApiTypeFormat = openApiSchema.Format;
+
             switch (openApiType)
             {
+                case OpenApiSchemaTypes.Object:
+                {
+                    if (!openApiSchema.AdditionalPropertiesAllowed)
+                    {
+                        Type = typeof(object);
+                    }
+                    else
+                    {
+                        ResolveDictionaryType(openApiSchema.AdditionalProperties);
+                    }
+
+                    break;
+                }
                 case OpenApiSchemaTypes.Integer:
                     {
                         if (string.IsNullOrWhiteSpace(openApiTypeFormat))
@@ -29,16 +54,19 @@ namespace Dojo.OpenApiGenerator.Models
                             case OpenApiTypeFormats.Int32:
                                 {
                                     Type = typeof(int);
+
                                     break;
                                 }
                             case OpenApiTypeFormats.Int64:
                                 {
                                     Type = typeof(long);
+
                                     break;
                                 }
                             default:
                                 {
                                     Type = typeof(int);
+
                                     break;
                                 }
                         }
@@ -58,18 +86,20 @@ namespace Dojo.OpenApiGenerator.Models
                             case OpenApiTypeFormats.DateTime:
                                 {
                                     Type = typeof(DateTime);
+
                                     break;
-                                    ;
                                 }
                             case OpenApiTypeFormats.Email:
                             {
                                 IsEmail = true;
                                 Type = typeof(string);
+
                                 break;
                             }
                             default:
                                 {
                                     Type = typeof(string);
+
                                     break;
                                 }
                         }
@@ -77,6 +107,20 @@ namespace Dojo.OpenApiGenerator.Models
                         break;
                     }
             }
+        }
+
+        private void ResolveDictionaryType(OpenApiSchema additionalProperties)
+        {
+            //TODO resolve reference types
+            var dictArgType1 = typeof(string);
+            var dictArgType2 = new ApiModel(additionalProperties).Type;
+
+            InnerTypes = new List<Type>
+            {
+                dictArgType1, 
+                dictArgType2
+            };
+            Type = typeof(IDictionary<,>);
         }
 
         protected abstract string GetTypeFullName();

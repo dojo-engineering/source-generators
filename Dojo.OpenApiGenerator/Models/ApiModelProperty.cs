@@ -1,33 +1,33 @@
 ﻿using System.Collections.Generic;
+using Dojo.OpenApiGenerator.Extensions;
 using Microsoft.OpenApi.Models;
 
 namespace Dojo.OpenApiGenerator.Models
 {
     internal class ApiModelProperty : ApiModelBase, IHasApiConstraints
     {
-        public bool IsRequired { get; private set; }
+        public bool IsRequired { get; }
+        public string SourceName { get; }
 
-        public static ApiModelProperty Create(string name, OpenApiSchema openApiSchema, ISet<string> required)
+        public ApiModelProperty(string name, OpenApiSchema openApiSchema, ISet<string> required)
         {
-            var model = new ApiModelProperty
-            {
-                Name = name,
-                IsRequired = ResolveIsRequired(name, required)
-            };
+            Name = name;
+            SourceName = name.FirstCharToUpper();
+            IsRequired = ResolveIsRequired(name, required);
 
-            model.ResolveType(openApiSchema.Type, openApiSchema.Format);
-
-            return model;
+            ResolveType(openApiSchema);
         }
 
         protected override string GetTypeFullName()
         {
-            return Type.FullName;
+            return Type == typeof(IDictionary<,>) ? 
+                $"{Type.Namespace}.IDictionary<{InnerTypes[0].FullName},{InnerTypes[1].FullName}>" : 
+                Type.FullName;
         }
 
         private static bool ResolveIsRequired(string name, ISet<string> requiredProperties)
         {
-            return requiredProperties.Contains(name);
+            return requiredProperties != null && requiredProperties.Contains(name);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace {{ProjectNamespace}}.Generated.Controllers
     public abstract class {{Title}}ControllerBase : ControllerBase
     {
         {{#Routes}}
-        {{#Operations}}
+        {{#Actions}}
         [{{HttpMethod}}]
         {{#ResponseTypes}}
         {{#ApiModel}}
@@ -25,12 +25,12 @@ namespace {{ProjectNamespace}}.Generated.Controllers
         {{^ApiModel}}
         [ProducesResponseType({{HttpStatusCode}})]
         {{/ApiModel}}
+        {{/ResponseTypes}}
         {{#ContentTypesStringList}}
         [Produces({{&ContentTypesStringList}})]
         {{/ContentTypesStringList}}
-        {{/ResponseTypes}}
         [Route("{{Route}}")]
-        public async virtual Task<IActionResult> {{ActionName}}ActionAsync({{InputActionParametersString}})
+        public async virtual Task<IActionResult> {{ActionName}}ActionAsync({{&InputActionParametersString}})
         {    
             {{#HasUnsuccessfulResponses}}
             try
@@ -38,10 +38,10 @@ namespace {{ProjectNamespace}}.Generated.Controllers
             {{/HasUnsuccessfulResponses}}
                 {{#SuccessResponse}}
                 {{#ApiModel}}
-                return Ok(await this.{{ActionName}}Async({{InputServiceCallParametersString}}));
+                return Ok(await this.{{ActionName}}Async({{&InputServiceCallParametersString}}));
                 {{/ApiModel}}
                 {{^ApiModel}}
-                await this.{{ActionName}}Async({{InputServiceCallParametersString}});
+                await this.{{ActionName}}Async({{&InputServiceCallParametersString}});
                 return Ok();
                 {{/ApiModel}}
                 {{/SuccessResponse}}
@@ -65,9 +65,9 @@ namespace {{ProjectNamespace}}.Generated.Controllers
         }
 
         {{#SuccessResponse}} 
-        {{#ApiModel}}protected abstract Task<{{TypeFullName}}>{{/ApiModel}}{{^ApiModel}}Task{{/ApiModel}} {{ActionName}}Async({{InputServiceParametersString}});
+        {{#ApiModel}}protected abstract Task<{{&TypeFullName}}>{{/ApiModel}}{{^ApiModel}}Task{{/ApiModel}} {{ActionName}}Async({{&InputServiceParametersString}});
         {{/SuccessResponse}} 
-        {{/Operations}}     
+        {{/Actions}}     
         {{/Routes}}
     }
 }

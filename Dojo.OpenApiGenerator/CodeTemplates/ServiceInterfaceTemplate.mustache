@@ -12,11 +12,11 @@ namespace {{ProjectNamespace}}.Services
     public interface I{{Title}}Service
     {
         {{#Routes}}
-        {{#Operations}}
+        {{#Actions}}
         {{#SuccessResponse}} 
-        {{#ApiModel}}Task<{{TypeFullName}}>{{/ApiModel}}{{^ApiModel}}Task{{/ApiModel}} {{ActionName}}Async({{InputServiceParametersString}});
+        {{#ApiModel}}Task<{{&TypeFullName}}>{{/ApiModel}}{{^ApiModel}}Task{{/ApiModel}} {{ActionName}}Async({{&InputServiceParametersString}});
         {{/SuccessResponse}} 
-        {{/Operations}}     
+        {{/Actions}}     
         {{/Routes}}
     }
 }

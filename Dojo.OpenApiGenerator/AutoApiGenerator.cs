@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -69,23 +70,28 @@ namespace Dojo.OpenApiGenerator
             }
         }
 
-        private static void GenerateApiSourceCode(GeneratorExecutionContext context, ICollection<string> apisToOverride, OpenApiDocument openApiDocument)
+        private static void GenerateApiSourceCode(
+            GeneratorExecutionContext context,
+            ICollection<string> apisToOverride,
+            OpenApiDocument openApiDocument)
         {
             var projectNamespace = context.GetProjectDefaultNamespace();
             var apiModels = GenerateApiModels(openApiDocument, projectNamespace);
+            var parameters = openApiDocument.Components.Parameters.GetApiParameters(projectNamespace, apiModels);
             var data = new ApiControllerDefinition
             {
                 ProjectNamespace = projectNamespace,
                 Title = openApiDocument.Info.Title,
                 Version = openApiDocument.Info.Version,
-                Routes = openApiDocument.Paths.Select(x => ApiControllerRoute.Create(x.Key, x.Value, apiModels)),
+                Routes = openApiDocument.Paths.Select(x => new ApiControllerRoute(x.Key, x.Value, apiModels, projectNamespace, parameters)),
                 Models = apiModels,
-                CanOverride = apisToOverride.Contains(openApiDocument.Info.Title)
+                CanOverride = apisToOverride.Contains(openApiDocument.Info.Title),
+                Parameters = parameters
             };
 
-            GenerateController(context, data);
-            //GenerateServiceInterface(context, data);
             GenerateModels(context, data);
+            //GenerateServiceInterface(context, data);
+            GenerateController(context, data);
         }
 
         private static void GenerateModels(GeneratorExecutionContext context, ApiControllerDefinition data)
@@ -123,7 +129,7 @@ namespace Dojo.OpenApiGenerator
         private static Dictionary<string, ApiModel> GenerateApiModels(OpenApiDocument openApiDocument, string projectNamespace)
         {
             var apiModels =
-                openApiDocument.Components.Schemas.Select(x => ApiModel.Create(x.Value, projectNamespace));
+                openApiDocument.Components.Schemas.Select(x => new ApiModel(x.Key, x.Value, projectNamespace));
 
             return apiModels.ToDictionary(x => x.Name);
         }

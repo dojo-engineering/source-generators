@@ -5,7 +5,9 @@ namespace Dojo.OpenApiGenerator.Models
 {
     internal class ApiQueryParameter : ApiParameterBase
     {
-        public ApiQueryParameter(OpenApiParameter openApiParameter) : base(openApiParameter)
+        public override ParameterLocation ParameterLocation => ParameterLocation.Query;
+
+        public ApiQueryParameter(string sourceCodeName, OpenApiParameter openApiParameter) : base(sourceCodeName, openApiParameter)
         {
         }
 

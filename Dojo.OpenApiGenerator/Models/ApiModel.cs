@@ -10,40 +10,29 @@ namespace Dojo.OpenApiGenerator.Models
         public string Namespace { get; set; }
         public IEnumerable<ApiModelProperty> Properties { get; set; }
 
-        public static ApiModel Create(OpenApiSchema openApiSchema, string projectNamespace)
+        public ApiModel(string name, OpenApiSchema openApiSchema, string projectNamespace)
         {
-            var model = new ApiModel
-            {
-                Name = openApiSchema.Title,
-                TypeName = $"{openApiSchema.Title}ApiModel",
-                IsBuiltInType = openApiSchema.Type != OpenApiSchemaTypes.Object,
-                Namespace = $"{projectNamespace}.Generated.Models"
-            };
+            Name = name ?? openApiSchema.Title;
+            TypeName = $"{openApiSchema.Title}ApiModel";
+            IsBuiltInType = openApiSchema.Type != OpenApiSchemaTypes.Object || openApiSchema.AdditionalPropertiesAllowed;
+            Namespace = $"{projectNamespace}.Generated.Models";
 
-            if (model.IsBuiltInType)
+            if (IsBuiltInType)
             {
-                model.ResolveType(openApiSchema.Type, openApiSchema.Format);
+                ResolveType(openApiSchema);
             }
             else
             {
-                model.Properties = openApiSchema.Properties.Select(x => ApiModelProperty.Create(x.Key, x.Value, openApiSchema.Required));
+                Properties = openApiSchema.Properties.Select(x => new ApiModelProperty(x.Key, x.Value, openApiSchema.Required));
             }
 
             //SetRequiredProperties(model, openApiSchema.Required);
-
-            return model;
         }
 
-        public static ApiModel Create(string openApiSchemaType, string openApiSchemaFormat)
+        public ApiModel(OpenApiSchema openApiSchema)
         {
-            var model = new ApiModel
-            {
-                IsBuiltInType = true
-            };
-
-            model.ResolveType(openApiSchemaType, openApiSchemaFormat);
-
-            return model;
+            IsBuiltInType = true;
+            ResolveType(openApiSchema);
         }
 
         protected override string GetTypeFullName()

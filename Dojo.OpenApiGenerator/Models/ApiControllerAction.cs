@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Dojo.OpenApiGenerator.Extensions;
 using Dojo.OpenApiGenerator.Mvc;
 using Microsoft.OpenApi.Models;
 
 namespace Dojo.OpenApiGenerator.Models
 {
-    internal class ApiControllerAction : IHasRouteParameters
+    internal class ApiControllerAction : IHasRouteParameters, IHasHeaderParameters
     {
+        private readonly string _projectNamespace;
+        private readonly IDictionary<string, ApiParameterBase> _apiParameters;
         private const string InputParametersSeparator = ",";
 
         public string ActionName { get; }
@@ -15,30 +18,74 @@ namespace Dojo.OpenApiGenerator.Models
         public IEnumerable<ApiResponse> ResponseTypes { get; }
         public ApiResponse SuccessResponse { get; }
         public IEnumerable<ApiResponse> UnsuccessfulResponses { get; }
-        public IEnumerable<ApiRouteParameter> RouteParameters { get; }
+        public IList<ApiRouteParameter> RouteParameters { get; }
         public string InputActionParametersString { get; }
         public string InputServiceCallParametersString { get; }
         public string InputServiceParametersString { get; }
         public bool HasUnsuccessfulResponses { get; }
         public bool HasRouteParameters { get; }
+        public IList<ApiHeaderParameter> HeaderParameters { get; }
+        public bool HasHeaderParameters { get; }
+        public IList<ApiParameterBase> AllParameters { get; }
+        public string ContentTypesStringList => GetContentTypesAsList();
+        public bool HasAnyParameters { get; }
 
-    public ApiControllerAction(
+        public ApiControllerAction(
             OperationType operationType, 
             OpenApiOperation operation,
             IDictionary<string, ApiModel> apiModels, 
-            IEnumerable<ApiRouteParameter> apiRouteParameters)
+            IList<ApiRouteParameter> apiRouteParameters,
+            string projectNamespace,
+            IDictionary<string, ApiParameterBase> apiParameters)
         {
+            _projectNamespace = projectNamespace;
+            _apiParameters = apiParameters;
             HttpMethod = GetHttpMethodAttributeName(operationType);
             ActionName = operation.Summary;
-            ResponseTypes = operation.Responses.Select(x => ApiResponse.Create(x.Key, x.Value, apiModels));
+            ResponseTypes = operation.Responses.Select(x => new ApiResponse(x.Key, x.Value, apiModels));
             RouteParameters = apiRouteParameters;
             HasRouteParameters = RouteParameters != null && RouteParameters.Any();
             SuccessResponse = GetSuccessResponse();
             UnsuccessfulResponses = GetUnsuccessfulResponses();
             HasUnsuccessfulResponses = UnsuccessfulResponses != null && UnsuccessfulResponses.Any();
+            HeaderParameters = GetHeaderParameters(operation.Parameters).ToList();
+            HasHeaderParameters = HeaderParameters != null && HeaderParameters.Any();
+            AllParameters = GetAllParameters();
+            HasAnyParameters = AllParameters != null && AllParameters.Any();
             InputActionParametersString = GetInputActionParametersString();
             InputServiceCallParametersString = GetInputServiceCallParametersString();
             InputServiceParametersString = GetInputServiceParametersString();
+        }
+
+        private IList<ApiParameterBase> GetAllParameters()
+        {
+            IList<ApiParameterBase> allParameters = null;
+
+            if (HasRouteParameters)
+            {
+                allParameters = new List<ApiParameterBase>(RouteParameters);
+            }
+
+            if (HasHeaderParameters)
+            {
+                allParameters ??= new List<ApiParameterBase>();
+                allParameters = allParameters.Concat(HeaderParameters).ToList();
+            }
+
+            return allParameters;
+        }
+
+        private IEnumerable<ApiHeaderParameter> GetHeaderParameters(IList<OpenApiParameter> operationParameters)
+        {
+            if (operationParameters == null || !operationParameters.Any())
+            {
+                yield break;
+            }
+
+            foreach (var operationParameter in operationParameters.Where(x => x.In == ParameterLocation.Header))
+            {
+                yield return operationParameter.GetApiParameter<ApiHeaderParameter>(_apiParameters, _projectNamespace);
+            }
         }
 
         private static string GetHttpMethodAttributeName(OperationType operationType)
@@ -68,7 +115,7 @@ namespace Dojo.OpenApiGenerator.Models
 
         private string GetInputActionParametersString()
         {
-            if (!HasRouteParameters)
+            if (!HasAnyParameters)
             {
                 return null;
             }
@@ -76,7 +123,7 @@ namespace Dojo.OpenApiGenerator.Models
             var actionParameterBuilder = new StringBuilder();
             var index = 0;
 
-            foreach (var apiRouteParameter in RouteParameters)
+            foreach (var apiParameter in AllParameters)
             {
                 if (index > 0)
                 {
@@ -85,11 +132,11 @@ namespace Dojo.OpenApiGenerator.Models
 
                 index++;
 
-                actionParameterBuilder.Append(GetActionParameterConstraint(apiRouteParameter.IsRequired));
+                actionParameterBuilder.Append(GetActionParameterConstraint(apiParameter));
                 actionParameterBuilder.Append(" ");
-                actionParameterBuilder.Append(apiRouteParameter.ApiModel.TypeFullName);
+                actionParameterBuilder.Append(apiParameter.ApiModel.TypeFullName);
                 actionParameterBuilder.Append(" ");
-                actionParameterBuilder.Append(apiRouteParameter.Name);
+                actionParameterBuilder.Append(apiParameter.SourceCodeName);
             }
 
             return actionParameterBuilder.ToString();
@@ -97,7 +144,7 @@ namespace Dojo.OpenApiGenerator.Models
 
         private string GetInputServiceCallParametersString()
         {
-            if (!HasRouteParameters)
+            if (!HasAnyParameters)
             {
                 return null;
             }
@@ -105,7 +152,7 @@ namespace Dojo.OpenApiGenerator.Models
             var actionParameterBuilder = new StringBuilder();
             var index = 0;
 
-            foreach (var apiRouteParameter in RouteParameters)
+            foreach (var apiParameter in AllParameters)
             {
                 if (index > 0)
                 {
@@ -114,7 +161,7 @@ namespace Dojo.OpenApiGenerator.Models
 
                 index++;
 
-                actionParameterBuilder.Append(apiRouteParameter.Name);
+                actionParameterBuilder.Append(apiParameter.SourceCodeName);
             }
 
             return actionParameterBuilder.ToString();
@@ -122,7 +169,7 @@ namespace Dojo.OpenApiGenerator.Models
 
         private string GetInputServiceParametersString()
         {
-            if (!HasRouteParameters)
+            if (!HasAnyParameters)
             {
                 return null;
             }
@@ -130,7 +177,7 @@ namespace Dojo.OpenApiGenerator.Models
             var actionParameterBuilder = new StringBuilder();
             var index = 0;
 
-            foreach (var apiRouteParameter in RouteParameters)
+            foreach (var apiParameter in AllParameters)
             {
                 if (index > 0)
                 {
@@ -139,19 +186,20 @@ namespace Dojo.OpenApiGenerator.Models
 
                 index++;
 
-                actionParameterBuilder.Append(apiRouteParameter.ApiModel.TypeFullName);
+                actionParameterBuilder.Append(apiParameter.ApiModel.TypeFullName);
                 actionParameterBuilder.Append(" ");
-                actionParameterBuilder.Append(apiRouteParameter.Name);
+                actionParameterBuilder.Append(apiParameter.SourceCodeName);
             }
 
             return actionParameterBuilder.ToString();
         }
 
-        private static string GetActionParameterConstraint(bool isRequired)
+        private static string GetActionParameterConstraint(ApiParameterBase apiParameter)
         {
-            var constraint = $"[{ActionConstraints.FromRoute}";
+            var actionSourceConstraint = GetActionParameterSourceConstrain(apiParameter.ParameterLocation, apiParameter.Name);
+            var constraint = $"[{actionSourceConstraint}";
 
-            if (isRequired)
+            if (apiParameter.IsRequired)
             {
                 constraint += $"{InputParametersSeparator} {ActionConstraints.BindRequired}]";
             }
@@ -161,6 +209,54 @@ namespace Dojo.OpenApiGenerator.Models
             }
 
             return constraint;
+        }
+
+        private static string GetActionParameterSourceConstrain(ParameterLocation parameterLocation, string parameterName)
+        {
+            switch (parameterLocation)
+            {
+                case ParameterLocation.Path:
+                    return ActionConstraints.FromRoute;
+                case ParameterLocation.Header:
+                    return GetFromHeaderActionConstraint(parameterName);
+            }
+
+            return null;
+        }
+
+        private static string GetFromHeaderActionConstraint(string parameterName)
+        {
+            return $"{ActionConstraints.FromHeader}(Name = \"{parameterName}\")";
+        }
+
+        private string GetContentTypesAsList()
+        {
+            var contentTypes = new HashSet<string>();
+
+            if (ResponseTypes == null)
+            {
+                return null;
+            }
+
+            foreach (var responseType in ResponseTypes)
+            {
+                if (responseType?.ContentTypes == null)
+                {
+                    continue;
+                }
+
+                foreach (var contentType in responseType.ContentTypes)
+                {
+                    if (contentType?.Type != null)
+                    {
+                        contentTypes.Add(contentType.Type);
+                    }
+                }
+            }
+
+            return contentTypes.Any() ?
+                string.Join(",", contentTypes.Select(x => $"\"{x}\"")) :
+                null;
         }
     }
 }

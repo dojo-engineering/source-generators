@@ -4,7 +4,6 @@ namespace Dojo.OpenApiGenerator.CodeTemplates
 {
     internal static class Templates
     {
-        public static string Controller => "ControllerTemplate.mustache";
         public static string Model => "ModelTemplate.mustache";
         public static string ServiceInterface => "ServiceInterfaceTemplate.mustache";
         public static string AbstractController => "AbstractControllerTemplate.mustache";
