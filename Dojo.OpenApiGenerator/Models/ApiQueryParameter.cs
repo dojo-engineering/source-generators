@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 
 namespace Dojo.OpenApiGenerator.Models
@@ -7,7 +8,12 @@ namespace Dojo.OpenApiGenerator.Models
     {
         public override ParameterLocation ParameterLocation => ParameterLocation.Query;
 
-        public ApiQueryParameter(string sourceCodeName, OpenApiParameter openApiParameter) : base(sourceCodeName, openApiParameter)
+        public ApiQueryParameter(
+            string sourceCodeName, 
+            OpenApiParameter openApiParameter, 
+            string apiVersion,
+            IDictionary<string, ApiModel> apiModels,
+            string apiFileName) : base(sourceCodeName, openApiParameter, apiVersion, apiModels, apiFileName)
         {
         }
 

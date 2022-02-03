@@ -7,6 +7,7 @@ namespace Dojo.OpenApiGenerator.Models
 {
     internal class ApiControllerRoute : IHasRouteParameters
     {
+        public string Version { get; }
         public string Route { get; set; }
         public IEnumerable<ApiControllerAction> Actions { get; set; }
         public IList<ApiRouteParameter> RouteParameters { get; set; }
@@ -17,13 +18,16 @@ namespace Dojo.OpenApiGenerator.Models
             OpenApiPathItem openApiPathItem,
             IDictionary<string, ApiModel> apiModels,
             string projectNamespace,
-            IDictionary<string, ApiParameterBase> apiParameters)
+            IDictionary<string, ApiParameterBase> apiParameters,
+            string apiVersion,
+            string apiFileName)
         {
-            var routeParameters = openApiPathItem.Parameters.Select(p => p.GetApiParameter<ApiRouteParameter>(apiParameters, projectNamespace)).ToList();
+            Version = apiVersion;
+            var routeParameters = openApiPathItem.Parameters.Select(p => p.GetApiParameter<ApiRouteParameter>(Version, apiModels, apiFileName, apiParameters, projectNamespace)).ToList();
 
             Route = BuildRoute(route, routeParameters);
             Actions = openApiPathItem.Operations.Select(x =>
-                new ApiControllerAction(x.Key, x.Value, apiModels, routeParameters, projectNamespace, apiParameters));
+                new ApiControllerAction(x.Key, x.Value, apiModels, routeParameters, projectNamespace, apiParameters, apiVersion, apiFileName));
             RouteParameters = routeParameters;
         }
 

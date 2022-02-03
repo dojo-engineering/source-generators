@@ -10,9 +10,10 @@ using Microsoft.AspNetCore.Http;
 using {{ProjectNamespace}}.Services;
 using Dojo.OpenApiGenerator.Exceptions;
 
-namespace {{ProjectNamespace}}.Generated.Controllers
+namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{SourceCodeVersion}}{{/SourceCodeVersion}}
 {
     [GeneratedCode("Dojo.OpenApiGenerator", "{Assembly.GetExecutingAssembly().GetName().Version}")]
+    {{#Version}}[ApiVersion("{{Version}}")]{{/Version}}
     public abstract class {{Title}}ControllerBase : ControllerBase
     {
         {{#Routes}}

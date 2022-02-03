@@ -24,7 +24,7 @@ namespace Dojo.OpenApiGenerator.TestWebApi.Controllers
         }
 
         [HttpGet]
-        public Task<WeatherForecast[]> Get([FromRoute, BindRequired] string x)
+        public Task<WeatherForecast[]> Get([FromRoute, BindRequired] string x, [FromBody, BindRequired] object someObject)
         {
             var rng = new Random();
 

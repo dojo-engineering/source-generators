@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dojo.OpenApiGenerator.TestWebApi.Generated.Controllers;
+using Dojo.OpenApiGenerator.TestWebApi.Generated.Controllers.V20220103;
 using Dojo.OpenApiGenerator.TestWebApi.Generated.Models;
 
 namespace Dojo.OpenApiGenerator.TestWebApi.Controllers

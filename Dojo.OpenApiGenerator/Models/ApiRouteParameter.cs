@@ -15,7 +15,12 @@ namespace Dojo.OpenApiGenerator.Models
         public string RouteConstraintsString { get; }
         public override ParameterLocation ParameterLocation => ParameterLocation.Path;
 
-        public ApiRouteParameter(string sourceCodeName, OpenApiParameter openApiParameter) : base(sourceCodeName, openApiParameter)
+        public ApiRouteParameter(
+            string sourceCodeName, 
+            OpenApiParameter openApiParameter, 
+            string apiVersion,
+            IDictionary<string, ApiModel> apiModels,
+            string apiFileName) : base(sourceCodeName, openApiParameter, apiVersion, apiModels, apiFileName)
         {
             Constraints = GetRouteConstraints();
             RouteConstraintsString = GetRouteConstrainsString();

@@ -13,12 +13,14 @@
 
 	<ItemGroup>
 	  <None Remove="CodeTemplates\AbstractControllerTemplate.mustache" />
+	  <None Remove="CodeTemplates\EnumTemplate.mustache" />
 	  <None Remove="CodeTemplates\ModelTemplate.mustache" />
 	  <None Remove="CodeTemplates\ServiceInterfaceTemplate.mustache" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate.mustache" />
+	  <EmbeddedResource Include="CodeTemplates\EnumTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ServiceInterfaceTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ModelTemplate.mustache" />
 	</ItemGroup>

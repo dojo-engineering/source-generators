@@ -6,5 +6,6 @@
         public const string Required = "Required";
         public const string BindRequired = "BindRequired";
         public const string FromHeader = "FromHeader";
+        public const string FromBody = "FromBody";
     }
 }

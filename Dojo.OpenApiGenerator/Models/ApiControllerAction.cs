@@ -7,11 +7,13 @@ using Microsoft.OpenApi.Models;
 
 namespace Dojo.OpenApiGenerator.Models
 {
-    internal class ApiControllerAction : IHasRouteParameters, IHasHeaderParameters
+    internal class ApiControllerAction : IHasRouteParameters, IHasHeaderParameters, IHasRequestBody
     {
+        private readonly IDictionary<string, ApiModel> _apiModels;
         private readonly string _projectNamespace;
         private readonly IDictionary<string, ApiParameterBase> _apiParameters;
-        private const string InputParametersSeparator = ",";
+        private readonly string _apiFileName;
+        private const string InputParametersSeparator = ", ";
 
         public string ActionName { get; }
         public string HttpMethod { get; }
@@ -19,6 +21,7 @@ namespace Dojo.OpenApiGenerator.Models
         public ApiResponse SuccessResponse { get; }
         public IEnumerable<ApiResponse> UnsuccessfulResponses { get; }
         public IList<ApiRouteParameter> RouteParameters { get; }
+        public string Version { get; }
         public string InputActionParametersString { get; }
         public string InputServiceCallParametersString { get; }
         public string InputServiceParametersString { get; }
@@ -26,6 +29,8 @@ namespace Dojo.OpenApiGenerator.Models
         public bool HasRouteParameters { get; }
         public IList<ApiHeaderParameter> HeaderParameters { get; }
         public bool HasHeaderParameters { get; }
+        public ApiRequestBody RequestBody { get; }
+        public bool HasRequestBody { get; }
         public IList<ApiParameterBase> AllParameters { get; }
         public string ContentTypesStringList => GetContentTypesAsList();
         public bool HasAnyParameters { get; }
@@ -36,25 +41,43 @@ namespace Dojo.OpenApiGenerator.Models
             IDictionary<string, ApiModel> apiModels, 
             IList<ApiRouteParameter> apiRouteParameters,
             string projectNamespace,
-            IDictionary<string, ApiParameterBase> apiParameters)
+            IDictionary<string, ApiParameterBase> apiParameters,
+            string apiVersion,
+            string apiFileName)
         {
+            _apiModels = apiModels;
             _projectNamespace = projectNamespace;
             _apiParameters = apiParameters;
+            _apiFileName = apiFileName;
             HttpMethod = GetHttpMethodAttributeName(operationType);
             ActionName = operation.Summary;
-            ResponseTypes = operation.Responses.Select(x => new ApiResponse(x.Key, x.Value, apiModels));
+            ResponseTypes = operation.Responses.Select(x => new ApiResponse(x.Key, x.Value, apiModels, apiVersion, apiFileName));
             RouteParameters = apiRouteParameters;
+            Version = apiVersion;
             HasRouteParameters = RouteParameters != null && RouteParameters.Any();
             SuccessResponse = GetSuccessResponse();
             UnsuccessfulResponses = GetUnsuccessfulResponses();
             HasUnsuccessfulResponses = UnsuccessfulResponses != null && UnsuccessfulResponses.Any();
             HeaderParameters = GetHeaderParameters(operation.Parameters).ToList();
             HasHeaderParameters = HeaderParameters != null && HeaderParameters.Any();
+            RequestBody = GetRequestBody(operation.RequestBody, apiModels);
+            HasRequestBody = RequestBody != null;
             AllParameters = GetAllParameters();
             HasAnyParameters = AllParameters != null && AllParameters.Any();
             InputActionParametersString = GetInputActionParametersString();
             InputServiceCallParametersString = GetInputServiceCallParametersString();
             InputServiceParametersString = GetInputServiceParametersString();
+        }
+
+        private ApiRequestBody GetRequestBody(OpenApiRequestBody operationRequestBody, IDictionary<string, ApiModel> apiModels)
+        {
+            var content = operationRequestBody?.Content?.FirstOrDefault();
+            if (content == null)
+            {
+                return null;
+            }
+
+            return new ApiRequestBody(operationRequestBody, apiModels, Version, _apiFileName);
         }
 
         private IList<ApiParameterBase> GetAllParameters()
@@ -84,18 +107,20 @@ namespace Dojo.OpenApiGenerator.Models
 
             foreach (var operationParameter in operationParameters.Where(x => x.In == ParameterLocation.Header))
             {
-                yield return operationParameter.GetApiParameter<ApiHeaderParameter>(_apiParameters, _projectNamespace);
+                yield return operationParameter.GetApiParameter<ApiHeaderParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
             }
         }
 
         private static string GetHttpMethodAttributeName(OperationType operationType)
         {
-            switch (operationType)
-            {
-                case OperationType.Get:  return "HttpGet";
-            }
+            //switch (operationType)
+            //{
+            //    case OperationType.Get:  return "HttpGet";
+            //    case OperationType.Post: return "HttpPost";
+            //    case OperationType.Delete: return "HttpDelete";
+            //}
 
-            return null;
+            return $"Http{operationType}";
         }
 
         private ApiResponse GetSuccessResponse()
@@ -123,20 +148,37 @@ namespace Dojo.OpenApiGenerator.Models
             var actionParameterBuilder = new StringBuilder();
             var index = 0;
 
-            foreach (var apiParameter in AllParameters)
+            if (HasAnyParameters)
             {
-                if (index > 0)
+                foreach (var apiParameter in AllParameters)
                 {
-                    actionParameterBuilder.Append($" {InputParametersSeparator}");
+                    if (index > 0)
+                    {
+                        actionParameterBuilder.Append($"{InputParametersSeparator}");
+                    }
+
+                    index++;
+
+                    actionParameterBuilder.Append(GetActionParameterConstraint(apiParameter));
+                    actionParameterBuilder.Append(" ");
+                    actionParameterBuilder.Append(apiParameter.ApiModel.TypeFullName);
+                    actionParameterBuilder.Append(" ");
+                    actionParameterBuilder.Append(apiParameter.SourceCodeName);
+                }
+            }
+
+            if (HasRequestBody)
+            {
+                if (actionParameterBuilder.Length > 0)
+                {
+                    actionParameterBuilder.Append($"{InputParametersSeparator}");
                 }
 
-                index++;
-
-                actionParameterBuilder.Append(GetActionParameterConstraint(apiParameter));
+                actionParameterBuilder.Append(GetActionBodyParameterConstraint(RequestBody));
                 actionParameterBuilder.Append(" ");
-                actionParameterBuilder.Append(apiParameter.ApiModel.TypeFullName);
+                actionParameterBuilder.Append(RequestBody.ApiModel.TypeFullName);
                 actionParameterBuilder.Append(" ");
-                actionParameterBuilder.Append(apiParameter.SourceCodeName);
+                actionParameterBuilder.Append(RequestBody.SourceCodeName);
             }
 
             return actionParameterBuilder.ToString();
@@ -149,22 +191,35 @@ namespace Dojo.OpenApiGenerator.Models
                 return null;
             }
 
-            var actionParameterBuilder = new StringBuilder();
+            var builder = new StringBuilder();
             var index = 0;
 
-            foreach (var apiParameter in AllParameters)
+            if (HasAnyParameters)
             {
-                if (index > 0)
+                foreach (var apiParameter in AllParameters)
                 {
-                    actionParameterBuilder.Append($" {InputParametersSeparator}");
+                    if (index > 0)
+                    {
+                        builder.Append($"{InputParametersSeparator}");
+                    }
+
+                    index++;
+
+                    builder.Append(apiParameter.SourceCodeName);
                 }
-
-                index++;
-
-                actionParameterBuilder.Append(apiParameter.SourceCodeName);
             }
 
-            return actionParameterBuilder.ToString();
+            if (HasRequestBody)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append($"{InputParametersSeparator}");
+                }
+
+                builder.Append(RequestBody.SourceCodeName);
+            }
+
+            return builder.ToString();
         }
 
         private string GetInputServiceParametersString()
@@ -174,24 +229,39 @@ namespace Dojo.OpenApiGenerator.Models
                 return null;
             }
 
-            var actionParameterBuilder = new StringBuilder();
+            var builder = new StringBuilder();
             var index = 0;
 
-            foreach (var apiParameter in AllParameters)
+            if (HasAnyParameters)
             {
-                if (index > 0)
+                foreach (var apiParameter in AllParameters)
                 {
-                    actionParameterBuilder.Append($" {InputParametersSeparator}");
+                    if (index > 0)
+                    {
+                        builder.Append($"{InputParametersSeparator}");
+                    }
+
+                    index++;
+
+                    builder.Append(apiParameter.ApiModel.TypeFullName);
+                    builder.Append(" ");
+                    builder.Append(apiParameter.SourceCodeName);
                 }
-
-                index++;
-
-                actionParameterBuilder.Append(apiParameter.ApiModel.TypeFullName);
-                actionParameterBuilder.Append(" ");
-                actionParameterBuilder.Append(apiParameter.SourceCodeName);
             }
 
-            return actionParameterBuilder.ToString();
+            if (HasRequestBody)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append($"{InputParametersSeparator}");
+                }
+
+                builder.Append(RequestBody.ApiModel.TypeFullName);
+                builder.Append(" ");
+                builder.Append(RequestBody.SourceCodeName);
+            }
+
+            return builder.ToString();
         }
 
         private static string GetActionParameterConstraint(ApiParameterBase apiParameter)
@@ -201,7 +271,24 @@ namespace Dojo.OpenApiGenerator.Models
 
             if (apiParameter.IsRequired)
             {
-                constraint += $"{InputParametersSeparator} {ActionConstraints.BindRequired}]";
+                constraint += $"{InputParametersSeparator}{ActionConstraints.BindRequired}]";
+            }
+            else
+            {
+                constraint += "]";
+            }
+
+            return constraint;
+        }
+
+        private static string GetActionBodyParameterConstraint(ApiRequestBody apiRequestBody)
+        {
+            var actionSourceConstraint = ActionConstraints.FromBody;
+            var constraint = $"[{actionSourceConstraint}";
+
+            if (apiRequestBody.IsRequired)
+            {
+                constraint += $"{InputParametersSeparator}{ActionConstraints.BindRequired}]";
             }
             else
             {

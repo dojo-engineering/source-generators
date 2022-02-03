@@ -14,6 +14,8 @@ namespace Dojo.OpenApiGenerator.Models
         public bool IsBuiltInType { get; set; }
         public bool IsEmail { get; private set; }
         public IList<Type> InnerTypes { get; private set; }
+        public string Version { get; set; }
+        public string SourceCodeVersion { get; set; }
 
         protected void ResolveType(OpenApiSchema openApiSchema)
         {

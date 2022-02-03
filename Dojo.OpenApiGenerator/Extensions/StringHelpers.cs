@@ -1,4 +1,6 @@
-﻿namespace Dojo.OpenApiGenerator.Extensions
+﻿using System.Text;
+
+namespace Dojo.OpenApiGenerator.Extensions
 {
     internal static class StringHelpers
     {
@@ -14,7 +16,28 @@
 
         public static string ToSourceCodeName(this string value)
         {
-            return string.IsNullOrEmpty(value) ? string.Empty : value.Trim('-', ' ');
+            return string.IsNullOrEmpty(value) ? string.Empty : 
+                value
+                    .Replace("-", string.Empty)
+                    .Replace(".", string.Empty);
+        }
+
+        public static string ToSourceCodeParameterName(this string value)
+        {
+            var words = value.Split('-', '.');
+            var sb = new StringBuilder(words[0]);
+
+            for (var i = 1; i < words.Length; i++)
+            {
+                sb.Append(words[i].FirstCharToUpper());
+            }
+
+            return sb.ToString();
+        }
+
+        public static string GetApiModelKey(this string modelName, string fileName = null)
+        {
+            return fileName != null ? $"{fileName}_{modelName}" : modelName;
         }
     }
 }
