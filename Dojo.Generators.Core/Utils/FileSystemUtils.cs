@@ -10,15 +10,6 @@ namespace Dojo.Generators.Core.Utils
 {
     internal class FileSystemUtils
     {
-        internal static string FindFile(string folder, string name)
-        {
-            var extension = Path.GetExtension(name);
-            var files = FindFilesWithExtension(folder, extension);
-
-            return files
-                .First(x => x.EndsWith(name, StringComparison.OrdinalIgnoreCase));
-        }
-
         internal static string[] FindFiles(string folder, string name)
         {
             var extension = Path.GetExtension(name);
