@@ -68,7 +68,9 @@ namespace Dojo.OpenApiGenerator
             var openApiDocuments = GetOpenApiDocuments(_projectDir);
             var projectNamespace = context.GetProjectDefaultNamespace();
 
-            GenerateApiModels(context, openApiDocuments, projectNamespace);
+            //CleanGeneratedCodeFolders();
+
+            GenerateApiModelsSourceCode(context, openApiDocuments, projectNamespace);
 
             foreach (var openApiDocument in openApiDocuments)
             {
@@ -76,7 +78,30 @@ namespace Dojo.OpenApiGenerator
             }
         }
 
-        private static void GenerateApiModels(
+        private void CleanGeneratedCodeFolders()
+        {
+            var controllersDir = new DirectoryInfo($"{_projectDir}\\{Constants.GeneratedCodeFolder}\\{Constants.GeneratedControllersCodeFolder}");
+            var modelsDir = new DirectoryInfo($"{_projectDir}\\{Constants.GeneratedCodeFolder}\\{Constants.GeneratedModelsCodeFolder}");
+
+            if (controllersDir.Exists)
+            {
+                foreach (var controllerFile in controllersDir.GetFiles())
+                {
+                    controllerFile.Delete();
+                }
+            }
+
+            if (modelsDir.Exists)
+            {
+                foreach (var modelFile in modelsDir.GetFiles())
+                {
+                    modelFile.Delete();
+                }
+            }
+        }
+
+        private static void GenerateApiModelsSourceCode
+        (
             GeneratorExecutionContext context,
             IDictionary<string, OpenApiDocument> openApiDocuments,
             string projectNamespace)
@@ -123,7 +148,7 @@ namespace Dojo.OpenApiGenerator
 
             if (data.Routes.Any(x => x.Actions.Any()))
             {
-                GenerateController(context, data);
+                GenerateController(context, data, apiFileName);
             }
         }
 
@@ -187,12 +212,13 @@ namespace Dojo.OpenApiGenerator
 
             context.AddSource(fileName, SourceText.From(modelSource, Encoding.UTF8));
 
-            if (Debugger.IsAttached)
-            {
-                var sourceFilePath = $"{_projectDir}\\{Constants.GeneratedCodeFolder}\\{Constants.GeneratedModelsCodeFolder}\\{fileName}";
-
-                File.WriteAllText(sourceFilePath, modelSource);
-            }
+            //#if DEBUG
+            //var sourceFilePath = $"{_projectDir}\\{Constants.GeneratedCodeFolder}\\{Constants.GeneratedModelsCodeFolder}\\{fileName}";
+            //var file = new FileInfo(sourceFilePath);
+            //file.Directory.Create();
+            //file.Create();
+            //File.WriteAllText(sourceFilePath, modelSource);
+            //#endif
         }
 
         private static void GenerateEnum(GeneratorExecutionContext context, ApiModel apiModel, string name)
@@ -204,26 +230,31 @@ namespace Dojo.OpenApiGenerator
 
             context.AddSource(fileName, SourceText.From(enumSource, Encoding.UTF8));
 
-#if DEBUG
-            var sourceFilePath = $"{_projectDir}\\{Constants.GeneratedCodeFolder}\\{Constants.GeneratedModelsCodeFolder}\\{fileName}";
-            File.WriteAllText(sourceFilePath, enumSource);
-#endif
+            //#if DEBUG
+            //var sourceFilePath = $"{_projectDir}\\{Constants.GeneratedCodeFolder}\\{Constants.GeneratedModelsCodeFolder}\\{fileName}";
+            //var file = new FileInfo(sourceFilePath);
+            //file.Directory.Create();
+            //file.Create();
+            //File.WriteAllText(sourceFilePath, enumSource);
+            //#endif
         }
 
-        private static void GenerateController(GeneratorExecutionContext context, ApiControllerDefinition data)
+        private static void GenerateController(GeneratorExecutionContext context, ApiControllerDefinition data, string apiFileName)
         {
             _controllerTemplateString ??= Templates.ReadTemplate(Templates.AbstractController);
 
-            var fileName = $"{data.Title}ControllerBase.g.cs";
+            var fileName = $"{apiFileName}_{data.Title}ControllerBase.g.cs";
             var controllerSourceCode = StubbleBuilder.Render(_controllerTemplateString, data);
 
             context.AddSource(fileName, SourceText.From(controllerSourceCode, Encoding.UTF8));
 
-#if DEBUG
-            var sourceFilePath = $"{_projectDir}\\{Constants.GeneratedCodeFolder}\\{Constants.GeneratedControllersCodeFolder}\\{fileName}";
-
-            File.WriteAllText(sourceFilePath, controllerSourceCode);
-#endif
+            //#if DEBUG
+            //var sourceFilePath = $"{_projectDir}\\{Constants.GeneratedCodeFolder}\\{Constants.GeneratedControllersCodeFolder}\\{fileName}";
+            //var file = new FileInfo(sourceFilePath);
+            //file.Directory.Create();
+            //file.Create();
+            //File.WriteAllText(sourceFilePath, controllerSourceCode);
+            //#endif
         }
 
         private static void GenerateServiceInterface(GeneratorExecutionContext context, ApiControllerDefinition data)
@@ -235,11 +266,11 @@ namespace Dojo.OpenApiGenerator
 
             context.AddSource(fileName, SourceText.From(serviceInterfaceSourceCode, Encoding.UTF8));
 
-#if DEBUG
-            var sourceFilePath = $"{_projectDir}\\{Constants.GeneratedCodeFolder}\\{Constants.GeneratedServicesCodeFolder}\\{fileName}";
+            //#if DEBUG
+            //var sourceFilePath = $"{_projectDir}\\{Constants.GeneratedCodeFolder}\\{Constants.GeneratedServicesCodeFolder}\\{fileName}";
 
-            File.WriteAllText(sourceFilePath, serviceInterfaceSourceCode);
-#endif
+            //File.WriteAllText(sourceFilePath, serviceInterfaceSourceCode);
+            //#endif
         }
 
         private static Dictionary<string, ApiModel> GetApiModels(OpenApiDocument openApiDocument, string projectNamespace, string apiVersion, IDictionary<string, ApiModel> apiModels, string apiFileName)

@@ -5,45 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\ConnectECredentialsController.cs" />
-    <Compile Remove="GeneratedCode\Controllers\CapturesControllerBase.g.cs" />
-    <Compile Remove="GeneratedCode\Controllers\HelloWorldControllerBase.g.cs" />
-    <Compile Remove="GeneratedCode\Controllers\RefundsControllerBase.g.cs" />
-    <Compile Remove="GeneratedCode\Models\hello-source-generators-api.json_HelloFromSourceApiModel.g.cs" />
-    <Compile Remove="GeneratedCode\Models\payment-intents-captures.json_CreateCaptureRequestApiModel.g.cs" />
-    <Compile Remove="GeneratedCode\Models\payment-intents-captures.json_CreateCaptureResponseApiModel.g.cs" />
-    <Compile Remove="GeneratedCode\Models\payment-intents-refunds.json_CreateRefundRequestApiModel.g.cs" />
-    <Compile Remove="GeneratedCode\Models\payment-intents-refunds.json_CreateRefundResponseApiModel.g.cs" />
-    <Compile Remove="GeneratedCode\Models\shared.json_CaptureStatus.g.cs" />
-    <Compile Remove="GeneratedCode\Models\shared.json_CursorApiModel.g.cs" />
-    <Compile Remove="GeneratedCode\Models\shared.json_PaymentIntentStatus.g.cs" />
-    <Compile Remove="GeneratedCode\Models\shared.json_ProblemDetailsApiModel.g.cs" />
-    <Compile Remove="GeneratedCode\Models\shared.json_RefundStatus.g.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="GeneratedCode\Controllers\CapturesControllerBase.g.cs" />
-    <None Include="GeneratedCode\Controllers\HelloWorldControllerBase.g.cs" />
-    <None Include="GeneratedCode\Controllers\RefundsControllerBase.g.cs" />
-    <None Include="GeneratedCode\Models\hello-source-generators-api.json_HelloFromSourceApiModel.g.cs" />
-    <None Include="GeneratedCode\Models\payment-intents-captures.json_CreateCaptureRequestApiModel.g.cs" />
-    <None Include="GeneratedCode\Models\payment-intents-captures.json_CreateCaptureResponseApiModel.g.cs" />
-    <None Include="GeneratedCode\Models\payment-intents-refunds.json_CreateRefundRequestApiModel.g.cs" />
-    <None Include="GeneratedCode\Models\payment-intents-refunds.json_CreateRefundResponseApiModel.g.cs" />
-    <None Include="GeneratedCode\Models\shared.json_CaptureStatus.g.cs" />
-    <None Include="GeneratedCode\Models\shared.json_CursorApiModel.g.cs" />
-    <None Include="GeneratedCode\Models\shared.json_PaymentIntentStatus.g.cs" />
-    <None Include="GeneratedCode\Models\shared.json_ProblemDetailsApiModel.g.cs" />
-    <None Include="GeneratedCode\Models\shared.json_RefundStatus.g.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Controllers\ConnectECredentialsController.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.15.7" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 

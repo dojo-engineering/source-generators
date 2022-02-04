@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dojo.OpenApiGenerator.TestWebApi.Controllers
 {
+
     public class HelloWorldCustomController : HelloWorldControllerBase
     {
         private readonly IHelloWorldService _helloWorldService;
@@ -15,12 +16,7 @@ namespace Dojo.OpenApiGenerator.TestWebApi.Controllers
             _helloWorldService = helloWorldService;
         }
 
-        public override Task<IActionResult> HelloFromSourceActionAsync(long number)
-        {
-            return Task.FromResult<IActionResult>(Ok(number));
-        }
-
-        protected override Task<HelloFromSourceApiModel> HelloFromSourceAsync(long number)
+        protected override Task<HelloFromSourceApiModel> HelloFromSourceAsync(long number, string message)
         {
             return _helloWorldService.HelloFromSourceAsync(number);
         }

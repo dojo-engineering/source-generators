@@ -7,5 +7,6 @@
         public const string BindRequired = "BindRequired";
         public const string FromHeader = "FromHeader";
         public const string FromBody = "FromBody";
+        public const string FromQuery = "FromQuery";
     }
 }

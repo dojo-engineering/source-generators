@@ -12,9 +12,11 @@ namespace Dojo.OpenApiGenerator.Extensions
 
         public static string GetApiModelReference(this OpenApiReference openApiReference, string localApiFileName)
         {
-            return openApiReference.IsExternal ?
+            var modelRef = openApiReference.IsExternal ?
                 openApiReference.GetModelName().GetApiModelKey(openApiReference.ExternalResource.Replace("./", string.Empty)) :
                 openApiReference.GetModelName().GetApiModelKey(localApiFileName);
+
+            return modelRef.TrimStart('.');
         }
     }
 }

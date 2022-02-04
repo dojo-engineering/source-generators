@@ -57,6 +57,10 @@ namespace Dojo.OpenApiGenerator.Extensions
                 {
                     return new ApiHeaderParameter(sourceCodeName, apiParameter, projectNamespace, apiModels, apiVersion, apiFileName);
                 }
+                case ParameterLocation.Query:
+                {
+                    return new ApiQueryParameter(sourceCodeName, apiParameter, projectNamespace, apiModels, apiVersion, apiFileName);
+                }
             }
 
             return null;

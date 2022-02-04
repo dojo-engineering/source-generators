@@ -37,7 +37,16 @@
         },
         "summary": "HelloFromSource",
         "operationId": "",
-        "parameters": [],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "message",
+            "required": true
+          }
+        ],
         "description": ""
       },
       "parameters": [

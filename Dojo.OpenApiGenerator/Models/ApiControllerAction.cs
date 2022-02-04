@@ -7,7 +7,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Dojo.OpenApiGenerator.Models
 {
-    internal class ApiControllerAction : IHasRouteParameters, IHasHeaderParameters, IHasRequestBody
+    internal class ApiControllerAction : IHasRouteParameters, IHasHeaderParameters, IHasRequestBody, IHasQueryParameters
     {
         private readonly IDictionary<string, ApiModel> _apiModels;
         private readonly string _projectNamespace;
@@ -26,19 +26,22 @@ namespace Dojo.OpenApiGenerator.Models
         public string InputServiceCallParametersString { get; }
         public string InputServiceParametersString { get; }
         public bool HasUnsuccessfulResponses { get; }
-        public bool HasRouteParameters { get; }
-        public IList<ApiHeaderParameter> HeaderParameters { get; }
-        public bool HasHeaderParameters { get; }
+        public bool HasRouteParameters { get; private set; }
+        public IList<ApiHeaderParameter> HeaderParameters { get; private set; }
+        public bool HasHeaderParameters { get; private set; }
         public ApiRequestBody RequestBody { get; }
         public bool HasRequestBody { get; }
-        public IList<ApiParameterBase> AllParameters { get; }
+        public List<ApiParameterBase> AllParameters { get; private set; }
         public string ContentTypesStringList => GetContentTypesAsList();
-        public bool HasAnyParameters { get; }
+        public IList<ApiQueryParameter> QueryParameters { get; private set; }
+        public bool HasQueryParameters { get; private set; }
+        public bool HasAnyParameters { get; private set; }
+        public bool IsDeprecated { get; private set; }
 
         public ApiControllerAction(
-            OperationType operationType, 
+            OperationType operationType,
             OpenApiOperation operation,
-            IDictionary<string, ApiModel> apiModels, 
+            IDictionary<string, ApiModel> apiModels,
             IList<ApiRouteParameter> apiRouteParameters,
             string projectNamespace,
             IDictionary<string, ApiParameterBase> apiParameters,
@@ -49,21 +52,20 @@ namespace Dojo.OpenApiGenerator.Models
             _projectNamespace = projectNamespace;
             _apiParameters = apiParameters;
             _apiFileName = apiFileName;
+            IsDeprecated = operation.Deprecated;
             HttpMethod = GetHttpMethodAttributeName(operationType);
             ActionName = operation.Summary;
             ResponseTypes = operation.Responses.Select(x => new ApiResponse(x.Key, x.Value, apiModels, apiVersion, apiFileName));
             RouteParameters = apiRouteParameters;
             Version = apiVersion;
-            HasRouteParameters = RouteParameters != null && RouteParameters.Any();
             SuccessResponse = GetSuccessResponse();
             UnsuccessfulResponses = GetUnsuccessfulResponses();
             HasUnsuccessfulResponses = UnsuccessfulResponses != null && UnsuccessfulResponses.Any();
-            HeaderParameters = GetHeaderParameters(operation.Parameters).ToList();
-            HasHeaderParameters = HeaderParameters != null && HeaderParameters.Any();
             RequestBody = GetRequestBody(operation.RequestBody, apiModels);
             HasRequestBody = RequestBody != null;
-            AllParameters = GetAllParameters();
-            HasAnyParameters = AllParameters != null && AllParameters.Any();
+
+            ResolveParameters(operation.Parameters);
+
             InputActionParametersString = GetInputActionParametersString();
             InputServiceCallParametersString = GetInputServiceCallParametersString();
             InputServiceParametersString = GetInputServiceParametersString();
@@ -80,46 +82,53 @@ namespace Dojo.OpenApiGenerator.Models
             return new ApiRequestBody(operationRequestBody, apiModels, Version, _apiFileName);
         }
 
-        private IList<ApiParameterBase> GetAllParameters()
+        private void ResolveParameters(IList<OpenApiParameter> operationParameters)
         {
-            IList<ApiParameterBase> allParameters = null;
+            AllParameters = new List<ApiParameterBase>();
 
-            if (HasRouteParameters)
+            if (RouteParameters != null && RouteParameters.Any())
             {
-                allParameters = new List<ApiParameterBase>(RouteParameters);
+                HasAnyParameters = true;
+                HasRouteParameters = true;
+                AllParameters.AddRange(RouteParameters);
             }
 
-            if (HasHeaderParameters)
+            foreach (var operationParameter in operationParameters.OrderBy(x => x.In))
             {
-                allParameters ??= new List<ApiParameterBase>();
-                allParameters = allParameters.Concat(HeaderParameters).ToList();
-            }
+                switch (operationParameter.In)
+                {
+                    case ParameterLocation.Query:
+                        {
+                            QueryParameters ??= new List<ApiQueryParameter>();
 
-            return allParameters;
-        }
+                            var parameter = operationParameter.GetApiParameter<ApiQueryParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
 
-        private IEnumerable<ApiHeaderParameter> GetHeaderParameters(IList<OpenApiParameter> operationParameters)
-        {
-            if (operationParameters == null || !operationParameters.Any())
-            {
-                yield break;
-            }
+                            QueryParameters.Add(parameter);
+                            AllParameters.Add(parameter);
+                            HasQueryParameters = true;
+                            HasAnyParameters = true;
 
-            foreach (var operationParameter in operationParameters.Where(x => x.In == ParameterLocation.Header))
-            {
-                yield return operationParameter.GetApiParameter<ApiHeaderParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
+                            break;
+                        }
+                    case ParameterLocation.Header:
+                        {
+                            HeaderParameters ??= new List<ApiHeaderParameter>();
+
+                            var parameter = operationParameter.GetApiParameter<ApiHeaderParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
+
+                            HeaderParameters.Add(parameter);
+                            AllParameters.Add(parameter);
+                            HasHeaderParameters = true;
+                            HasAnyParameters = true;
+
+                            break;
+                        }
+                }
             }
         }
 
         private static string GetHttpMethodAttributeName(OperationType operationType)
         {
-            //switch (operationType)
-            //{
-            //    case OperationType.Get:  return "HttpGet";
-            //    case OperationType.Post: return "HttpPost";
-            //    case OperationType.Delete: return "HttpDelete";
-            //}
-
             return $"Http{operationType}";
         }
 
@@ -304,6 +313,8 @@ namespace Dojo.OpenApiGenerator.Models
             {
                 case ParameterLocation.Path:
                     return ActionConstraints.FromRoute;
+                case ParameterLocation.Query:
+                    return ActionConstraints.FromQuery;
                 case ParameterLocation.Header:
                     return GetFromHeaderActionConstraint(parameterName);
             }
