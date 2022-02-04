@@ -9,12 +9,18 @@ namespace Dojo.OpenApiGenerator.Models
 {
     internal class ApiModel : ApiModelBase
     {
+        private readonly string _projectNamespace;
         private readonly IDictionary<string, ApiModel> _apiModels;
         private readonly string _apiFileName;
+        private string _baseModelReference;
         public string Namespace { get; set; }
         public IEnumerable<ApiModelProperty> Properties { get; set; }
         public bool IsEnum { get; }
         public IList<string> EnumValues { get; }
+        public bool IsDerivedModel { get; }
+
+        public ApiModel BaseModel => _apiModels[_baseModelReference];
+
 
         public ApiModel(
             string name, 
@@ -24,12 +30,14 @@ namespace Dojo.OpenApiGenerator.Models
             IDictionary<string, ApiModel> apiModels,
             string apiFileName)
         {
+            _projectNamespace = projectNamespace;
             _apiModels = apiModels;
             _apiFileName = apiFileName;
             Name = name ?? openApiSchema.Title;
             IsEnum = openApiSchema.Enum.Any();
             TypeName = IsEnum ? Name : $"{Name}ApiModel";
-            IsBuiltInType = (openApiSchema.Type != OpenApiSchemaTypes.Object || openApiSchema.AdditionalPropertiesAllowed) && !IsEnum;
+            IsDerivedModel = TryResolveDerivedModel(openApiSchema);
+            IsBuiltInType = (openApiSchema.Type != OpenApiSchemaTypes.Object || openApiSchema.AdditionalPropertiesAllowed) && !IsEnum && !IsDerivedModel;
             Version = apiVersion;
             SourceCodeVersion =  apiVersion.ToSourceCodeName();
             Namespace = string.IsNullOrWhiteSpace(SourceCodeVersion) 
@@ -45,6 +53,20 @@ namespace Dojo.OpenApiGenerator.Models
             {
                 Properties = openApiSchema.Properties.Select(x => new ApiModelProperty(x.Key, x.Value, openApiSchema.Required, apiModels, apiFileName));
             }
+        }
+
+        private bool TryResolveDerivedModel(OpenApiSchema openApiSchema)
+        {
+            var baseSchemaReference = openApiSchema?.AllOf?.FirstOrDefault()?.Reference;
+
+            if (baseSchemaReference == null)
+            {
+                return false;
+            }
+
+            _baseModelReference = baseSchemaReference.GetApiModelReference(_apiFileName);
+
+            return true;
         }
 
         public ApiModel(OpenApiSchema openApiSchema)
