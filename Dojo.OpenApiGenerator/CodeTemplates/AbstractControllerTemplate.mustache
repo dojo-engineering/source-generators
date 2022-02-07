@@ -35,42 +35,13 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
         [Produces({{&ContentTypesStringList}})]
         {{/ContentTypesStringList}}
         {{^IsDeprecated}}[Route("{{Route}}")]{{/IsDeprecated}}
-        public async virtual Task<IActionResult> {{ActionName}}ActionAsync({{&InputActionParametersString}})
+        public {{#SuccessResponse}}{{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}}{{/SuccessResponse}}  {{ActionName}}ActionAsync({{&InputActionParametersString}})
         {    
-            {{#HasUnsuccessfulResponses}}
-            try
-            {
-            {{/HasUnsuccessfulResponses}}
-                {{#SuccessResponse}}
-                {{#ApiModel}}
-                return Ok(await this.{{ActionName}}Async({{&InputServiceCallParametersString}}));
-                {{/ApiModel}}
-                {{^ApiModel}}
-                await this.{{ActionName}}Async({{&InputServiceCallParametersString}});
-                return Ok();
-                {{/ApiModel}}
-                {{/SuccessResponse}}
-            {{#HasUnsuccessfulResponses}}
-            }
-            {{/HasUnsuccessfulResponses}}
-            {{#UnsuccessfulResponses}}
-            {{#IsBadRequestResponse}}
-            catch (BadRequestApiException e)
-            {
-                return BadRequest(e.Message);
-            }
-            {{/IsBadRequestResponse}}
-            {{#IsNotFoundResponse}}
-            catch (NotFoundApiException e)
-            {
-                return NotFound(e.Message);
-            }
-            {{/IsNotFoundResponse}}
-            {{/UnsuccessfulResponses}}
+            return this.{{ActionName}}Async({{&InputServiceCallParametersString}});
         }
 
         {{#SuccessResponse}} 
-        {{#ApiModel}}protected abstract Task<{{&TypeFullName}}>{{/ApiModel}}{{^ApiModel}}Task{{/ApiModel}} {{ActionName}}Async({{&InputServiceParametersString}});
+        protected abstract {{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}} {{ActionName}}Async({{&InputServiceParametersString}});
         {{/SuccessResponse}} 
         {{/Actions}}     
         {{/Routes}}

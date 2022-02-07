@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Dojo.OpenApiGenerator.Configuration;
 using Dojo.OpenApiGenerator.Extensions;
 using Dojo.OpenApiGenerator.Mvc;
 using Microsoft.OpenApi.Models;
@@ -13,6 +14,7 @@ namespace Dojo.OpenApiGenerator.Models
         private readonly string _projectNamespace;
         private readonly IDictionary<string, ApiParameterBase> _apiParameters;
         private readonly string _apiFileName;
+        private readonly AutoApiGeneratorSettings _apiGeneratorSettings;
         private const string InputParametersSeparator = ", ";
 
         public string ActionName { get; }
@@ -36,7 +38,7 @@ namespace Dojo.OpenApiGenerator.Models
         public IList<ApiQueryParameter> QueryParameters { get; private set; }
         public bool HasQueryParameters { get; private set; }
         public bool HasAnyParameters { get; private set; }
-        public bool IsDeprecated { get; private set; }
+        public bool IsDeprecated { get; }
 
         public ApiControllerAction(
             OperationType operationType,
@@ -46,12 +48,14 @@ namespace Dojo.OpenApiGenerator.Models
             string projectNamespace,
             IDictionary<string, ApiParameterBase> apiParameters,
             string apiVersion,
-            string apiFileName)
+            string apiFileName,
+            AutoApiGeneratorSettings apiGeneratorSettings)
         {
             _apiModels = apiModels;
             _projectNamespace = projectNamespace;
             _apiParameters = apiParameters;
             _apiFileName = apiFileName;
+            _apiGeneratorSettings = apiGeneratorSettings;
             IsDeprecated = operation.Deprecated;
             HttpMethod = GetHttpMethodAttributeName(operationType);
             ActionName = operation.Summary;
@@ -161,6 +165,11 @@ namespace Dojo.OpenApiGenerator.Models
             {
                 foreach (var apiParameter in AllParameters)
                 {
+                    if (ExcludeVersionParameter(apiParameter))
+                    {
+                        continue;
+                    }
+
                     if (index > 0)
                     {
                         actionParameterBuilder.Append($"{InputParametersSeparator}");
@@ -193,6 +202,12 @@ namespace Dojo.OpenApiGenerator.Models
             return actionParameterBuilder.ToString();
         }
 
+        private bool ExcludeVersionParameter(ApiParameterBase apiParameter)
+        {
+            return !_apiGeneratorSettings.IncludeVersionParameterInActionSignature &&
+                   apiParameter.Name == _apiGeneratorSettings.VersionParameterName;
+        }
+
         private string GetInputServiceCallParametersString()
         {
             if (!HasAnyParameters)
@@ -207,6 +222,11 @@ namespace Dojo.OpenApiGenerator.Models
             {
                 foreach (var apiParameter in AllParameters)
                 {
+                    if (ExcludeVersionParameter(apiParameter))
+                    {
+                        continue;
+                    }
+
                     if (index > 0)
                     {
                         builder.Append($"{InputParametersSeparator}");
@@ -245,6 +265,11 @@ namespace Dojo.OpenApiGenerator.Models
             {
                 foreach (var apiParameter in AllParameters)
                 {
+                    if (ExcludeVersionParameter(apiParameter))
+                    {
+                        continue;
+                    }
+
                     if (index > 0)
                     {
                         builder.Append($"{InputParametersSeparator}");

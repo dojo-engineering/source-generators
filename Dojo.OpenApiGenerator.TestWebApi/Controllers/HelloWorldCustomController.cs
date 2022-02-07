@@ -16,14 +16,14 @@ namespace Dojo.OpenApiGenerator.TestWebApi.Controllers
             _helloWorldService = helloWorldService;
         }
 
-        protected override Task<HelloFromSourceApiModel> HelloFromSourceAsync(long number, string message)
+        protected override async Task<ActionResult<HelloFromSourceApiModel>> HelloFromSourceAsync(long number, string message)
         {
-            return _helloWorldService.HelloFromSourceAsync(number);
+            return Ok(await _helloWorldService.HelloFromSourceAsync(number));
         }
 
-        protected override Task<string> HelloGenerated2Async()
+        protected override async Task<ActionResult<string>> HelloGenerated2Async()
         {
-            return _helloWorldService.HelloGenerated2Async();
+            return Ok(await _helloWorldService.HelloGenerated2Async());
         }
     }
 }

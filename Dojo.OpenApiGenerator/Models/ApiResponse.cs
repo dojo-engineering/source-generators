@@ -12,9 +12,10 @@ namespace Dojo.OpenApiGenerator.Models
         public int HttpStatusCode { get; set; }
         public IEnumerable<ApiContent> ContentTypes { get; set; }
         public ApiModel ApiModel => GetResponseApiModel();
-        public bool IsSuccessResponse => HttpStatusCode == StatusCodes.Status200OK;
+        public bool IsSuccessResponse => HttpStatusCode is >= 200 and <= 299;
         public bool IsBadRequestResponse => HttpStatusCode == StatusCodes.Status400BadRequest;
         public bool IsNotFoundResponse => HttpStatusCode == StatusCodes.Status404NotFound;
+        public bool HasNoContent => HttpStatusCode == StatusCodes.Status204NoContent;
 
         public ApiResponse(
             string statusCode, 

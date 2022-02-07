@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Dojo.OpenApiGenerator.TestWebApi.Services;
@@ -10,10 +8,6 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 using NSwag.Generation.AspNetCore;
 
 namespace Dojo.OpenApiGenerator.TestWebApi

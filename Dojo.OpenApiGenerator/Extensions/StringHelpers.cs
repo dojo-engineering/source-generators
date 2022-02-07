@@ -14,6 +14,16 @@ namespace Dojo.OpenApiGenerator.Extensions
             return char.ToUpper(value[0]) + value.Substring(1);
         }
 
+        public static string FirstCharToLower(this string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return string.Empty;
+            }
+
+            return char.ToLower(value[0]) + value.Substring(1);
+        }
+
         public static string ToSourceCodeName(this string value)
         {
             return string.IsNullOrEmpty(value) ? string.Empty : 
@@ -32,7 +42,7 @@ namespace Dojo.OpenApiGenerator.Extensions
                 sb.Append(words[i].FirstCharToUpper());
             }
 
-            return sb.ToString();
+            return sb.ToString().FirstCharToLower();
         }
 
         public static string GetApiModelKey(this string modelName, string fileName = null)

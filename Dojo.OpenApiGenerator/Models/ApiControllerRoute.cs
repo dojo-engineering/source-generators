@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Dojo.OpenApiGenerator.Configuration;
 using Dojo.OpenApiGenerator.Extensions;
 using Microsoft.OpenApi.Models;
 
@@ -20,14 +21,15 @@ namespace Dojo.OpenApiGenerator.Models
             string projectNamespace,
             IDictionary<string, ApiParameterBase> apiParameters,
             string apiVersion,
-            string apiFileName)
+            string apiFileName,
+            AutoApiGeneratorSettings apiGeneratorSettings)
         {
             Version = apiVersion;
             var routeParameters = openApiPathItem.Parameters.Select(p => p.GetApiParameter<ApiRouteParameter>(Version, apiModels, apiFileName, apiParameters, projectNamespace)).ToList();
 
             Route = BuildRoute(route, routeParameters);
             Actions = openApiPathItem.Operations.Select(x =>
-                new ApiControllerAction(x.Key, x.Value, apiModels, routeParameters, projectNamespace, apiParameters, apiVersion, apiFileName));
+                new ApiControllerAction(x.Key, x.Value, apiModels, routeParameters, projectNamespace, apiParameters, apiVersion, apiFileName, apiGeneratorSettings));
             RouteParameters = routeParameters;
         }
 

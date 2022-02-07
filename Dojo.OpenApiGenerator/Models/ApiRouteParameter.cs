@@ -28,7 +28,7 @@ namespace Dojo.OpenApiGenerator.Models
 
         protected override ApiModel ResolveApiModel()
         {
-            return new ApiModel(OpenApiParameter.Schema);
+            return new ApiModel(OpenApiParameter.Schema, ApiModels, ApiFileName);
         }
 
         private IEnumerable<string> GetRouteConstraints()

@@ -12,7 +12,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="autoApiGeneratorSettings.json.sample" />
 	  <None Remove="CodeTemplates\AbstractControllerTemplate.mustache" />
+	  <None Remove="CodeTemplates\AbstractControllerTemplate_V1.mustache" />
+	  <None Remove="CodeTemplates\AbstractControllerTemplate_V2.mustache" />
+	  <None Remove="CodeTemplates\BaseControllerTemplate.mustache" />
 	  <None Remove="CodeTemplates\EnumTemplate.mustache" />
 	  <None Remove="CodeTemplates\ModelTemplate.mustache" />
 	  <None Remove="CodeTemplates\ServiceInterfaceTemplate.mustache" />
@@ -20,6 +24,9 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate.mustache" />
+	  <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate_V1.mustache" />
+	  <EmbeddedResource Include="CodeTemplates\BaseControllerTemplate.mustache" />
+	  <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate_V2.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\EnumTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ServiceInterfaceTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ModelTemplate.mustache" />
@@ -36,6 +43,15 @@
 		<None Include="$(PKGStubble_Core)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(PKGMicrosoft_OpenApi)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(PKGMicrosoft_OpenApi_Readers)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="autoApiGeneratorSettings.json.sample">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
 	</ItemGroup>
 
 
@@ -46,6 +62,7 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
 		<PackageReference Include="Microsoft.OpenApi" Version="1.2.3" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.2.3" PrivateAssets="all" GeneratePathProperty="true" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="SharpYaml" Version="1.6.5" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="Stubble.Core" Version="1.9.3" PrivateAssets="all" GeneratePathProperty="true" />
 		<ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
@@ -63,6 +80,7 @@
 			<TargetPathWithTargetPlatformMoniker Include="$(PKGStubble_Core)\lib\netstandard2.0\Stubble.Core.dll" IncludeRuntimeDependency="false" />
 			<TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_OpenApi)\lib\netstandard2.0\Microsoft.OpenApi.dll" IncludeRuntimeDependency="false" />
 			<TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_OpenApi_Readers)\lib\netstandard2.0\Microsoft.OpenApi.Readers.dll" IncludeRuntimeDependency="false" />
+			<TargetPathWithTargetPlatformMoniker Include="$(PKGNewtonsoft_Json)\lib\netstandard2.0\Newtonsoft.Json.dll" IncludeRuntimeDependency="false" />
 		</ItemGroup>
 	</Target>
 
