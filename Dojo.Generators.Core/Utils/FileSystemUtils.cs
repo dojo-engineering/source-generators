@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -27,6 +28,17 @@ namespace Dojo.Generators.Core.Utils
                 folder,
                 $"*{extension}",
                 SearchOption.AllDirectories);
+
+            return files;
+        }
+
+        internal static IEnumerable<string> FindFilesWithExtensions(string folder, params string[] extensions)
+        {
+            // Since on .netstandard2.0 EnumerationOptions cannot be used
+            var files = extensions.SelectMany(extension => Directory.GetFiles(
+                folder,
+                $"*{extension}",
+                SearchOption.AllDirectories));
 
             return files;
         }
