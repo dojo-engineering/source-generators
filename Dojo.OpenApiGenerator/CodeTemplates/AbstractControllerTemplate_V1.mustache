@@ -1,0 +1,62 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.CodeDom.Compiler;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using {{ProjectNamespace}}.Services;
+using Dojo.OpenApiGenerator.Exceptions;
+
+namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{SourceCodeVersion}}{{/SourceCodeVersion}}
+{
+    [ApiController]
+    {{#Version}}[ApiVersion("{{Version}}")]{{/Version}}
+    [GeneratedCode("Dojo.OpenApiGenerator", "{Assembly.GetExecutingAssembly().GetName().Version}")]
+    public abstract class {{Title}}ControllerBase : ControllerBase
+    {
+        {{#Routes}}
+        {{#Actions}}
+        [{{HttpMethod}}{{#IsDeprecated}}("{{Route}}"){{/IsDeprecated}}]
+        {{#IsDeprecated}}
+        [Obsolete]
+        {{/IsDeprecated}}
+        {{#ResponseTypes}}
+        {{#ApiModel}}
+        [ProducesResponseType(typeof({{TypeFullName}}), {{HttpStatusCode}})]
+        {{/ApiModel}}
+        {{^ApiModel}}
+        [ProducesResponseType({{HttpStatusCode}})]
+        {{/ApiModel}}
+        {{/ResponseTypes}}
+        {{#ContentTypesStringList}}
+        [Produces({{&ContentTypesStringList}})]
+        {{/ContentTypesStringList}}
+        {{^IsDeprecated}}[Route("{{Route}}")]{{/IsDeprecated}}
+        public async Task<IActionResult> {{ActionName}}ActionAsync({{&InputActionParametersString}})
+        {    
+                {{#SuccessResponse}}
+                {{#ApiModel}}
+                return Ok(await this.{{ActionName}}Async({{&InputServiceCallParametersString}}));
+                {{/ApiModel}}
+                {{^ApiModel}}
+                await this.{{ActionName}}Async({{&InputServiceCallParametersString}});
+                {{^HasContent}}
+                return Ok();
+                {{/HasContent}}
+                {{#HasContent}}
+                return NoContent();
+                {{/HasContent}}
+                {{/ApiModel}}
+                {{/SuccessResponse}}
+        }
+
+        {{#SuccessResponse}} 
+        protected abstract {{#ApiModel}}Task<{{&TypeFullName}}>{{/ApiModel}}{{^ApiModel}}Task{{/ApiModel}} {{ActionName}}Async({{&InputServiceParametersString}});
+        {{/SuccessResponse}} 
+        {{/Actions}}     
+        {{/Routes}}
+    }
+}

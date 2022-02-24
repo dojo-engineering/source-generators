@@ -356,3 +356,6 @@ Remote.Payments.Internal.Gateway.Client/*.g.cs
 /Dojo.OpenApiGenerator.TestWebApi/Controllers/ConnectECredentialsController.cs
 /Dojo.OpenApiGenerator.TestWebApi/Controllers/RefundController.cs
 /Dojo.OpenApiGenerator.TestWebApi/Controllers/ReversalsController.cs
+/Dojo.OpenApiGenerator.TestWebApi/Controllers/PaymentIntentsController.cs
+/Dojo.OpenApiGenerator.TestWebApi/OpenApiSchemas/payment-intents.json.disabled
+/Dojo.OpenApiGenerator.TestWebApi/OpenApiSchemas/payment-intents.yaml

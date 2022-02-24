@@ -1,0 +1,4 @@
+{
+  "VersionParameterName": "version",
+  "IncludeVersionParameterInActionSignature":  false 
+}

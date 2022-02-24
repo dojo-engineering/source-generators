@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dojo.OpenApiGenerator.TestWebApi.Controllers
 {
-
     public class HelloWorldCustomController : HelloWorldControllerBase
     {
         private readonly IHelloWorldService _helloWorldService;

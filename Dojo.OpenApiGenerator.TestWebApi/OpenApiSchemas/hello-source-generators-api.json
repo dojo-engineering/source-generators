@@ -80,7 +80,8 @@
             }
           }
         },
-        "operationId": "get-hello-generated2"
+        "operationId": "get-hello-generated2",
+        "description": ""
       }
     }
   },
