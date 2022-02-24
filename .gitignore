@@ -345,3 +345,17 @@ ASALocalRun/
 common-*.tgz
 Chart.lock
 Remote.Payments.Internal.Gateway.Client/*.g.cs
+/Dojo.OpenApiGenerator.TestWebApi/OpenApiSchemas/20200103
+/Dojo.OpenApiGenerator.TestWebApi/OpenApiSchemas/connect-e-credentials.json
+/Dojo.OpenApiGenerator.TestWebApi/OpenApiSchemas/payment-intents-captures.json
+/Dojo.OpenApiGenerator.TestWebApi/OpenApiSchemas/payment-intents-refunds.json
+/Dojo.OpenApiGenerator.TestWebApi/OpenApiSchemas/payment-intents-reversals.json
+/Dojo.OpenApiGenerator.TestWebApi/OpenApiSchemas/shared.json
+/Dojo.OpenApiGenerator.TestWebApi/Controllers/V20220103
+/Dojo.OpenApiGenerator.TestWebApi/Controllers/CapturesController.cs
+/Dojo.OpenApiGenerator.TestWebApi/Controllers/ConnectECredentialsController.cs
+/Dojo.OpenApiGenerator.TestWebApi/Controllers/RefundController.cs
+/Dojo.OpenApiGenerator.TestWebApi/Controllers/ReversalsController.cs
+/Dojo.OpenApiGenerator.TestWebApi/Controllers/PaymentIntentsController.cs
+/Dojo.OpenApiGenerator.TestWebApi/OpenApiSchemas/payment-intents.json.disabled
+/Dojo.OpenApiGenerator.TestWebApi/OpenApiSchemas/payment-intents.yaml

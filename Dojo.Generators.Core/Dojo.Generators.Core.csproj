@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<!-- Generates a package at build -->
+		<IncludeBuildOutput>true</IncludeBuildOutput>
+		<PackageId>Dojo.Generators.Core</PackageId>
+		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+		<Description>This library contains core functionality used by source generators in PaymentSense DOJO</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" />
+	</ItemGroup>
+
+</Project>

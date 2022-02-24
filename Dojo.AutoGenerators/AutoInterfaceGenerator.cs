@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using Dojo.Generators.Core.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
@@ -32,7 +33,7 @@ namespace Dojo.AutoGenerators
         {
             var bdr = new StringBuilder();
 
-            bdr.Append(method.ReturnType.ToString()).Append(' ');
+            bdr.Append(method.ReturnType).Append(' ');
 
             bdr.Append(method.Name);
             if (method.IsGenericMethod)
@@ -59,14 +60,14 @@ namespace Dojo.AutoGenerators
             StringBuilder bdr = new();
             foreach(var param in method.Parameters) {
                 bdr.Clear();
-                bdr.Append(param.Type.ToString());
+                bdr.Append(param.Type);
                 bdr.Append(' ');
                 bdr.Append(param.Name);
                 if(param.HasExplicitDefaultValue)
                 {
                     bdr.Append(" = ");
                     if(param.ExplicitDefaultValue is null){
-                        bdr.Append("default(").Append(param.Type.ToString()).Append(')');
+                        bdr.Append("default(").Append(param.Type).Append(')');
                     }
                     else if(param.ExplicitDefaultValue is string) {
                         bdr.Append('\"').Append(param.ExplicitDefaultValue).Append('\"');
@@ -174,6 +175,15 @@ namespace {classDefinition.Namespace}
 
         public void Initialize(GeneratorInitializationContext context)
         {
+            //#if DEBUG
+            //if (!Debugger.IsAttached)
+            //{
+            //    Debugger.Launch();
+            //}
+            //#endif
+
+            //Debug.WriteLine("Initialize code generator");
+
             context.RegisterForSyntaxNotifications(()=>new ClassWithAttributeSyntaxReceiver("AutoInterface"));
         }
     }

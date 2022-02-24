@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Dojo.AutoGenerators.Utils;
+using Dojo.Generators.Core.CodeAnalysis;
+using Dojo.Generators.Core.Utils;
 using Microsoft.CodeAnalysis;
 using Newtonsoft.Json.Linq;
 
@@ -83,7 +83,7 @@ namespace Dojo.AutoGenerators.AppSettingsGenerator
             // Check filesystem directly first
             if (context.TryGetProjectDir(out string projectDir))
             {
-                string[] filePaths = FileSystemUtil.FindFiles(
+                string[] filePaths = FileSystemUtils.FindFiles(
                     projectDir,
                     fileGroup.FileName);
 

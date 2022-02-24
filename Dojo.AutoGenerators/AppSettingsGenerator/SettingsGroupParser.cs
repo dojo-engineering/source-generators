@@ -1,5 +1,4 @@
-﻿using Dojo.AutoGenerators.Utils;
-using Dojo.Generators.Abstractions;
+﻿using Dojo.Generators.Abstractions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -7,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.XPath;
+using Dojo.Generators.Core.CodeAnalysis;
+using Dojo.Generators.Core.Utils;
 
 namespace Dojo.AutoGenerators.AppSettingsGenerator
 {
@@ -135,7 +136,7 @@ namespace Dojo.AutoGenerators.AppSettingsGenerator
         {
             if (context.TryGetProjectDir(out string projectDir))
             {
-                string project = FileSystemUtil.FindFilesWithExtension(projectDir, ".csproj").SingleOrDefault();
+                string project = FileSystemUtils.FindFilesWithExtension(projectDir, ".csproj").SingleOrDefault();
                 if (project != null)
                 {
                     using var fileStream = File.Open(project, FileMode.Open);

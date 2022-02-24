@@ -1,0 +1,120 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "HelloWorld",
+    "version": "",
+    "description": ""
+  },
+  "paths": {
+    "/hello-generated/{number}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelloFromSource"
+                },
+                "examples": {}
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelloFromSource"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "summary": "HelloFromSource",
+        "operationId": "",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "message",
+            "required": true
+          }
+        ],
+        "description": ""
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": "number",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    "": {
+      "parameters": []
+    },
+    "/hello-generated2": {
+      "get": {
+        "summary": "HelloGenerated2",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-hello-generated2",
+        "description": ""
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HelloFromSource": {
+        "type": "object",
+        "title": "HelloFromSource",
+        "description": "",
+        "additionalProperties": false,
+        "properties": {
+          "Message": {
+            "type": "string"
+          },
+          "Number": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "DateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": [
+          "Message",
+          "Email"
+        ]
+      }
+    },
+    "responses": {}
+  }
+}

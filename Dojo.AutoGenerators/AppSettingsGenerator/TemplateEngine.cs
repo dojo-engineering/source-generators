@@ -1,7 +1,7 @@
-﻿using Dojo.AutoGenerators.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dojo.Generators.Core.Utils;
 
 namespace Dojo.AutoGenerators.AppSettingsGenerator
 {

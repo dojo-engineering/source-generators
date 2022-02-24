@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
-namespace Dojo.AutoGenerators.Utils
+[assembly: InternalsVisibleTo("Dojo.AutoGenerators")]
+namespace Dojo.Generators.Core.Utils
 {
-    public static class AssemblyUtils
+    internal static class AssemblyUtils
     {
         public static string ReadEmbeddedResource(string resourceName)
         {

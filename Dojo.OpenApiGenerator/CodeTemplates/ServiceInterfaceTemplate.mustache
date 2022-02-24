@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.CodeDom.Compiler;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+
+namespace {{ProjectNamespace}}.Services
+{
+    [GeneratedCode("Dojo.OpenApiGenerator", "{Assembly.GetExecutingAssembly().GetName().Version}")]
+    public interface I{{Title}}Service
+    {
+        {{#Routes}}
+        {{#Actions}}
+        {{#SuccessResponse}} 
+        {{#ApiModel}}Task<{{&TypeFullName}}>{{/ApiModel}}{{^ApiModel}}Task{{/ApiModel}} {{ActionName}}Async({{&InputServiceParametersString}});
+        {{/SuccessResponse}} 
+        {{/Actions}}     
+        {{/Routes}}
+    }
+}

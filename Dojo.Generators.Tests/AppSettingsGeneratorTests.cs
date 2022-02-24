@@ -4,7 +4,7 @@ using ApprovalTests;
 using ApprovalTests.Namers;
 using ApprovalTests.Reporters;
 using Dojo.AutoGenerators.AppSettingsGenerator;
-using Dojo.AutoGenerators.Utils;
+using Dojo.Generators.Core.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;

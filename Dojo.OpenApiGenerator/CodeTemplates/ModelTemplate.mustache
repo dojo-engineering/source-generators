@@ -1,0 +1,18 @@
+﻿using System;
+using System.CodeDom.Compiler;
+using System.ComponentModel.DataAnnotations;
+
+namespace {{Namespace}}
+{
+    [GeneratedCode("Dojo.OpenApiGenerator", "{Assembly.GetExecutingAssembly().GetName().Version}")]
+    public class {{TypeName}}{{#IsDerivedModel}} : {{#BaseModel}}{{&TypeFullName}}{{/BaseModel}}{{/IsDerivedModel}}
+    {
+        {{#Properties}}
+        {{#IsRequired}}
+        [Required]{{/IsRequired}}{{#IsEmail}}
+        [EmailAddress]{{/IsEmail}}
+        public virtual {{&TypeFullName}} {{SourceName}} { get; set;}
+
+        {{/Properties}}
+    }
+}
