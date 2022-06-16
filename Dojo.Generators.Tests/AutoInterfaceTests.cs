@@ -116,5 +116,50 @@ namespace Level1.Level2
             // Assert
             GeneratorTestHelper.CompareSources(expectedSource, actual);
         }
+        
+        [Fact]
+        public void PropertySignature_Generate()
+        {
+            // Arrange
+            string userSource = $@"
+using System;
+using System.Text;
+namespace Level1.Level2
+{{
+    [AutoInterface]
+    public partial class TestFoo
+    {{
+        private int _prop2;
+
+        public string Prop1 {{ get; set; }}
+
+        public int Prop2 {{ get {{ return _prop2; }} }}
+    }}
+";
+
+            string expectedSource = $@"
+using System;
+using System.CodeDom.Compiler;
+
+namespace Level1.Level2
+{{
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
+    public partial class TestFoo: ITestFoo
+    {{
+    }}
+
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
+    public interface ITestFoo
+    {{
+        string Prop1 {{ get; set; }}
+        int Prop2 {{ get; }}
+    }}
+}}";
+            // Act
+            var actual = GeneratorTestHelper.GenerateFromSource<AutoInterfaceGenerator>(userSource);
+
+            // Assert
+            GeneratorTestHelper.CompareSources(expectedSource, actual);
+        }
     }
 }

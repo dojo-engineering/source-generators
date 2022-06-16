@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Dojo.Generators.Core.CodeAnalysis;
@@ -50,6 +51,28 @@ namespace Dojo.AutoGenerators
             }
 
             bdr.Append(GetParametersDefinition(method));
+            bdr.Append(';');
+            return bdr.ToString();
+        }
+        
+        public static string GetPropertyDefinition(IPropertySymbol propertySymbol)
+        {
+            var bdr = new StringBuilder();
+
+            bdr.Append(propertySymbol.Type).Append(' ');
+
+            bdr.Append(propertySymbol.Name);
+
+            bdr.Append(" { ");
+            if (propertySymbol.GetMethod != null)
+            {
+                bdr.Append("get;");
+            }
+            if (propertySymbol.SetMethod != null)
+            {
+                bdr.Append(" set;");
+            }
+            bdr.Append(" }");
 
             return bdr.ToString();
         }
@@ -125,8 +148,19 @@ namespace Dojo.AutoGenerators
                         && member.DeclaredAccessibility == Accessibility.Public
                         && !member.IsImplicitlyDeclared
                         ) {
-                            if(member is IMethodSymbol method) {
-                                if(method.MethodKind == MethodKind.Constructor) {
+                            if (member is IPropertySymbol property)
+                            {
+                                var propertyDefinition = GetPropertyDefinition(property);
+                                classDefinition.Methods.Add(propertyDefinition);
+                            }
+                            else if(member is IMethodSymbol method) {
+                                if(method.MethodKind == MethodKind.Constructor 
+                                    || method.MethodKind == MethodKind.PropertyGet
+                                    || method.MethodKind == MethodKind.PropertySet
+                                    || method.MethodKind == MethodKind.EventAdd
+                                    || method.MethodKind == MethodKind.EventRaise
+                                    || method.MethodKind == MethodKind.EventRemove
+                                    || method.MethodKind == MethodKind.Destructor) {
                                     continue;
                                 }
                                 var methodDefinition = GetMethodDefinition(method);
@@ -161,7 +195,7 @@ namespace {classDefinition.Namespace}
                 // add the filepath of each tree to the class we're building
                 foreach (var method in classDefinition.Methods)
                 {
-                    sourceBuilder.Append("        ").Append(method).AppendLine(";\r");
+                    sourceBuilder.Append("        ").Append(method).AppendLine("\r");
                 }
 
                 // finish creating the source to inject
