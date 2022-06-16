@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Dojo.OpenApiGenerator.TestWebApi.Services;
+// using Dojo.OpenApiGenerator.TestWebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -24,25 +24,25 @@ namespace Dojo.OpenApiGenerator.TestWebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            });
-            services.AddSingleton<IHelloWorldService, HelloWorldService>();
-
-            services.AddApiVersioning(options =>
-            {
-                options.AssumeDefaultVersionWhenUnspecified = true;
-                options.DefaultApiVersion = Microsoft.AspNetCore.Mvc.ApiVersion.Default;
-                options.ApiVersionReader = new HeaderApiVersionReader("version");
-                options.ReportApiVersions = true;
-            });
-
-            services.AddVersionedApiExplorer();
-
-            services.AddOpenApiDocument(document => ConfigureSingleVersion(document, "1.0"));
-            services.AddOpenApiDocument(document => ConfigureSingleVersion(document, "2022-01-03"));
+            // services.AddControllers().AddJsonOptions(options =>
+            // {
+            //     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            //     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            // });
+            // services.AddSingleton<IHelloWorldService, HelloWorldService>();
+            //
+            // services.AddApiVersioning(options =>
+            // {
+            //     options.AssumeDefaultVersionWhenUnspecified = true;
+            //     options.DefaultApiVersion = Microsoft.AspNetCore.Mvc.ApiVersion.Default;
+            //     options.ApiVersionReader = new HeaderApiVersionReader("version");
+            //     options.ReportApiVersions = true;
+            // });
+            //
+            // services.AddVersionedApiExplorer();
+            //
+            // services.AddOpenApiDocument(document => ConfigureSingleVersion(document, "1.0"));
+            // services.AddOpenApiDocument(document => ConfigureSingleVersion(document, "2022-01-03"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
