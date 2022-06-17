@@ -25,7 +25,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Dojo.AutoGenerators\Dojo.AutoGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     <ProjectReference Include="..\Dojo.Generators.Abstractions\Dojo.Generators.Abstractions.csproj" />
-    <ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" />
     <ProjectReference Include="..\Dojo.OpenApiGenerator\Dojo.OpenApiGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
   </ItemGroup>
 

@@ -7,8 +7,9 @@ RUN echo "Publishing $VERSION_SUFFIX to $NEXUS_URL"
 
 WORKDIR /src
 ADD . .
+RUN VERSION=$(cat /src/nuget-version)
 RUN dotnet restore /src/Dojo.Generators.sln --configfile /src/NuGet.config
-RUN dotnet build --no-restore /src/Dojo.Generators.sln -c Release
+RUN dotnet build --no-restore /src/Dojo.Generators.sln -c Release -p:Version=$VERSION
 RUN dotnet test --no-build /src/Dojo.Generators.Tests/Dojo.Generators.Tests.csproj -c Release
 
 RUN chmod +x /src/build/publish.sh
