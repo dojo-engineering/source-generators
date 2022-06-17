@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\HelloWorldCustomController.cs" />
+    <Compile Remove="Services\HelloWorldService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Controllers\HelloWorldCustomController.cs" />
+    <None Include="Services\HelloWorldService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
