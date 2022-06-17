@@ -30,6 +30,7 @@ if [ -f "$VERSION_FILE" ]; then
         NUGET_FULL_VER="$VERSION$VERSION_SUFFIX"
         echo "Targeting version: $NUGET_FULL_VER"
 
+        dotnet build --no-restore /src/Dojo.Generators.sln -c Release -p:Version=$NUGET_FULL_VER
         dotnet pack --no-build --output nupkgs -p:Version=$NUGET_FULL_VER -c Release
         dotnet nuget push /src/nupkgs/Dojo.AutoGenerators.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
         dotnet nuget push /src/nupkgs/Dojo.Generators.Core.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
