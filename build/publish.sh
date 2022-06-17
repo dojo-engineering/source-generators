@@ -32,7 +32,7 @@ if [ -f "$VERSION_FILE" ]; then
 
         dotnet pack --no-build --output nupkgs -p:Version=$NUGET_FULL_VER -c Release
         dotnet nuget push /src/nupkgs/Dojo.AutoGenerators.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
-
+        dotnet nuget push /src/nupkgs/Dojo.Generators.Core.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
         dotnet nuget push /src/nupkgs/Dojo.Generators.Abstractions.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
 
     fi
