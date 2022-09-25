@@ -9,13 +9,13 @@ namespace Dojo.OpenApiGenerator.Models
         public string Version { get; }
         public IDictionary<string, ApiModel> ApiModels { get; }
         public string ApiFileName { get; }
-        protected readonly OpenApiParameter OpenApiParameter;
-
         public string Name { get; set; }
         public ApiModel ApiModel { get; set; }
         public bool IsRequired { get; }
         public abstract ParameterLocation ParameterLocation { get; }
         public string SourceCodeName { get; }
+
+        protected readonly OpenApiParameter OpenApiParameter;
 
         protected ApiParameterBase(
             string sourceCodeName, 

@@ -31,9 +31,11 @@ namespace Dojo.OpenApiGenerator.Models
         public ApiModel BaseModel => ApiModels[BaseModelReference];
         public bool IsReferenceType { get; }
         public ApiModel ReferenceModel => ApiModels[ModelReference];
+        public object DefaultValue { get; private set; }
+        public bool IsNullable { get; private set; }
 
         protected ApiModelBase(
-            OpenApiSchema openApiSchema, 
+            OpenApiSchema openApiSchema,
             IDictionary<string, ApiModel> apiModels,
             string apiFileName)
         {
@@ -45,10 +47,9 @@ namespace Dojo.OpenApiGenerator.Models
             IsReferenceType = TryResolveReferenceModel(OpenApiSchema);
             IsBuiltInType = (OpenApiSchema.Type != OpenApiSchemaTypes.Object || OpenApiSchema.AdditionalPropertiesAllowed) && !IsEnum && !IsDerivedModel && !IsReferenceType;
             EnumValues = IsEnum ? GetEnumValues(OpenApiSchema.Enum).ToList() : null;
-            
         }
 
-        protected void ResolveType(OpenApiSchema openApiSchema)
+        protected virtual void ResolveType(OpenApiSchema openApiSchema)
         {
             if (openApiSchema.Type == null)
             {
@@ -58,49 +59,71 @@ namespace Dojo.OpenApiGenerator.Models
             }
 
             var openApiType = openApiSchema.Type;
-            var openApiTypeFormat = openApiSchema.Format;
 
             switch (openApiType)
             {
                 case OpenApiSchemaTypes.Object:
-                {
-                    ResolveObject(openApiSchema);
+                    {
+                        ResolveObject(openApiSchema);
 
-                    break;
-                }
+                        break;
+                    }
                 case OpenApiSchemaTypes.Integer:
-                {
-                    ResolveInteger(openApiTypeFormat);
+                    {
+                        ResolveInteger(openApiSchema);
 
-                    break;
-                }
+                        break;
+                    }
                 case OpenApiSchemaTypes.String:
-                {
-                    ResolveString(openApiTypeFormat);
+                    {
+                        ResolveString(openApiSchema);
 
-                    break;
-                }
+                        break;
+                    }
                 case OpenApiSchemaTypes.Array:
-                {
-                    ResolveArray(openApiSchema);
+                    {
+                        ResolveArray(openApiSchema);
 
-                    break;
-                }
+                        break;
+                    }
+                case OpenApiSchemaTypes.Boolean:
+                    {
+                        ResolveBoolean(openApiSchema);
+
+                        break;
+                    }
             }
         }
 
-        private IEnumerable<string> GetEnumValues(IList<IOpenApiAny> enumValues)
+        protected virtual string GetTypeFullName()
         {
-            foreach (OpenApiString enumValue in enumValues)
+            if (IsReferenceType)
             {
-                yield return enumValue.Value;
+                return ReferenceModel.GetTypeFullName();
             }
+
+            if (IsNullable)
+            {
+                return $"{Type.Namespace}.Nullable<{Type?.FullName}>";
+            }
+
+            if (Type == typeof(IDictionary<,>))
+            {
+                return $"{Type.Namespace}.IDictionary<{InnerTypes[0].TypeFullName},{InnerTypes[1].TypeFullName}>";
+            }
+
+            if (Type == typeof(IEnumerable<>))
+            {
+                return $"{Type.Namespace}.IEnumerable<{InnerTypes[0].TypeFullName}>";
+            }
+
+            return Type?.FullName;
         }
 
         private void ResolveArray(OpenApiSchema openApiSchema)
         {
             var arrayItemType = new ApiModel(openApiSchema.Items, ApiModels, ApiFileName);
-            
+
             InnerTypes = new List<ApiModel>
             {
                 arrayItemType
@@ -109,65 +132,74 @@ namespace Dojo.OpenApiGenerator.Models
             Type = typeof(IEnumerable<>);
         }
 
-        private void ResolveString(string openApiTypeFormat)
+        private void ResolveString(OpenApiSchema openApiSchema)
         {
-            if (string.IsNullOrWhiteSpace(openApiTypeFormat))
+            if (string.IsNullOrWhiteSpace(openApiSchema.Format))
             {
-                Type = typeof(string);
+                ResolveTypeAndDefaultValue<string>(openApiSchema.Default);
             }
 
-            switch (openApiTypeFormat)
+            switch (openApiSchema.Format)
             {
                 case OpenApiTypeFormats.Date:
                 case OpenApiTypeFormats.DateTime:
                 {
-                    Type = typeof(DateTime);
+                    ResolveDateTime(openApiSchema);
 
                     break;
                 }
                 case OpenApiTypeFormats.Email:
-                {
-                    IsEmail = true;
-                    Type = typeof(string);
+                    {
+                        IsEmail = true;
+                        ResolveTypeAndDefaultValue<string>(openApiSchema.Default);
 
-                    break;
-                }
+                        break;
+                    }
                 default:
-                {
-                    Type = typeof(string);
+                    {
+                        ResolveTypeAndDefaultValue<string>(openApiSchema.Default);
 
-                    break;
-                }
+                        break;
+                    }
             }
         }
 
-        private void ResolveInteger(string openApiTypeFormat)
+        private void ResolveDateTime(OpenApiSchema openApiSchema)
         {
-            if (string.IsNullOrWhiteSpace(openApiTypeFormat))
+            IsNullable = openApiSchema.Nullable;
+
+            ResolveTypeAndDefaultValue<DateTime>(openApiSchema.Default);
+        }
+
+        private void ResolveInteger(OpenApiSchema openApiSchema)
+        {
+            IsNullable = openApiSchema.Nullable;
+
+            if (string.IsNullOrWhiteSpace(openApiSchema.Format))
             {
-                Type = typeof(int);
+                ResolveTypeAndDefaultValue<int>(openApiSchema.Default);
             }
 
-            switch (openApiTypeFormat)
+            switch (openApiSchema.Format)
             {
                 case OpenApiTypeFormats.Int32:
-                {
-                    Type = typeof(int);
+                    {
+                        ResolveTypeAndDefaultValue<int>(openApiSchema.Default);
 
-                    break;
-                }
+                        break;
+                    }
                 case OpenApiTypeFormats.Int64:
-                {
-                    Type = typeof(long);
+                    {
+                        ResolveTypeAndDefaultValue<long>(openApiSchema.Default);
 
-                    break;
-                }
+                        break;
+                    }
                 default:
-                {
-                    Type = typeof(int);
+                    {
+                        ResolveTypeAndDefaultValue<int>(openApiSchema.Default);
 
-                    break;
-                }
+                        break;
+                    }
             }
         }
 
@@ -183,15 +215,33 @@ namespace Dojo.OpenApiGenerator.Models
             }
         }
 
+        private void ResolveBoolean(OpenApiSchema openApiSchema)
+        {
+            IsNullable = openApiSchema.Nullable;
+
+            ResolveTypeAndDefaultValue<bool>(openApiSchema.Default);
+        }
+
+        private void ResolveTypeAndDefaultValue<T>(IOpenApiAny openApiSchema)
+        {
+            Type = typeof(T);
+            if (openApiSchema is not OpenApiPrimitive<T> @default)
+            {
+                return;
+            }
+
+            DefaultValue = @default.Value;
+        }
+
         private void ResolveDictionaryType(OpenApiSchema additionalProperties)
         {
             //TODO resolve reference types
-            var dictArgType1 = new ApiModel(new OpenApiSchema { Type = OpenApiSchemaTypes.String}, ApiModels, ApiFileName);
+            var dictArgType1 = new ApiModel(new OpenApiSchema { Type = OpenApiSchemaTypes.String }, ApiModels, ApiFileName);
             var dictArgType2 = new ApiModel(additionalProperties, ApiModels, ApiFileName);
 
             InnerTypes = new List<ApiModel>
             {
-                dictArgType1, 
+                dictArgType1,
                 dictArgType2
             };
             Type = typeof(IDictionary<,>);
@@ -225,24 +275,15 @@ namespace Dojo.OpenApiGenerator.Models
             return true;
         }
 
-        protected virtual string GetTypeFullName()
+        private static IEnumerable<string> GetEnumValues(IEnumerable<IOpenApiAny> enumValues)
         {
-            if (IsReferenceType)
+            foreach (var openApiAny in enumValues)
             {
-                return ReferenceModel.GetTypeFullName();
-            }
+                var enumValue = (OpenApiString)openApiAny;
 
-            if (Type == typeof(IDictionary<,>))
-            {
-                return $"{Type.Namespace}.IDictionary<{InnerTypes[0].TypeFullName},{InnerTypes[1].TypeFullName}>";
+                yield return enumValue.Value;
             }
-
-            if (Type == typeof(IEnumerable<>))
-            {
-                return $"{Type.Namespace}.IEnumerable<{InnerTypes[0].TypeFullName}>";
-            }
-
-            return Type?.FullName;
         }
+
     }
 }
