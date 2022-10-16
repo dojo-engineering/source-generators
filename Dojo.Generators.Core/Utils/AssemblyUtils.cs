@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Dojo.AutoGenerators")]
+[assembly: InternalsVisibleTo("Dojo.OpenApiGenerator")]
 namespace Dojo.Generators.Core.Utils
 {
     internal static class AssemblyUtils

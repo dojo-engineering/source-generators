@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using Dojo.OpenApiGenerator.Configuration;
 using Dojo.OpenApiGenerator.Extensions;
 using Dojo.OpenApiGenerator.Mvc;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 namespace Dojo.OpenApiGenerator.Models
@@ -62,7 +60,7 @@ namespace Dojo.OpenApiGenerator.Models
             _apiGeneratorSettings = apiGeneratorSettings;
             IsDeprecated = operation.Deprecated;
             HttpMethod = GetHttpMethodAttributeName(operationType);
-            ActionName = ToActionName(operation.OperationId ?? operation.Summary);
+            ActionName = ToActionName(!string.IsNullOrWhiteSpace(operation.OperationId) ? operation.OperationId : operation.Summary);
             ResponseTypes = operation.Responses.Select(x => new ApiResponse(x.Key, x.Value, apiModels, apiVersion, apiFileName));
             RouteParameters = apiRouteParameters;
             Version = apiVersion;

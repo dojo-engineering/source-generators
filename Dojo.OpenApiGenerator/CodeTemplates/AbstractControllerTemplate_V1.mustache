@@ -14,7 +14,7 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
 {
     [ApiController]
     {{#Version}}[ApiVersion("{{Version}}")]{{/Version}}
-    [GeneratedCode("Dojo.OpenApiGenerator", "{Assembly.GetExecutingAssembly().GetName().Version}")]
+    [GeneratedCode("Dojo.OpenApiGenerator", "{{AssemblyVersion}}")]
     public abstract class {{Title}}ControllerBase : ControllerBase
     {
         {{#Routes}}

@@ -1,0 +1,64 @@
+﻿using System.CodeDom.Compiler;
+using {{ProjectNamespace}}.Generated.Common;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.Extensions.DependencyInjection;
+using NSwag.Generation.AspNetCore;
+
+namespace {{ProjectNamespace}}.Generated.StartupConfiguration
+{
+    [GeneratedCode("Dojo.OpenApiGenerator", "{{AssemblyVersion}}")]
+    public static class ApiConfigurator
+    {
+        public static IServiceCollection AddOpenApiVersioning(
+            this IServiceCollection services,
+            string title,
+            string versionHeaderName = "version",
+            string infoTitle = "API",
+            IApiVersionReader versionReader = null,
+            IErrorResponseProvider errorResponseProvider = null,
+            ApiVersion defaultVersion = null,
+            bool assumeDefaultVersionWhenUnspecified = true,
+            bool reportApiVersions = true)
+        {
+            services.AddApiVersioning(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = assumeDefaultVersionWhenUnspecified;
+                options.DefaultApiVersion = defaultVersion ?? ApiVersion.Default;
+                options.ApiVersionReader = versionReader ?? new HeaderApiVersionReader(versionHeaderName);
+                options.ReportApiVersions = reportApiVersions;
+
+                if (errorResponseProvider != null)
+                {
+                    options.ErrorResponses = errorResponseProvider;
+                }
+            });
+
+            services.AddVersionedApiExplorer();
+
+            foreach (var apiVersion in ApiConstants.ApiVersions)
+            {
+                services.AddOpenApiDocument(document => ConfigureSingleVersion(title, document, apiVersion, infoTitle));
+            }
+
+            return services;
+        }
+
+        private static void ConfigureSingleVersion(
+            string title,
+            AspNetCoreOpenApiDocumentGeneratorSettings configure,
+            string version,
+            string infoTitle)
+        {
+            configure.Title = title;
+            configure.DocumentName = version;
+            configure.ApiGroupNames = new[] { version };
+
+            configure.PostProcess = document =>
+            {
+                document.Info.Version = version;
+                document.Info.Title = infoTitle;
+            };
+        }
+    }
+}

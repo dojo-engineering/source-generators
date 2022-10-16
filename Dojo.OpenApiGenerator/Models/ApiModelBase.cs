@@ -8,7 +8,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Dojo.OpenApiGenerator.Models
 {
-    internal abstract class ApiModelBase
+    internal abstract class ApiModelBase : BaseGeneratedCodeModel
     {
         protected string BaseModelReference;
         protected string ModelReference { get; set; }
@@ -37,7 +37,8 @@ namespace Dojo.OpenApiGenerator.Models
         protected ApiModelBase(
             OpenApiSchema openApiSchema,
             IDictionary<string, ApiModel> apiModels,
-            string apiFileName)
+            string apiFileName,
+            string projectNamespace) : base(projectNamespace)
         {
             OpenApiSchema = openApiSchema.OneOf != null && openApiSchema.OneOf.Any() ? openApiSchema.OneOf.FirstOrDefault() : openApiSchema;
             ApiModels = apiModels;

@@ -1,0 +1,19 @@
+﻿using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+namespace {{ProjectNamespace}}.Generated.Common
+{
+    [GeneratedCode("Dojo.OpenApiGenerator", "{{AssemblyVersion}}")]
+    public static class ApiConstants
+    {
+        private static readonly IList<string> _apiVersions = new List<string>
+        {
+            {{#ApiVersions}}
+            "{{.}}",
+            {{/ApiVersions}}
+        };
+
+        public static readonly IReadOnlyCollection<string> ApiVersions = new ReadOnlyCollection<string>(_apiVersions);
+    }
+}

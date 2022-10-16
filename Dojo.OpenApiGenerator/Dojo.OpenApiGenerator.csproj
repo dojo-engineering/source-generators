@@ -16,18 +16,24 @@
 	  <None Remove="CodeTemplates\AbstractControllerTemplate.mustache" />
 	  <None Remove="CodeTemplates\AbstractControllerTemplate_V1.mustache" />
 	  <None Remove="CodeTemplates\AbstractControllerTemplate_V2.mustache" />
+	  <None Remove="CodeTemplates\ApiConfiguratorTemplate.mustache" />
+	  <None Remove="CodeTemplates\ApiConstantsTemplate.mustache" />
 	  <None Remove="CodeTemplates\BaseControllerTemplate.mustache" />
 	  <None Remove="CodeTemplates\EnumTemplate.mustache" />
+	  <None Remove="CodeTemplates\InheritedApiVersionAttribute.mustache" />
 	  <None Remove="CodeTemplates\ModelTemplate.mustache" />
 	  <None Remove="CodeTemplates\ServiceInterfaceTemplate.mustache" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Include="CodeTemplates\ApiConfiguratorTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate_V1.mustache" />
+	  <EmbeddedResource Include="CodeTemplates\InheritedApiVersionAttribute.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\BaseControllerTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate_V2.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\EnumTemplate.mustache" />
+	  <EmbeddedResource Include="CodeTemplates\ApiConstantsTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ServiceInterfaceTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ModelTemplate.mustache" />
 	</ItemGroup>
@@ -60,11 +66,11 @@
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-		<PackageReference Include="Microsoft.OpenApi" Version="1.2.3" PrivateAssets="all" GeneratePathProperty="true" />
-		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.2.3" PrivateAssets="all" GeneratePathProperty="true" />
+		<PackageReference Include="Microsoft.OpenApi" Version="1.4.3" PrivateAssets="all" GeneratePathProperty="true" />
+		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.4.1" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" PrivateAssets="all" GeneratePathProperty="true" />
-		<PackageReference Include="SharpYaml" Version="1.6.5" PrivateAssets="all" GeneratePathProperty="true" />
-		<PackageReference Include="Stubble.Core" Version="1.9.3" PrivateAssets="all" GeneratePathProperty="true" />
+		<PackageReference Include="SharpYaml" Version="2.1.0" PrivateAssets="all" GeneratePathProperty="true" />
+		<PackageReference Include="Stubble.Core" Version="1.10.8" PrivateAssets="all" GeneratePathProperty="true" />
 		<ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
 		<ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" OutputItemType="Analyzer" />
 	</ItemGroup>

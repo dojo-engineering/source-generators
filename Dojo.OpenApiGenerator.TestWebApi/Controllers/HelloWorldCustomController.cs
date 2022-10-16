@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
-using Dojo.OpenApiGenerator.TestWebApi.Generated.Controllers;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using Dojo.OpenApiGenerator.TestWebApi.Generated.Controllers.V10;
 using Dojo.OpenApiGenerator.TestWebApi.Generated.Models;
 using Dojo.OpenApiGenerator.TestWebApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Dojo.OpenApiGenerator.TestWebApi.Controllers
 {
@@ -15,12 +17,18 @@ namespace Dojo.OpenApiGenerator.TestWebApi.Controllers
             _helloWorldService = helloWorldService;
         }
 
-        protected override async Task<ActionResult<HelloFromSourceApiModel>> HelloFromSourceAsync(long number, string message)
+        public override Task<ActionResult<Dojo.OpenApiGenerator.TestWebApi.Generated.Models.HelloFromSourceApiModel>>
+            HelloFromSourceActionAsync([FromQuery, BindRequired, MaxLength(5)] System.String message, [FromRoute, BindRequired] System.Int64 number)
+        {
+            return base.HelloFromSourceActionAsync(message, number);
+        }
+
+        protected override async Task<ActionResult<HelloFromSourceApiModel>> HelloFromSourceAsync(string message, long number)
         {
             return Ok(await _helloWorldService.HelloFromSourceAsync(number));
         }
 
-        protected override async Task<ActionResult<string>> HelloGenerated2Async()
+        protected override async Task<ActionResult<string>> GetHelloGenerated2Async()
         {
             return Ok(await _helloWorldService.HelloGenerated2Async());
         }
