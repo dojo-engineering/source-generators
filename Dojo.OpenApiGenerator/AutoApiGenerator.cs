@@ -367,7 +367,7 @@ namespace Dojo.OpenApiGenerator
         {
             var openApiDocuments = new Dictionary<string, OpenApiDocument>();
             var openApiSchemasDir = $"{projectDir}\\{Constants.OpenApiSchemasFolder}";
-            var schemaFiles = FileSystemUtils.FindFilesWithExtensions(openApiSchemasDir, Constants.OpenApiFileJsonExtension, Constants.OpenApiFileYamlExtension);
+            var schemaFiles = FileSystemUtils.FindFilesWithExtensions(openApiSchemasDir, Constants.OpenApiFileJsonExtension, Constants.OpenApiFileYamlExtension, Constants.OpenApiFileYmlExtension);
             var openApiReader = new OpenApiStringReader();
 
             foreach (var schemaFile in schemaFiles)

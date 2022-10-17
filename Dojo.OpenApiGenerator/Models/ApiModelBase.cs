@@ -42,13 +42,13 @@ namespace Dojo.OpenApiGenerator.Models
             string apiFileName,
             string projectNamespace) : base(projectNamespace)
         {
-            OpenApiSchema = openApiSchema.OneOf != null && openApiSchema.OneOf.Any() ? openApiSchema.OneOf.FirstOrDefault() : openApiSchema;
+            OpenApiSchema = openApiSchema?.OneOf != null && openApiSchema.OneOf.Any() ? openApiSchema.OneOf.FirstOrDefault() : openApiSchema;
             ApiModels = apiModels;
             ApiFileName = apiFileName;
-            IsEnum = OpenApiSchema.Enum.Any();
+            IsEnum = OpenApiSchema != null && OpenApiSchema.Enum.Any();
             IsDerivedModel = TryResolveDerivedModel(OpenApiSchema);
             IsReferenceType = TryResolveReferenceModel(OpenApiSchema);
-            IsBuiltInType = (OpenApiSchema.Type != OpenApiSchemaTypes.Object || OpenApiSchema.AdditionalPropertiesAllowed) && !IsEnum && !IsDerivedModel && !IsReferenceType;
+            IsBuiltInType = (OpenApiSchema?.Type != OpenApiSchemaTypes.Object || OpenApiSchema.AdditionalPropertiesAllowed) && !IsEnum && !IsDerivedModel && !IsReferenceType;
             EnumValues = IsEnum ? GetEnumValues(OpenApiSchema.Enum).ToList() : null;
             MaxLength = openApiSchema.MaxLength;
             MinLength = openApiSchema.MinLength;
@@ -210,7 +210,7 @@ namespace Dojo.OpenApiGenerator.Models
 
         private void ResolveObject(OpenApiSchema openApiSchema)
         {
-            if (!openApiSchema.AdditionalPropertiesAllowed)
+            if (openApiSchema.AdditionalProperties == null || !openApiSchema.AdditionalPropertiesAllowed)
             {
                 Type = typeof(object);
             }

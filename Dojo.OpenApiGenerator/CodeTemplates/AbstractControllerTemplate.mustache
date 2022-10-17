@@ -40,7 +40,7 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
         {{/IsDeprecated}}
         {{#ResponseTypes}}
         {{#ApiModel}}
-        [ProducesResponseType(typeof({{TypeFullName}}), {{HttpStatusCode}})]
+        [ProducesResponseType(typeof({{&TypeFullName}}), {{HttpStatusCode}})]
         {{/ApiModel}}
         {{^ApiModel}}
         [ProducesResponseType({{HttpStatusCode}})]
