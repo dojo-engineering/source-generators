@@ -10,6 +10,7 @@ namespace Dojo.OpenApiGenerator.Models
         public IEnumerable<ApiControllerRoute> Routes { get; set; }
         public bool CanOverride { get; set; }
         public IDictionary<string, ApiParameterBase> Parameters { get; set; }
+        public IEnumerable<string> AuthorizationPolicies { get; set; }
 
         public ApiControllerDefinition(string projectNamespace) : base(projectNamespace)
         {

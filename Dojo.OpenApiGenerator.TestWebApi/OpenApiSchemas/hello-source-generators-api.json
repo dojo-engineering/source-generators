@@ -40,7 +40,9 @@
         "parameters": [
           {
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 100,
+              "maxLength": 500
             },
             "in": "query",
             "name": "message",
@@ -94,7 +96,9 @@
         "additionalProperties": false,
         "properties": {
           "Message": {
-            "type": "string"
+            "type": "string",
+            "minLength": 100,
+            "maxLength": 500
           },
           "Number": {
             "type": "integer",
@@ -121,5 +125,9 @@
     "1.0",
     "2022-01-03",
     "2022-04-07"
+  ],
+  "x-authorization-policies": [
+    "Sec1",
+    "Sec2"
   ]
 }

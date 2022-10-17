@@ -12,6 +12,8 @@ namespace Dojo.OpenApiGenerator.Models
         public string Name { get; set; }
         public ApiModel ApiModel { get; set; }
         public bool IsRequired { get; }
+        public int? MaxLength { get; }
+        public int? MinLength { get; }
         public abstract ParameterLocation ParameterLocation { get; }
         public string SourceCodeName { get; }
 
@@ -32,6 +34,8 @@ namespace Dojo.OpenApiGenerator.Models
             ApiModel = ResolveApiModel();
             IsRequired = openApiParameter.Required;
             SourceCodeName = sourceCodeName ?? Name.ToSourceCodeParameterName();
+            MaxLength = openApiParameter.Schema?.MaxLength;
+            MinLength = openApiParameter.Schema?.MinLength;
         }
 
         protected abstract ApiModel ResolveApiModel();

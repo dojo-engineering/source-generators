@@ -155,7 +155,8 @@ namespace Dojo.OpenApiGenerator
                 SourceCodeVersion = GetSourceCodeVersion(supportedApiVersions, apiVersion),
                 Routes = openApiDocument.Paths.Select(x => new ApiControllerRoute(x.Key, x.Value, _apiModels, projectNamespace, parameters, apiVersion, apiFileName, _autoApiGeneratorSettings)),
                 CanOverride = apisToOverride.Contains(openApiDocument.Info.Title),
-                Parameters = parameters
+                Parameters = parameters,
+                AuthorizationPolicies = TryGetApiAuthorizationPolicies(openApiDocument)
             };
 
             foreach (var supportedApiVersion in supportedApiVersions)
@@ -169,6 +170,48 @@ namespace Dojo.OpenApiGenerator
             {
                 GenerateController(context, data, apiFileName);
             }
+        }
+
+        private HashSet<string> TryGetApiAuthorizationPolicies(IOpenApiExtensible openApiDocument)
+        {
+            var authPoliciesExtensionName = _autoApiGeneratorSettings.ApiAuthorizationPoliciesExtension;
+
+            if (string.IsNullOrWhiteSpace(authPoliciesExtensionName))
+            {
+                return null;
+            }
+
+            if (!openApiDocument.Extensions.TryGetValue(authPoliciesExtensionName, out var extension))
+            {
+                return null;
+            }
+
+            if (extension is not OpenApiArray extensionValues || !extensionValues.Any())
+            {
+                return null;
+            }
+
+            var authPolicies = new HashSet<string>();
+
+            foreach (var extensionValue in extensionValues.Where(x => x != null))
+            {
+                switch (extensionValue)
+                {
+                    case OpenApiString openApiString:
+                    {
+                        if (string.IsNullOrWhiteSpace(openApiString.Value))
+                        {
+                            continue;
+                        }
+
+                        authPolicies.Add(openApiString.Value);
+
+                        break;
+                    }
+                }
+            }
+
+            return authPolicies.Any() ? authPolicies : null;
         }
 
         private HashSet<string> TryGetSupportedApiVersions(IOpenApiExtensible openApiDocument)

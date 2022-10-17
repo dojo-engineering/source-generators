@@ -33,6 +33,8 @@ namespace Dojo.OpenApiGenerator.Models
         public ApiModel ReferenceModel => ApiModels[ModelReference];
         public object DefaultValue { get; private set; }
         public bool IsNullable { get; private set; }
+        public int? MaxLength { get; }
+        public int? MinLength { get; }
 
         protected ApiModelBase(
             OpenApiSchema openApiSchema,
@@ -48,6 +50,8 @@ namespace Dojo.OpenApiGenerator.Models
             IsReferenceType = TryResolveReferenceModel(OpenApiSchema);
             IsBuiltInType = (OpenApiSchema.Type != OpenApiSchemaTypes.Object || OpenApiSchema.AdditionalPropertiesAllowed) && !IsEnum && !IsDerivedModel && !IsReferenceType;
             EnumValues = IsEnum ? GetEnumValues(OpenApiSchema.Enum).ToList() : null;
+            MaxLength = openApiSchema.MaxLength;
+            MinLength = openApiSchema.MinLength;
         }
 
         protected virtual void ResolveType(OpenApiSchema openApiSchema)

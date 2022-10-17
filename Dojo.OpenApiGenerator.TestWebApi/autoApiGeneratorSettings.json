@@ -2,5 +2,6 @@
   "VersionParameterName": "version",
   "IncludeVersionParameterInActionSignature": false,
   "OpenApiSupportedVersionsExtension": "x-supported-api-versions",
-  "DateTimeVersionFormat": "yyyy-MM-dd"
+  "DateTimeVersionFormat": "yyyy-MM-dd",
+  "ApiAuthorizationPoliciesExtension": "x-authorization-policies"
 }

@@ -1,7 +1,7 @@
 {
   "VersionParameterName": "version",
   "IncludeVersionParameterInActionSignature": false,
-  /*The OpenApi Schema value type myst be an array of Strings
+  /*The OpenApi Schema value type must be an array of Strings
     Example:
    "x-supported-api-versions": [
     "1.0",
@@ -12,5 +12,12 @@
   // helps convert DateTime versions to expected string format.
   "DateTimeVersionFormat": "yyyy-MM-dd",
   "OpenApiSupportedVersionsExtension": "x-supported-api-versions",
-
+  /*
+   * Used to specify the authorization policies for a given API
+     "x-authorization-policies": [
+       "Sec1",
+       "Sec2"
+     ]
+   */
+  "ApiAuthorizationPoliciesExtension": "x-authorization-policies"
 }

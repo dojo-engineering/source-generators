@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.CodeDom.Compiler;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +17,9 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
     {{#SupportedVersions}}
     [InheritedApiVersionAttribute("{{.}}")]
     {{/SupportedVersions}}
+    {{#AuthorizationPolicies}}
+    [Authorize(Policy = "{{.}}")]
+    {{/AuthorizationPolicies}}
     [GeneratedCode("Dojo.OpenApiGenerator", "{{AssemblyVersion}}")]
     public abstract class {{Title}}ControllerBase : ControllerBase
     {

@@ -349,18 +349,54 @@ namespace Dojo.OpenApiGenerator.Models
         private static string GetActionParameterConstraints(ApiParameterBase apiParameter)
         {
             var actionSourceConstraint = GetActionParameterSourceConstraint(apiParameter.ParameterLocation, apiParameter.Name);
-            var constraint = $"[{actionSourceConstraint}";
+            var constraintBuilder = new StringBuilder($"[{actionSourceConstraint}");
+            var constraints = new List<string>();
 
             if (apiParameter.IsRequired)
             {
-                constraint += $"{InputParametersSeparator}{ActionConstraints.BindRequired}]";
-            }
-            else
-            {
-                constraint += "]";
+                constraints.Add(ActionConstraints.BindRequired);
             }
 
-            return constraint;
+            if (apiParameter.MinLength.HasValue)
+            {
+                constraints.Add(ActionConstraints.MinLength);
+            }
+
+            if (apiParameter.MaxLength.HasValue)
+            {
+                constraints.Add(ActionConstraints.MaxLength);
+            }
+
+            if (constraints.Any())
+            {
+                foreach (var constraint in constraints)
+                {
+                    constraintBuilder.Append(InputParametersSeparator);
+
+                    switch (constraint)
+                    {
+                        case ActionConstraints.BindRequired:
+                            {
+                                constraintBuilder.Append($"{ActionConstraints.BindRequired}");
+                                break;
+                            }
+                        case ActionConstraints.MinLength:
+                            {
+                                constraintBuilder.Append($"{ActionConstraints.MinLength}({apiParameter.MinLength})");
+                                break;
+                            }
+                        case ActionConstraints.MaxLength:
+                            {
+                                constraintBuilder.Append($"{ActionConstraints.MaxLength}({apiParameter.MaxLength})");
+                                break;
+                            }
+                    }
+                }
+            }
+
+            constraintBuilder.Append("]");
+
+            return constraintBuilder.ToString();
         }
 
         private static string GetActionBodyParameterConstraint(ApiRequestBody apiRequestBody)

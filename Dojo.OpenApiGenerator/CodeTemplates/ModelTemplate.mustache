@@ -10,7 +10,9 @@ namespace {{Namespace}}
         {{#Properties}}
         {{#IsRequired}}
         [Required]{{/IsRequired}}{{#IsEmail}}
-        [EmailAddress]{{/IsEmail}}
+        [EmailAddress]{{/IsEmail}}{{#MinLength}}
+        [MinLength({{.}})]{{/MinLength}}{{#MaxLength}}
+        [MaxLength({{.}})]{{/MaxLength}}
         public virtual {{&TypeFullName}} {{SourceName}} { get; set;}
 
         {{/Properties}}

@@ -15,6 +15,8 @@ namespace Dojo.OpenApiGenerator.Models
         public string Name { get; set; }
         public ApiModel ApiModel { get; set; }
         public bool IsRequired { get; }
+        public int? MaxLength => null;
+        public int? MinLength => null;
         public string SourceCodeName { get; }
 
         public ApiRequestBody(
