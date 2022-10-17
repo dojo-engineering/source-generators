@@ -1,20 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\HelloWorldCustomController.cs" />
-    <Compile Remove="Services\HelloWorldService.cs" />
+    <Compile Remove="Controllers\PaymentIntentsController.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Controllers\HelloWorldCustomController.cs" />
-    <None Include="Services\HelloWorldService.cs" />
+    <None Remove="OpenApiSchemas\payment-intents\payment-intents.json.disabled" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="OpenApiSchemas\payment-intents\payment-intents.json.disabled" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Controllers\PaymentIntentsController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -23,9 +30,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Dojo.AutoGenerators\Dojo.AutoGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
-    <ProjectReference Include="..\Dojo.Generators.Abstractions\Dojo.Generators.Abstractions.csproj" />
-    <ProjectReference Include="..\Dojo.OpenApiGenerator\Dojo.OpenApiGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
-  </ItemGroup>
+    <ProjectReference Include="..\Dojo.AutoGenerators\Dojo.AutoGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true">
+	    <IncludeAssets>all</IncludeAssets>
+	    <PrivateAssets>analyzers</PrivateAssets>
+	</ProjectReference>
+	<ProjectReference Include="..\Dojo.Generators.Abstractions\Dojo.Generators.Abstractions.csproj" />
+    <ProjectReference Include="..\Dojo.OpenApiGenerator\Dojo.OpenApiGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true">
+	    <IncludeAssets>all</IncludeAssets>
+	    <PrivateAssets>analyzers</PrivateAssets>
+	</ProjectReference>
+</ItemGroup>
 
 </Project>

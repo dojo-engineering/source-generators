@@ -1,0 +1,19 @@
+﻿using System;
+using System.CodeDom.Compiler;
+using Microsoft.AspNetCore.Mvc;
+
+namespace {{ProjectNamespace}}.Generated.Http
+{
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
+    [GeneratedCode("Dojo.OpenApiGenerator", "{{AssemblyVersion}}")]
+    public class InheritedApiVersionAttribute : ApiVersionAttribute
+    {
+        protected InheritedApiVersionAttribute(ApiVersion version) : base(version)
+        {
+        }
+
+        public InheritedApiVersionAttribute(string version) : base(version)
+        {
+        }
+    }
+}

@@ -1,21 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.CodeDom.Compiler;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Dojo.OpenApiGenerator.Exceptions;
+using {{ProjectNamespace}}.Generated.Http;
 
 namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{SourceCodeVersion}}{{/SourceCodeVersion}}
 {
     [ApiController]
-    {{#Version}}[ApiVersion("{{Version}}")]{{/Version}}
-    [GeneratedCode("Dojo.OpenApiGenerator", "{Assembly.GetExecutingAssembly().GetName().Version}")]
+    {{#SupportedVersions}}
+    [InheritedApiVersionAttribute("{{.}}")]
+    {{/SupportedVersions}}
+    {{#AuthorizationPolicies}}
+    [Authorize(Policy = "{{.}}")]
+    {{/AuthorizationPolicies}}
+    [GeneratedCode("Dojo.OpenApiGenerator", "{{AssemblyVersion}}")]
     public abstract class {{Title}}ControllerBase : ControllerBase
     {
+        private static readonly IList<string> _supportedApiVersions = new List<string>
+        {
+            {{#SupportedVersions}}
+            "{{.}}",
+            {{/SupportedVersions}}
+        };
+
+        public static readonly IReadOnlyCollection<string> SupportedApiVersions = new ReadOnlyCollection<string>(_supportedApiVersions);
+
         {{#Routes}}
         {{#Actions}}
         [{{HttpMethod}}{{#IsDeprecated}}("{{Route}}"){{/IsDeprecated}}]
@@ -24,7 +40,7 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
         {{/IsDeprecated}}
         {{#ResponseTypes}}
         {{#ApiModel}}
-        [ProducesResponseType(typeof({{TypeFullName}}), {{HttpStatusCode}})]
+        [ProducesResponseType(typeof({{&TypeFullName}}), {{HttpStatusCode}})]
         {{/ApiModel}}
         {{^ApiModel}}
         [ProducesResponseType({{HttpStatusCode}})]
@@ -34,7 +50,7 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
         [Produces({{&ContentTypesStringList}})]
         {{/ContentTypesStringList}}
         {{^IsDeprecated}}[Route("{{Route}}")]{{/IsDeprecated}}
-        public {{#SuccessResponse}}{{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}}{{/SuccessResponse}}  {{ActionName}}ActionAsync({{&InputActionParametersString}})
+        public virtual {{#SuccessResponse}}{{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}}{{/SuccessResponse}}  {{ActionName}}ActionAsync({{&InputActionParametersString}})
         {    
             return this.{{ActionName}}Async({{&InputServiceCallParametersString}});
         }

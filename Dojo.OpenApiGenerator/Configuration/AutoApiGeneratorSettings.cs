@@ -7,6 +7,9 @@ namespace Dojo.OpenApiGenerator.Configuration
     {
         public string VersionParameterName { get; set; }
         public bool IncludeVersionParameterInActionSignature { get; set; }
+        public string OpenApiSupportedVersionsExtension { get; set; }
+        public string DateTimeVersionFormat { get; set; }
+        public string ApiAuthorizationPoliciesExtension { get; set; }
 
         public static AutoApiGeneratorSettings GetAutoApiGeneratorSettings(string projectDir)
         {

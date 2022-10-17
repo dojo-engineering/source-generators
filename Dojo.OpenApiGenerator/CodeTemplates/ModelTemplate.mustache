@@ -4,13 +4,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace {{Namespace}}
 {
-    [GeneratedCode("Dojo.OpenApiGenerator", "{Assembly.GetExecutingAssembly().GetName().Version}")]
+    [GeneratedCode("Dojo.OpenApiGenerator", "{{AssemblyVersion}}")]
     public class {{TypeName}}{{#IsDerivedModel}} : {{#BaseModel}}{{&TypeFullName}}{{/BaseModel}}{{/IsDerivedModel}}
     {
         {{#Properties}}
         {{#IsRequired}}
         [Required]{{/IsRequired}}{{#IsEmail}}
-        [EmailAddress]{{/IsEmail}}
+        [EmailAddress]{{/IsEmail}}{{#MinLength}}
+        [MinLength({{.}})]{{/MinLength}}{{#MaxLength}}
+        [MaxLength({{.}})]{{/MaxLength}}
         public virtual {{&TypeFullName}} {{SourceName}} { get; set;}
 
         {{/Properties}}

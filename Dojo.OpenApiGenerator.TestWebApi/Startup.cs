@@ -1,14 +1,13 @@
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-// using Dojo.OpenApiGenerator.TestWebApi.Services;
+using Dojo.OpenApiGenerator.TestWebApi.Generated.StartupConfiguration;
+using Dojo.OpenApiGenerator.TestWebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NSwag.Generation.AspNetCore;
 
 namespace Dojo.OpenApiGenerator.TestWebApi
 {
@@ -24,25 +23,14 @@ namespace Dojo.OpenApiGenerator.TestWebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.AddControllers().AddJsonOptions(options =>
-            // {
-            //     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            //     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            // });
-            // services.AddSingleton<IHelloWorldService, HelloWorldService>();
-            //
-            // services.AddApiVersioning(options =>
-            // {
-            //     options.AssumeDefaultVersionWhenUnspecified = true;
-            //     options.DefaultApiVersion = Microsoft.AspNetCore.Mvc.ApiVersion.Default;
-            //     options.ApiVersionReader = new HeaderApiVersionReader("version");
-            //     options.ReportApiVersions = true;
-            // });
-            //
-            // services.AddVersionedApiExplorer();
-            //
-            // services.AddOpenApiDocument(document => ConfigureSingleVersion(document, "1.0"));
-            // services.AddOpenApiDocument(document => ConfigureSingleVersion(document, "2022-01-03"));
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            });
+            services.AddSingleton<IHelloWorldService, HelloWorldService>();
+
+            services.AddOpenApiVersioning("Hello World Service");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,27 +69,12 @@ namespace Dojo.OpenApiGenerator.TestWebApi
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-        }
-
-        private static void ConfigureSingleVersion(
-            AspNetCoreOpenApiDocumentGeneratorSettings configure,
-            string version)
-        {
-            configure.Title = "Test WebApi Service";
-            configure.DocumentName = version;
-            configure.ApiGroupNames = new[] { version };
-
-            configure.PostProcess = document =>
-            {
-                document.Info.Version = version;
-                document.Info.Title = "API";
-            };
         }
     }
 }

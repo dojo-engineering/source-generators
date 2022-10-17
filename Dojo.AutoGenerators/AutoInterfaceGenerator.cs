@@ -95,6 +95,10 @@ namespace Dojo.AutoGenerators
                     else if(param.ExplicitDefaultValue is string) {
                         bdr.Append('\"').Append(param.ExplicitDefaultValue).Append('\"');
                     }
+                    else if (param.ExplicitDefaultValue is bool)
+                    {
+                        bdr.Append(param.ExplicitDefaultValue.ToString().ToLower());
+                    }
                     else {
                         bdr.Append(param.ExplicitDefaultValue);
                     }

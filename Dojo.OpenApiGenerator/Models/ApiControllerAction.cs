@@ -10,6 +10,7 @@ namespace Dojo.OpenApiGenerator.Models
 {
     internal class ApiControllerAction : IHasRouteParameters, IHasHeaderParameters, IHasRequestBody, IHasQueryParameters
     {
+        private readonly OpenApiOperation _operation;
         private readonly IDictionary<string, ApiModel> _apiModels;
         private readonly string _projectNamespace;
         private readonly IDictionary<string, ApiParameterBase> _apiParameters;
@@ -22,7 +23,7 @@ namespace Dojo.OpenApiGenerator.Models
         public IEnumerable<ApiResponse> ResponseTypes { get; }
         public ApiResponse SuccessResponse { get; }
         public IEnumerable<ApiResponse> UnsuccessfulResponses { get; }
-        public IList<ApiRouteParameter> RouteParameters { get; }
+        public IList<ApiRouteParameter> RouteParameters { get; private set; }
         public string Version { get; }
         public string InputActionParametersString { get; }
         public string InputServiceCallParametersString { get; }
@@ -51,6 +52,7 @@ namespace Dojo.OpenApiGenerator.Models
             string apiFileName,
             AutoApiGeneratorSettings apiGeneratorSettings)
         {
+            _operation = operation;
             _apiModels = apiModels;
             _projectNamespace = projectNamespace;
             _apiParameters = apiParameters;
@@ -58,7 +60,7 @@ namespace Dojo.OpenApiGenerator.Models
             _apiGeneratorSettings = apiGeneratorSettings;
             IsDeprecated = operation.Deprecated;
             HttpMethod = GetHttpMethodAttributeName(operationType);
-            ActionName = operation.Summary;
+            ActionName = ToActionName(!string.IsNullOrWhiteSpace(operation.OperationId) ? operation.OperationId : operation.Summary);
             ResponseTypes = operation.Responses.Select(x => new ApiResponse(x.Key, x.Value, apiModels, apiVersion, apiFileName));
             RouteParameters = apiRouteParameters;
             Version = apiVersion;
@@ -86,16 +88,9 @@ namespace Dojo.OpenApiGenerator.Models
             return new ApiRequestBody(operationRequestBody, apiModels, Version, _apiFileName);
         }
 
-        private void ResolveParameters(IList<OpenApiParameter> operationParameters)
+        private void ResolveParameters(IEnumerable<OpenApiParameter> operationParameters)
         {
             AllParameters = new List<ApiParameterBase>();
-
-            if (RouteParameters != null && RouteParameters.Any())
-            {
-                HasAnyParameters = true;
-                HasRouteParameters = true;
-                AllParameters.AddRange(RouteParameters);
-            }
 
             foreach (var operationParameter in operationParameters.OrderBy(x => x.In))
             {
@@ -127,7 +122,29 @@ namespace Dojo.OpenApiGenerator.Models
 
                             break;
                         }
+                    case ParameterLocation.Path:
+                        {
+                            RouteParameters ??= new List<ApiRouteParameter>();
+
+                            if (RouteParameters.Any(p => p.Name == operationParameter.Name))
+                            {
+                                break;
+                            }
+
+                            var parameter = operationParameter.GetApiParameter<ApiRouteParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
+
+                            RouteParameters.Add(parameter);
+
+                            break;
+                        }
                 }
+            }
+
+            if (RouteParameters != null && RouteParameters.Any())
+            {
+                HasAnyParameters = true;
+                HasRouteParameters = true;
+                AllParameters.AddRange(RouteParameters);
             }
         }
 
@@ -153,17 +170,31 @@ namespace Dojo.OpenApiGenerator.Models
 
         private string GetInputActionParametersString()
         {
-            if (!HasAnyParameters)
+            if (!HasAnyParameters && !HasRequestBody)
             {
                 return null;
             }
 
             var actionParameterBuilder = new StringBuilder();
-            var index = 0;
+
+            if (HasRequestBody)
+            {
+                actionParameterBuilder.Append(
+                    GetParameterSignature(GetActionBodyParameterConstraint(RequestBody),
+                    RequestBody.ApiModel.TypeFullName,
+                    RequestBody.SourceCodeName));
+            }
 
             if (HasAnyParameters)
             {
-                foreach (var apiParameter in AllParameters)
+                if (actionParameterBuilder.Length > 0)
+                {
+                    actionParameterBuilder.Append($"{InputParametersSeparator}");
+                }
+
+                var index = 0;
+
+                foreach (var apiParameter in AllParameters.OrderBy(p => p.ApiModel.DefaultValue != null))
                 {
                     if (ExcludeVersionParameter(apiParameter))
                     {
@@ -177,26 +208,13 @@ namespace Dojo.OpenApiGenerator.Models
 
                     index++;
 
-                    actionParameterBuilder.Append(GetActionParameterConstraint(apiParameter));
-                    actionParameterBuilder.Append(" ");
-                    actionParameterBuilder.Append(apiParameter.ApiModel.TypeFullName);
-                    actionParameterBuilder.Append(" ");
-                    actionParameterBuilder.Append(apiParameter.SourceCodeName);
-                }
-            }
+                    var parameterConstraints = GetActionParameterConstraints(apiParameter);
+                    var parameterSignature = GetParameterSignature(parameterConstraints, apiParameter.ApiModel.TypeFullName, apiParameter.SourceCodeName);
 
-            if (HasRequestBody)
-            {
-                if (actionParameterBuilder.Length > 0)
-                {
-                    actionParameterBuilder.Append($"{InputParametersSeparator}");
-                }
+                    actionParameterBuilder.Append(parameterSignature);
 
-                actionParameterBuilder.Append(GetActionBodyParameterConstraint(RequestBody));
-                actionParameterBuilder.Append(" ");
-                actionParameterBuilder.Append(RequestBody.ApiModel.TypeFullName);
-                actionParameterBuilder.Append(" ");
-                actionParameterBuilder.Append(RequestBody.SourceCodeName);
+                    TryAppendParameterDefaultValue(apiParameter, actionParameterBuilder);
+                }
             }
 
             return actionParameterBuilder.ToString();
@@ -298,60 +316,6 @@ namespace Dojo.OpenApiGenerator.Models
             return builder.ToString();
         }
 
-        private static string GetActionParameterConstraint(ApiParameterBase apiParameter)
-        {
-            var actionSourceConstraint = GetActionParameterSourceConstrain(apiParameter.ParameterLocation, apiParameter.Name);
-            var constraint = $"[{actionSourceConstraint}";
-
-            if (apiParameter.IsRequired)
-            {
-                constraint += $"{InputParametersSeparator}{ActionConstraints.BindRequired}]";
-            }
-            else
-            {
-                constraint += "]";
-            }
-
-            return constraint;
-        }
-
-        private static string GetActionBodyParameterConstraint(ApiRequestBody apiRequestBody)
-        {
-            var actionSourceConstraint = ActionConstraints.FromBody;
-            var constraint = $"[{actionSourceConstraint}";
-
-            if (apiRequestBody.IsRequired)
-            {
-                constraint += $"{InputParametersSeparator}{ActionConstraints.BindRequired}]";
-            }
-            else
-            {
-                constraint += "]";
-            }
-
-            return constraint;
-        }
-
-        private static string GetActionParameterSourceConstrain(ParameterLocation parameterLocation, string parameterName)
-        {
-            switch (parameterLocation)
-            {
-                case ParameterLocation.Path:
-                    return ActionConstraints.FromRoute;
-                case ParameterLocation.Query:
-                    return ActionConstraints.FromQuery;
-                case ParameterLocation.Header:
-                    return GetFromHeaderActionConstraint(parameterName);
-            }
-
-            return null;
-        }
-
-        private static string GetFromHeaderActionConstraint(string parameterName)
-        {
-            return $"{ActionConstraints.FromHeader}(Name = \"{parameterName}\")";
-        }
-
         private string GetContentTypesAsList()
         {
             var contentTypes = new HashSet<string>();
@@ -380,6 +344,138 @@ namespace Dojo.OpenApiGenerator.Models
             return contentTypes.Any() ?
                 string.Join(",", contentTypes.Select(x => $"\"{x}\"")) :
                 null;
+        }
+
+        private static string GetActionParameterConstraints(ApiParameterBase apiParameter)
+        {
+            var actionSourceConstraint = GetActionParameterSourceConstraint(apiParameter.ParameterLocation, apiParameter.Name);
+            var constraintBuilder = new StringBuilder($"[{actionSourceConstraint}");
+            var constraints = new List<string>();
+
+            if (apiParameter.IsRequired)
+            {
+                constraints.Add(ActionConstraints.BindRequired);
+            }
+
+            if (apiParameter.MinLength.HasValue)
+            {
+                constraints.Add(ActionConstraints.MinLength);
+            }
+
+            if (apiParameter.MaxLength.HasValue)
+            {
+                constraints.Add(ActionConstraints.MaxLength);
+            }
+
+            if (constraints.Any())
+            {
+                foreach (var constraint in constraints)
+                {
+                    constraintBuilder.Append(InputParametersSeparator);
+
+                    switch (constraint)
+                    {
+                        case ActionConstraints.BindRequired:
+                            {
+                                constraintBuilder.Append($"{ActionConstraints.BindRequired}");
+                                break;
+                            }
+                        case ActionConstraints.MinLength:
+                            {
+                                constraintBuilder.Append($"{ActionConstraints.MinLength}({apiParameter.MinLength})");
+                                break;
+                            }
+                        case ActionConstraints.MaxLength:
+                            {
+                                constraintBuilder.Append($"{ActionConstraints.MaxLength}({apiParameter.MaxLength})");
+                                break;
+                            }
+                    }
+                }
+            }
+
+            constraintBuilder.Append("]");
+
+            return constraintBuilder.ToString();
+        }
+
+        private static string GetActionBodyParameterConstraint(ApiRequestBody apiRequestBody)
+        {
+            var actionSourceConstraint = ActionConstraints.FromBody;
+            var constraint = $"[{actionSourceConstraint}";
+
+            if (apiRequestBody.IsRequired)
+            {
+                constraint += $"{InputParametersSeparator}{ActionConstraints.BindRequired}]";
+            }
+            else
+            {
+                constraint += "]";
+            }
+
+            return constraint;
+        }
+
+        private static string GetActionParameterSourceConstraint(ParameterLocation parameterLocation, string parameterName)
+        {
+            switch (parameterLocation)
+            {
+                case ParameterLocation.Path:
+                    return ActionConstraints.FromRoute;
+                case ParameterLocation.Query:
+                    return ActionConstraints.FromQuery;
+                case ParameterLocation.Header:
+                    return GetFromHeaderActionConstraint(parameterName);
+            }
+
+            return null;
+        }
+
+        private static string GetFromHeaderActionConstraint(string parameterName)
+        {
+            return $"{ActionConstraints.FromHeader}(Name = \"{parameterName}\")";
+        }
+
+        private static string ToActionName(string actionName)
+        {
+            var actionNameWords = actionName.Split('_', '-', ' ');
+
+            return string.Join("", actionNameWords.Select(w => w.FirstCharToUpper()));
+        }
+
+        private static void TryAppendParameterDefaultValue(ApiParameterBase apiParameter, StringBuilder actionParameterBuilder)
+        {
+            if (apiParameter.ApiModel.DefaultValue == null)
+            {
+                return;
+            }
+
+            actionParameterBuilder.Append(" = ");
+            var defaultValue = apiParameter.ApiModel.DefaultValue.ToString();
+
+            switch (apiParameter.ApiModel.DefaultValue)
+            {
+                case bool:
+                    {
+                        actionParameterBuilder.Append($"{defaultValue.ToLower()}");
+                        break;
+                    }
+                case string:
+                    {
+                        actionParameterBuilder.Append($"\"{defaultValue}\"");
+                        break;
+                    }
+                default:
+                    {
+                        actionParameterBuilder.Append(defaultValue);
+                        break;
+                    }
+            }
+        }
+
+        private static string GetParameterSignature(string constraints, string typeFullName, string parameterName)
+        {
+            return $"{constraints} {typeFullName} {parameterName}";
         }
     }
 }

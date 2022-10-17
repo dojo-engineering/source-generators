@@ -9,16 +9,17 @@ namespace Dojo.OpenApiGenerator.Models
         public bool IsRequired { get; }
         public string SourceName { get; }
 
-        public ApiModelProperty(
-            string name, 
-            OpenApiSchema openApiSchema, 
-            ISet<string> required, 
+        public ApiModelProperty(string name,
+            OpenApiSchema openApiSchema,
+            ISet<string> required,
             IDictionary<string, ApiModel> apiModels,
-            string apiFileName) : base(openApiSchema, apiModels, apiFileName)
+            string apiFileName,
+            string projectNamespace) : base(openApiSchema, apiModels, apiFileName, projectNamespace)
         {
             Name = name;
             SourceName = name.FirstCharToUpper();
             IsRequired = ResolveIsRequired(name, required);
+            ProjectNamespace = projectNamespace;
 
             ResolveType(openApiSchema);
         }
