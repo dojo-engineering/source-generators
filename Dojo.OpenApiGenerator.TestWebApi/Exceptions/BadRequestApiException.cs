@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 
-namespace Dojo.OpenApiGenerator.Exceptions
+namespace Dojo.OpenApiGenerator.TestWebApi.Exceptions
 {
     public class BadRequestApiException : ApiException
     {

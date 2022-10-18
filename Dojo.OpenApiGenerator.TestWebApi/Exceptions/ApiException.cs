@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dojo.OpenApiGenerator.Exceptions
+namespace Dojo.OpenApiGenerator.TestWebApi.Exceptions
 {
     public class ApiException : Exception
     {

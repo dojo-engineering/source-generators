@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dojo.Generators.Abstractions;
-using Dojo.OpenApiGenerator.Exceptions;
+using Dojo.OpenApiGenerator.TestWebApi.Exceptions;
 using Dojo.OpenApiGenerator.TestWebApi.Generated.Models;
 
 namespace Dojo.OpenApiGenerator.TestWebApi.Services
