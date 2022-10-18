@@ -13,7 +13,7 @@ namespace Dojo.OpenApiGenerator.Configuration
 
         public static AutoApiGeneratorSettings GetAutoApiGeneratorSettings(string projectDir)
         {
-            var settingFilePath = $"{projectDir}\\{Constants.AutoApiGeneratorSettingsFile}";
+            var settingFilePath = $"{projectDir}/{Constants.AutoApiGeneratorSettingsFile}";
             var settingFile = new FileInfo(settingFilePath);
 
             if (!settingFile.Exists)

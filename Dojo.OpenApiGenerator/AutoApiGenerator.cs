@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -366,7 +367,7 @@ namespace Dojo.OpenApiGenerator
         private IDictionary<string, OpenApiDocument> GetOpenApiDocuments(string projectDir)
         {
             var openApiDocuments = new Dictionary<string, OpenApiDocument>();
-            var openApiSchemasDir = $"{projectDir}\\{Constants.OpenApiSchemasFolder}";
+            var openApiSchemasDir = $"{projectDir}/{Constants.OpenApiSchemasFolder}";
             var schemaFiles = FileSystemUtils.FindFilesWithExtensions(openApiSchemasDir, Constants.OpenApiFileJsonExtension, Constants.OpenApiFileYamlExtension, Constants.OpenApiFileYmlExtension);
             var openApiReader = new OpenApiStringReader();
 
