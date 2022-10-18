@@ -33,6 +33,7 @@ if [ -f "$VERSION_FILE" ]; then
         dotnet build --no-restore /src/Dojo.Generators.sln -c Release -p:Version=$NUGET_FULL_VER
         dotnet pack --no-build --output nupkgs -p:Version=$NUGET_FULL_VER -c Release
         dotnet nuget push /src/nupkgs/Dojo.AutoGenerators.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
+        dotnet nuget push /src/nupkgs/Dojo.OpenApiGenerator.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
         dotnet nuget push /src/nupkgs/Dojo.Generators.Core.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
         dotnet nuget push /src/nupkgs/Dojo.Generators.Abstractions.$NUGET_FULL_VER.nupkg -k $3 -s $NEXUS
 
