@@ -180,41 +180,44 @@ namespace Dojo.OpenApiGenerator.Models
             if (HasRequestBody)
             {
                 actionParameterBuilder.Append(
-                    GetParameterSignature(GetActionBodyParameterConstraint(RequestBody),
+                    GetParameterSignature(
+                        GetActionBodyParameterConstraint(RequestBody),
                     RequestBody.ApiModel.TypeFullName,
                     RequestBody.SourceCodeName));
             }
 
-            if (HasAnyParameters)
+            var parametersWithoutVersion = AllParameters
+                .Where(p => !ExcludeVersionParameter(p))
+                .OrderBy(p => p.ApiModel.DefaultValue != null)
+                .ToList();
+
+            if (!parametersWithoutVersion.Any())
             {
-                if (actionParameterBuilder.Length > 0)
+                return actionParameterBuilder.ToString();
+            }
+
+            if (actionParameterBuilder.Length > 0)
+            {
+                actionParameterBuilder.Append($"{InputParametersSeparator}");
+            }
+
+            var index = 0;
+
+            foreach (var apiParameter in parametersWithoutVersion)
+            {
+                if (index > 0 && index < parametersWithoutVersion.Count)
                 {
                     actionParameterBuilder.Append($"{InputParametersSeparator}");
                 }
 
-                var index = 0;
+                index++;
 
-                foreach (var apiParameter in AllParameters.OrderBy(p => p.ApiModel.DefaultValue != null))
-                {
-                    if (ExcludeVersionParameter(apiParameter))
-                    {
-                        continue;
-                    }
+                var parameterConstraints = GetActionParameterConstraints(apiParameter);
+                var parameterSignature = GetParameterSignature(parameterConstraints, apiParameter.ApiModel.TypeFullName, apiParameter.SourceCodeName);
 
-                    if (index > 0)
-                    {
-                        actionParameterBuilder.Append($"{InputParametersSeparator}");
-                    }
+                actionParameterBuilder.Append(parameterSignature);
 
-                    index++;
-
-                    var parameterConstraints = GetActionParameterConstraints(apiParameter);
-                    var parameterSignature = GetParameterSignature(parameterConstraints, apiParameter.ApiModel.TypeFullName, apiParameter.SourceCodeName);
-
-                    actionParameterBuilder.Append(parameterSignature);
-
-                    TryAppendParameterDefaultValue(apiParameter, actionParameterBuilder);
-                }
+                TryAppendParameterDefaultValue(apiParameter, actionParameterBuilder);
             }
 
             return actionParameterBuilder.ToString();
@@ -236,24 +239,20 @@ namespace Dojo.OpenApiGenerator.Models
             var builder = new StringBuilder();
             var index = 0;
 
-            if (HasAnyParameters)
+            var parametersWithoutVersion = AllParameters
+                .Where(p => !ExcludeVersionParameter(p))
+                .ToList();
+
+            foreach (var apiParameter in parametersWithoutVersion)
             {
-                foreach (var apiParameter in AllParameters)
+                if (index > 0 && index < parametersWithoutVersion.Count)
                 {
-                    if (ExcludeVersionParameter(apiParameter))
-                    {
-                        continue;
-                    }
-
-                    if (index > 0)
-                    {
-                        builder.Append($"{InputParametersSeparator}");
-                    }
-
-                    index++;
-
-                    builder.Append(apiParameter.SourceCodeName);
+                    builder.Append($"{InputParametersSeparator}");
                 }
+
+                index++;
+
+                builder.Append(apiParameter.SourceCodeName);
             }
 
             if (HasRequestBody)
@@ -278,27 +277,22 @@ namespace Dojo.OpenApiGenerator.Models
 
             var builder = new StringBuilder();
             var index = 0;
+            var parametersWithoutVersion = AllParameters
+                .Where(p => !ExcludeVersionParameter(p))
+                .ToList();
 
-            if (HasAnyParameters)
+            foreach (var apiParameter in parametersWithoutVersion)
             {
-                foreach (var apiParameter in AllParameters)
+                if (index > 0 && index < parametersWithoutVersion.Count)
                 {
-                    if (ExcludeVersionParameter(apiParameter))
-                    {
-                        continue;
-                    }
-
-                    if (index > 0)
-                    {
-                        builder.Append($"{InputParametersSeparator}");
-                    }
-
-                    index++;
-
-                    builder.Append(apiParameter.ApiModel.TypeFullName);
-                    builder.Append(" ");
-                    builder.Append(apiParameter.SourceCodeName);
+                    builder.Append($"{InputParametersSeparator}");
                 }
+
+                index++;
+
+                builder.Append(apiParameter.ApiModel.TypeFullName);
+                builder.Append(" ");
+                builder.Append(apiParameter.SourceCodeName);
             }
 
             if (HasRequestBody)
