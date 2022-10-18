@@ -153,7 +153,7 @@ namespace Dojo.OpenApiGenerator
             {
                 Title = openApiDocument.Info.Title,
                 SupportedVersions = supportedApiVersions,
-                SourceCodeVersion = GetSourceCodeVersion(supportedApiVersions, apiVersion),
+                SourceCodeVersion = StringHelpers.ToSourceCodeVersion(supportedApiVersions, apiVersion),
                 Routes = openApiDocument.Paths.Select(x => new ApiControllerRoute(x.Key, x.Value, _apiModels, projectNamespace, parameters, apiVersion, apiFileName, _autoApiGeneratorSettings)),
                 CanOverride = apisToOverride.Contains(openApiDocument.Info.Title),
                 Parameters = parameters,
@@ -261,13 +261,6 @@ namespace Dojo.OpenApiGenerator
             }
 
             return supportedVersions.Any() ? supportedVersions : null;
-        }
-
-        private static string GetSourceCodeVersion(HashSet<string> supportedApiVersions, string version)
-        {
-            version = string.IsNullOrWhiteSpace(version) ? supportedApiVersions.FirstOrDefault() : version;
-
-            return version.ToSourceCodeName();
         }
 
         private static void BuildApiModels(OpenApiDocument openApiDocument,

@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Dojo.OpenApiGenerator.Extensions
 {
@@ -31,6 +33,19 @@ namespace Dojo.OpenApiGenerator.Extensions
                     .Replace("-", string.Empty)
                     .Replace(".", string.Empty);
         }
+
+        public static string ToSourceCodeVersion(HashSet<string> supportedApiVersions, string version)
+        {
+            version = string.IsNullOrWhiteSpace(version) ? supportedApiVersions.FirstOrDefault() : version;
+
+            return version.ToSourceCodeVersion();
+        }
+
+        public static string ToSourceCodeVersion(this string version)
+        {
+            return version.ToSourceCodeName().Trim('0');
+        }
+
 
         public static string ToSourceCodeParameterName(this string value)
         {

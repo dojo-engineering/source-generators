@@ -74,6 +74,7 @@
 	<!-- Sections below allow to referrence project directly -->
 	<PropertyGroup>
 		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+		<Version>1.2.4</Version>
 	</PropertyGroup>
 
 	<Target Name="GetDependencyTargetPaths">

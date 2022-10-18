@@ -24,7 +24,7 @@ namespace Dojo.OpenApiGenerator.Models
             Name = name ?? openApiSchema.Title;
             TypeName = IsEnum ? Name : $"{Name}ApiModel";
             Version = apiVersion;
-            SourceCodeVersion =  apiVersion.ToSourceCodeName();
+            SourceCodeVersion =  apiVersion.ToSourceCodeVersion();
             Namespace = string.IsNullOrWhiteSpace(SourceCodeVersion) 
                 ? $"{ProjectNamespace}.Generated.Models"
                 : $"{ProjectNamespace}.Generated.Models.V{SourceCodeVersion}";

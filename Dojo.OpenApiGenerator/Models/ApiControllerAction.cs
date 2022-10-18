@@ -231,7 +231,7 @@ namespace Dojo.OpenApiGenerator.Models
 
         private string GetInputServiceCallParametersString()
         {
-            if (!HasAnyParameters)
+            if (!HasAnyParameters && !HasRequestBody)
             {
                 return null;
             }
@@ -270,7 +270,7 @@ namespace Dojo.OpenApiGenerator.Models
 
         private string GetInputServiceParametersString()
         {
-            if (!HasAnyParameters)
+            if (!HasAnyParameters && !HasRequestBody)
             {
                 return null;
             }
