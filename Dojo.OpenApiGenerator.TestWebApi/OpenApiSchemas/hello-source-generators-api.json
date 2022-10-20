@@ -111,11 +111,22 @@
           "Email": {
             "type": "string",
             "format": "email"
+          },
+          "type": {
+            "$ref": "#/components/schemas/HelloType"
           }
         },
         "required": [
           "Message",
           "Email"
+        ]
+      },
+      "HelloType": {
+        "type": "string",
+        "title": "HelloType",
+        "enum": [
+          "Salut",
+          "Buna"
         ]
       }
     },

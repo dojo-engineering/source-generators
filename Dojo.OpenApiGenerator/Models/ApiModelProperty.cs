@@ -24,6 +24,18 @@ namespace Dojo.OpenApiGenerator.Models
             ResolveType(openApiSchema);
         }
 
+        protected override string GetTypeFullName()
+        {
+            var typeFullName = base.GetTypeFullName();
+
+            if (IsReferenceType && !IsRequired && ReferenceModel.IsEnum)
+            {
+                return  $"System.Nullable<{typeFullName}>";
+            }
+
+            return typeFullName;
+        }
+
         private static bool ResolveIsRequired(string name, ISet<string> requiredProperties)
         {
             return requiredProperties != null && requiredProperties.Contains(name);
