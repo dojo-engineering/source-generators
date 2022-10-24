@@ -35,6 +35,9 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
         {{#Routes}}
         {{#Actions}}
         [{{HttpMethod}}{{#IsDeprecated}}("{{Route}}"){{/IsDeprecated}}]
+        {{#AuthorizationPolicies}}
+        [Authorize(Policy = "{{.}}")]
+        {{/AuthorizationPolicies}}
         {{#IsDeprecated}}
         [Obsolete]
         {{/IsDeprecated}}

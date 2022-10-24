@@ -8,7 +8,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Dojo.OpenApiGenerator.Models
 {
-    internal class ApiControllerAction : IHasRouteParameters, IHasHeaderParameters, IHasRequestBody, IHasQueryParameters
+    internal class ApiControllerAction : IHasRouteParameters, IHasHeaderParameters, IHasRequestBody, IHasQueryParameters, IHasAuthorizationPolicies
     {
         private readonly OpenApiOperation _operation;
         private readonly IDictionary<string, ApiModel> _apiModels;
@@ -40,6 +40,8 @@ namespace Dojo.OpenApiGenerator.Models
         public bool HasQueryParameters { get; private set; }
         public bool HasAnyParameters { get; private set; }
         public bool IsDeprecated { get; }
+
+        public IEnumerable<string> AuthorizationPolicies { get; set; }
 
         public ApiControllerAction(
             OperationType operationType,
@@ -75,6 +77,7 @@ namespace Dojo.OpenApiGenerator.Models
             InputActionParametersString = GetInputActionParametersString();
             InputServiceCallParametersString = GetInputServiceCallParametersString();
             InputServiceParametersString = GetInputServiceParametersString();
+            AuthorizationPolicies = _operation.TryGetApiAuthorizationPolicies(apiGeneratorSettings.ApiAuthorizationPoliciesExtension);
         }
 
         private ApiRequestBody GetRequestBody(OpenApiRequestBody operationRequestBody, IDictionary<string, ApiModel> apiModels)

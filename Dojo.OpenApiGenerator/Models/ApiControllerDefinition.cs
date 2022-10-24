@@ -2,7 +2,7 @@
 
 namespace Dojo.OpenApiGenerator.Models
 {
-    internal class ApiControllerDefinition : BaseGeneratedCodeModel
+    internal class ApiControllerDefinition : BaseGeneratedCodeModel, IHasAuthorizationPolicies
     {
         public string Title { get; set; }
         public HashSet<string> SupportedVersions { get; set; }

@@ -49,7 +49,10 @@
             "required": true
           }
         ],
-        "description": ""
+        "description": "",
+        "x-authorization-policies": [
+          "read"
+        ]
       },
       "parameters": [
         {
@@ -83,7 +86,11 @@
           }
         },
         "operationId": "get-hello-generated2",
-        "description": ""
+        "description": "",
+        "x-authorization-policies": [
+          "read",
+          "write"
+        ]
       }
     }
   },
