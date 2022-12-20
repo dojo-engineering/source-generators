@@ -92,6 +92,32 @@
           "write"
         ]
       }
+    },
+    "/hello_generated2": {
+      "get": {
+        "summary": "ObsoleteHelloGenerated2",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "obsolete-get-hello_generated2",
+        "description": "Use /hello-generated2",
+        "x-authorization-policies": [
+          "read",
+          "write"
+        ],
+        "deprecated": true
+      },
+      "parameters": []
     }
   },
   "components": {

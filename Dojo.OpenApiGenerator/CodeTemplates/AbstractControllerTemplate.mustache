@@ -34,13 +34,10 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
 
         {{#Routes}}
         {{#Actions}}
-        [{{HttpMethod}}{{#IsDeprecated}}("{{Route}}"){{/IsDeprecated}}]
+        [{{HttpMethod}}("{{Route}}")]
         {{#AuthorizationPolicies}}
         [Authorize(Policy = "{{.}}")]
         {{/AuthorizationPolicies}}
-        {{#IsDeprecated}}
-        [Obsolete]
-        {{/IsDeprecated}}
         {{#ResponseTypes}}
         {{#ApiModel}}
         [ProducesResponseType(typeof({{&TypeFullName}}), {{HttpStatusCode}})]
@@ -52,7 +49,7 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
         {{#ContentTypesStringList}}
         [Produces({{&ContentTypesStringList}})]
         {{/ContentTypesStringList}}
-        {{^IsDeprecated}}[Route("{{Route}}")]{{/IsDeprecated}}
+        {{#IsDeprecated}}[Obsolete("{{&Description}}")]{{/IsDeprecated}}
         public virtual {{#SuccessResponse}}{{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}}{{/SuccessResponse}}  {{ActionName}}ActionAsync({{&InputActionParametersString}})
         {    
             return this.{{ActionName}}Async({{&InputServiceCallParametersString}});
@@ -60,6 +57,7 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
 
         {{#SuccessResponse}} 
         protected abstract {{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}} {{ActionName}}Async({{&InputServiceParametersString}});
+
         {{/SuccessResponse}} 
         {{/Actions}}     
         {{/Routes}}

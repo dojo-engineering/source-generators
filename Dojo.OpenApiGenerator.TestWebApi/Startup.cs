@@ -1,4 +1,3 @@
-using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Dojo.OpenApiGenerator.TestWebApi.Generated.StartupConfiguration;
@@ -41,29 +40,7 @@ namespace Dojo.OpenApiGenerator.TestWebApi
                 app.UseDeveloperExceptionPage();
             }
 
-            var serverUrl = string.Empty;
-
-            app.UseOpenApi(options =>
-            {
-                options.Path = "/api/swagger/{documentName}/swagger.json";
-            });
-
-            app.UseSwaggerUi3(x =>
-            {
-                x.Path = "/api/swagger";
-                x.DocumentPath = "/api/swagger/{documentName}/swagger.json";
-
-                if (!env.IsDevelopment())
-                {
-                    x.TransformToExternalPath = (url, _) =>
-                    {
-                        x.ServerUrl = serverUrl;
-                        return url.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
-                            ? x.ServerUrl + url
-                            : url;
-                    };
-                }
-            });
+            app.UseOpenApiWithSwagger(env, !env.IsDevelopment());
 
             app.UseHttpsRedirection();
 

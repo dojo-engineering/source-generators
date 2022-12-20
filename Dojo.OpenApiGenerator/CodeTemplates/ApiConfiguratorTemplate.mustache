@@ -1,5 +1,9 @@
-﻿using System.CodeDom.Compiler;
+﻿using System;
+using System.Linq;
+using System.CodeDom.Compiler;
 using {{ProjectNamespace}}.Generated.Common;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +46,42 @@ namespace {{ProjectNamespace}}.Generated.StartupConfiguration
             }
 
             return services;
+        }
+
+        public static void UseOpenApiWithSwagger(this IApplicationBuilder app, IWebHostEnvironment env, bool includeEnvironmentName)
+        {
+            var serverUrl = string.Empty;
+
+            app.UseOpenApi(options =>
+            {
+                options.Path = "/api/swagger/{documentName}/swagger.json";
+
+                if (includeEnvironmentName)
+                {
+                    options.PostProcess = (document, _) =>
+                    {
+                        document.Servers.First().Url += $"/{env.EnvironmentName}";
+                        serverUrl = document.Servers.First().Url;
+                    };
+                }
+            });
+
+            app.UseSwaggerUi3(x =>
+            {
+                x.Path = "/api/swagger";
+                x.DocumentPath = "/api/swagger/{documentName}/swagger.json";
+
+                if (includeEnvironmentName)
+                {
+                    x.TransformToExternalPath = (url, _) =>
+                    {
+                        x.ServerUrl = serverUrl;
+                        return url.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+                            ? x.ServerUrl + url
+                            : url;
+                    };
+                }
+            });
         }
 
         private static void ConfigureSingleVersion(

@@ -32,5 +32,10 @@ namespace Dojo.OpenApiGenerator.TestWebApi.Controllers
         {
             return Ok(await _helloWorldService.HelloGenerated2Async());
         }
+
+        protected override Task<ActionResult<string>> ObsoleteGetHelloGenerated2Async()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

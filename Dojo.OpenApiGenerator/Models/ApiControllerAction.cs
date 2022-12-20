@@ -10,7 +10,6 @@ namespace Dojo.OpenApiGenerator.Models
 {
     internal class ApiControllerAction : IHasRouteParameters, IHasHeaderParameters, IHasRequestBody, IHasQueryParameters, IHasAuthorizationPolicies
     {
-        private readonly OpenApiOperation _operation;
         private readonly IDictionary<string, ApiModel> _apiModels;
         private readonly string _projectNamespace;
         private readonly IDictionary<string, ApiParameterBase> _apiParameters;
@@ -40,6 +39,7 @@ namespace Dojo.OpenApiGenerator.Models
         public bool HasQueryParameters { get; private set; }
         public bool HasAnyParameters { get; private set; }
         public bool IsDeprecated { get; }
+        public string Description { get; }
 
         public IEnumerable<string> AuthorizationPolicies { get; set; }
 
@@ -54,7 +54,6 @@ namespace Dojo.OpenApiGenerator.Models
             string apiFileName,
             AutoApiGeneratorSettings apiGeneratorSettings)
         {
-            _operation = operation;
             _apiModels = apiModels;
             _projectNamespace = projectNamespace;
             _apiParameters = apiParameters;
@@ -77,7 +76,8 @@ namespace Dojo.OpenApiGenerator.Models
             InputActionParametersString = GetInputActionParametersString();
             InputServiceCallParametersString = GetInputServiceCallParametersString();
             InputServiceParametersString = GetInputServiceParametersString();
-            AuthorizationPolicies = _operation.TryGetApiAuthorizationPolicies(apiGeneratorSettings.ApiAuthorizationPoliciesExtension);
+            AuthorizationPolicies = operation.TryGetApiAuthorizationPolicies(apiGeneratorSettings.ApiAuthorizationPoliciesExtension);
+            Description = operation.Description;
         }
 
         private ApiRequestBody GetRequestBody(OpenApiRequestBody operationRequestBody, IDictionary<string, ApiModel> apiModels)
