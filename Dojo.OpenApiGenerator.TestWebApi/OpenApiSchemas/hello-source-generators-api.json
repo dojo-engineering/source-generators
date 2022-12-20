@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "HelloWorld",
-    "version": "",
+    "version": "2022-04-07",
     "description": ""
   },
   "paths": {
@@ -52,6 +52,9 @@
         "description": "",
         "x-authorization-policies": [
           "read"
+        ],
+        "x-supported-api-versions": [
+          "2022-01-01"
         ]
       },
       "parameters": [
@@ -65,9 +68,6 @@
           "required": true
         }
       ]
-    },
-    "": {
-      "parameters": []
     },
     "/hello-generated2": {
       "get": {
@@ -115,7 +115,10 @@
           "read",
           "write"
         ],
-        "deprecated": true
+        "deprecated": true,
+        "x-supported-api-versions": [
+          "1.0"
+        ]
       },
       "parameters": []
     }
@@ -165,11 +168,6 @@
     },
     "responses": {}
   },
-  "x-supported-api-versions": [
-    "1.0",
-    "2022-01-03",
-    "2022-04-07"
-  ],
   "x-authorization-policies": [
     "Sec1",
     "Sec2"

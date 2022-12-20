@@ -52,5 +52,56 @@ namespace Dojo.OpenApiGenerator.Extensions
 
             return authPolicies.Any() ? authPolicies : null;
         }
+
+        public static HashSet<string> TryGetSupportedApiVersions(this IOpenApiExtensible openApiConfiguration, string supportedVersionExtensionName, string dateTimeVersionFormat, string declaredVersion = null)
+        {
+            var supportedVersions = new HashSet<string>();
+
+            if (!string.IsNullOrWhiteSpace(declaredVersion))
+            {
+                supportedVersions.Add(declaredVersion);
+            }
+
+            if (string.IsNullOrWhiteSpace(supportedVersionExtensionName))
+            {
+                return supportedVersions;
+            }
+
+            if (!openApiConfiguration.Extensions.TryGetValue(supportedVersionExtensionName, out var extension))
+            {
+                return supportedVersions;
+            }
+
+            if (extension is not OpenApiArray extensionValues || !extensionValues.Any())
+            {
+                return supportedVersions;
+            }
+
+            foreach (var extensionValue in extensionValues.Where(x => x != null))
+            {
+                switch (extensionValue)
+                {
+                    case OpenApiString openApiString:
+                    {
+                        if (string.IsNullOrWhiteSpace(openApiString.Value))
+                        {
+                            continue;
+                        }
+
+                        supportedVersions.Add(openApiString.Value);
+
+                        break;
+                    }
+                    case OpenApiDateTime openApiDateTime:
+                    {
+                        supportedVersions.Add(openApiDateTime.Value.ToString(dateTimeVersionFormat));
+
+                        break;
+                    }
+                }
+            }
+
+            return supportedVersions.Any() ? supportedVersions : null;
+        }
     }
 }

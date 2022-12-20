@@ -14,9 +14,6 @@ using {{ProjectNamespace}}.Generated.Http;
 namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{SourceCodeVersion}}{{/SourceCodeVersion}}
 {
     [ApiController]
-    {{#SupportedVersions}}
-    [InheritedApiVersionAttribute("{{.}}")]
-    {{/SupportedVersions}}
     {{#AuthorizationPolicies}}
     [Authorize(Policy = "{{.}}")]
     {{/AuthorizationPolicies}}
@@ -38,6 +35,9 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
         {{#AuthorizationPolicies}}
         [Authorize(Policy = "{{.}}")]
         {{/AuthorizationPolicies}}
+        {{#SupportedVersions}}
+        [InheritedApiVersionAttribute("{{.}}")]
+        {{/SupportedVersions}}
         {{#ResponseTypes}}
         {{#ApiModel}}
         [ProducesResponseType(typeof({{&TypeFullName}}), {{HttpStatusCode}})]

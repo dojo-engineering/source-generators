@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Dojo.OpenApiGenerator.TestWebApi.Generated.Controllers.V1;
-using Dojo.OpenApiGenerator.TestWebApi.Generated.Models;
+using Dojo.OpenApiGenerator.TestWebApi.Generated.Controllers.V20220407;
+using Dojo.OpenApiGenerator.TestWebApi.Generated.Models.V20220407;
 using Dojo.OpenApiGenerator.TestWebApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;

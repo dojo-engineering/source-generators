@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,8 +10,6 @@ using Dojo.OpenApiGenerator.Extensions;
 using Dojo.OpenApiGenerator.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using Stubble.Core;
@@ -142,83 +139,31 @@ namespace Dojo.OpenApiGenerator
             string apiFileName)
         {
             var apiVersion = openApiDocument.Info.Version;
-            var supportedApiVersions = TryGetSupportedApiVersions(openApiDocument) ?? new HashSet<string>();
-            if (!string.IsNullOrWhiteSpace(apiVersion))
-            {
-                supportedApiVersions.Add(apiVersion);
-            }
+            var controllerApiVersions = openApiDocument.TryGetSupportedApiVersions(_autoApiGeneratorSettings.OpenApiSupportedVersionsExtension, _autoApiGeneratorSettings.DateTimeVersionFormat, apiVersion) ?? new HashSet<string>();
 
             var parameters = openApiDocument.Components.Parameters.GetApiParameters(projectNamespace, _apiModels, apiVersion, apiFileName);
-            var data = new ApiControllerDefinition(projectNamespace)
+            var apiControllerDefinition = new ApiControllerDefinition(projectNamespace)
             {
                 Title = openApiDocument.Info.Title,
-                SupportedVersions = supportedApiVersions,
-                SourceCodeVersion = StringHelpers.ToSourceCodeVersion(supportedApiVersions, apiVersion),
-                Routes = openApiDocument.Paths.Select(x => new ApiControllerRoute(x.Key, x.Value, _apiModels, projectNamespace, parameters, apiVersion, apiFileName, _autoApiGeneratorSettings)),
+                Routes = openApiDocument.Paths.Select(x => new ApiControllerRoute(x.Key, x.Value, _apiModels, projectNamespace, parameters, apiVersion, apiFileName, _autoApiGeneratorSettings)).ToList(),
                 CanOverride = apisToOverride.Contains(openApiDocument.Info.Title),
                 Parameters = parameters,
-                AuthorizationPolicies = openApiDocument.TryGetApiAuthorizationPolicies(_autoApiGeneratorSettings.ApiAuthorizationPoliciesExtension)
+                AuthorizationPolicies = openApiDocument.TryGetApiAuthorizationPolicies(_autoApiGeneratorSettings.ApiAuthorizationPoliciesExtension),
+                SupportedVersions = controllerApiVersions,
+                SourceCodeVersion = StringHelpers.ToSourceCodeVersion(controllerApiVersions, apiVersion)
             };
 
-            foreach (var supportedApiVersion in supportedApiVersions)
+            ApiVersions.UnionWith(controllerApiVersions);
+
+            foreach (var action in apiControllerDefinition.Routes.SelectMany(r => r.Actions))
             {
-                ApiVersions.Add(supportedApiVersion);
+                ApiVersions.UnionWith(action.SupportedVersions);
             }
 
-            //GenerateServiceInterface(context, data);
-
-            if (data.Routes.Any(x => x.Actions.Any()))
+            if (apiControllerDefinition.Routes.Any(x => x.Actions.Any()))
             {
-                GenerateController(context, data, apiFileName);
+                GenerateController(context, apiControllerDefinition, apiFileName);
             }
-        }
-
-        private HashSet<string> TryGetSupportedApiVersions(IOpenApiExtensible openApiDocument)
-        {
-            var supportedVersionExtensionName = _autoApiGeneratorSettings.OpenApiSupportedVersionsExtension;
-
-            if (string.IsNullOrWhiteSpace(supportedVersionExtensionName))
-            {
-                return null;
-            }
-
-            if (!openApiDocument.Extensions.TryGetValue(supportedVersionExtensionName, out var extension))
-            {
-                return null;
-            }
-
-            if (extension is not OpenApiArray extensionValues || !extensionValues.Any())
-            {
-                return null;
-            }
-
-            var supportedVersions = new HashSet<string>();
-
-            foreach (var extensionValue in extensionValues.Where(x => x != null))
-            {
-                switch (extensionValue)
-                {
-                    case OpenApiString openApiString:
-                        {
-                            if (string.IsNullOrWhiteSpace(openApiString.Value))
-                            {
-                                continue;
-                            }
-
-                            supportedVersions.Add(openApiString.Value);
-
-                            break;
-                        }
-                    case OpenApiDateTime openApiDateTime:
-                    {
-                        supportedVersions.Add(openApiDateTime.Value.ToString(_autoApiGeneratorSettings.DateTimeVersionFormat));
-
-                        break;
-                    }
-                }
-            }
-
-            return supportedVersions.Any() ? supportedVersions : null;
         }
 
         private static void BuildApiModels(OpenApiDocument openApiDocument,

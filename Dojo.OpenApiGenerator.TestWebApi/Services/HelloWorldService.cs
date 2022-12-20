@@ -2,14 +2,14 @@
 using System.Threading.Tasks;
 using Dojo.Generators.Abstractions;
 using Dojo.OpenApiGenerator.TestWebApi.Exceptions;
-using Dojo.OpenApiGenerator.TestWebApi.Generated.Models;
+using Dojo.OpenApiGenerator.TestWebApi.Generated.Models.V20220407;
 
 namespace Dojo.OpenApiGenerator.TestWebApi.Services
 {
     [AutoInterface]
     public partial class HelloWorldService
     {
-        public Task<Dojo.OpenApiGenerator.TestWebApi.Generated.Models.HelloFromSourceApiModel> HelloFromSourceAsync(long number)
+        public Task<Dojo.OpenApiGenerator.TestWebApi.Generated.Models.V20220407.HelloFromSourceApiModel> HelloFromSourceAsync(long number)
         {
             var result = GetHelloFromSourceGeneratedApiModel(number);
 
