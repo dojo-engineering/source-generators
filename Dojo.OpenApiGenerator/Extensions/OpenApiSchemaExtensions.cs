@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;
@@ -107,6 +108,40 @@ namespace Dojo.OpenApiGenerator.Extensions
             }
 
             return supportedVersions.Any() ? supportedVersions : null;
+        }
+
+        public static T GetExtensionValueOrDefault<T>(this IOpenApiExtensible schema, string extensionName, T defaultValue)
+        {
+            if (!schema.Extensions.TryGetValue(extensionName, out var extension))
+            {
+                return defaultValue;
+            }
+
+            object value = null;
+
+            if (typeof(T) == typeof(string))
+            {
+                value = (extension as OpenApiString)?.Value;
+            }
+            else if (typeof(T) == typeof(int))
+            {
+                value = (extension as OpenApiInteger)?.Value;
+            }
+            else if (typeof(T) == typeof(bool))
+            {
+                value = (extension as OpenApiBoolean)?.Value;
+            }
+            else if (typeof(T) == typeof(DateTime))
+            {
+                value = (extension as OpenApiDateTime)?.Value;
+            }
+
+            if (value == null)
+            {
+                return defaultValue;
+            }
+
+            return (T)value;
         }
     }
 }

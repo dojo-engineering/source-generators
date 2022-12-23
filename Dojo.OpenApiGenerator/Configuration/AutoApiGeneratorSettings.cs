@@ -10,6 +10,7 @@ namespace Dojo.OpenApiGenerator.Configuration
         public string OpenApiSupportedVersionsExtension { get; set; }
         public string DateTimeVersionFormat { get; set; }
         public string ApiAuthorizationPoliciesExtension { get; set; }
+        public string AbstractModelExtension { get; set; }
 
         public static AutoApiGeneratorSettings GetAutoApiGeneratorSettings(string projectDir)
         {

@@ -19,5 +19,9 @@
        "Sec2"
      ]
    */
-  "ApiAuthorizationPoliciesExtension": "x-authorization-policies"
+  "ApiAuthorizationPoliciesExtension": "x-authorization-policies",
+  /*
+   * Use to specify is meant to be abstract.
+   */
+  "AbstractModelExtension": "x-abstract"
 }

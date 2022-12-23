@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Dojo.OpenApiGenerator.Configuration;
 using Dojo.OpenApiGenerator.Extensions;
 using Microsoft.OpenApi.Models;
 
@@ -16,7 +17,8 @@ namespace Dojo.OpenApiGenerator.Models
             string projectNamespace, 
             IDictionary<string, ApiModel> apiModels,
             string apiVersion,
-            string apiFileName) : base(sourceCodeName, openApiParameter, apiVersion, apiModels, apiFileName)
+            string apiFileName,
+            AutoApiGeneratorSettings autoApiGeneratorSettings) : base(sourceCodeName, openApiParameter, apiVersion, apiModels, apiFileName, autoApiGeneratorSettings)
         {
             _projectNamespace = projectNamespace;
         }
@@ -25,7 +27,7 @@ namespace Dojo.OpenApiGenerator.Models
         {
             return OpenApiParameter.Schema.Reference != null ? 
                 ApiModels[OpenApiParameter.Reference.GetModelName()] : 
-                new ApiModel(null, OpenApiParameter.Schema, _projectNamespace, Version, ApiModels, ApiFileName);
+                new ApiModel(null, OpenApiParameter.Schema, _projectNamespace, Version, ApiModels, ApiFileName, AutoApiGeneratorSettings);
         }
     }
 }

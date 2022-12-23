@@ -26,7 +26,7 @@ namespace Dojo.OpenApiGenerator.Models
             IEnumerable<string> defaultApiVersions)
         {
             Version = apiVersion;
-            var routeParameters = openApiPathItem.Parameters.Select(p => p.GetApiParameter<ApiRouteParameter>(Version, apiModels, apiFileName, apiParameters, projectNamespace)).ToList();
+            var routeParameters = openApiPathItem.Parameters.Select(p => p.GetApiParameter<ApiRouteParameter>(Version, apiModels, apiFileName, apiGeneratorSettings, apiParameters, projectNamespace)).ToList();
 
             Route = BuildRoute(route, routeParameters);
             Actions = openApiPathItem.Operations.Select(x =>

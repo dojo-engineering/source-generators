@@ -141,7 +141,7 @@ namespace Dojo.OpenApiGenerator
             var apiVersion = openApiDocument.Info.Version;
             var controllerApiVersions = openApiDocument.TryGetSupportedApiVersions(_autoApiGeneratorSettings.OpenApiSupportedVersionsExtension, _autoApiGeneratorSettings.DateTimeVersionFormat, apiVersion) ?? new HashSet<string>();
 
-            var parameters = openApiDocument.Components.Parameters.GetApiParameters(projectNamespace, _apiModels, apiVersion, apiFileName);
+            var parameters = openApiDocument.Components.Parameters.GetApiParameters(projectNamespace, _apiModels, apiVersion, apiFileName, _autoApiGeneratorSettings);
             var apiControllerDefinition = new ApiControllerDefinition(projectNamespace)
             {
                 Title = openApiDocument.Info.Title,
@@ -166,7 +166,7 @@ namespace Dojo.OpenApiGenerator
             }
         }
 
-        private static void BuildApiModels(OpenApiDocument openApiDocument,
+        private void BuildApiModels(OpenApiDocument openApiDocument,
             string projectNamespace,
             IDictionary<string, ApiModel> apiModels,
             string apiFileName)
@@ -252,10 +252,10 @@ namespace Dojo.OpenApiGenerator
             context.AddSource(fileName, SourceText.From(serviceInterfaceSourceCode, Encoding.UTF8));
         }
 
-        private static Dictionary<string, ApiModel> GetApiModels(OpenApiDocument openApiDocument, string projectNamespace, string apiVersion, IDictionary<string, ApiModel> apiModels, string apiFileName)
+        private Dictionary<string, ApiModel> GetApiModels(OpenApiDocument openApiDocument, string projectNamespace, string apiVersion, IDictionary<string, ApiModel> apiModels, string apiFileName)
         {
             var models =
-                openApiDocument.Components.Schemas.Select(x => new ApiModel(x.Key, x.Value, projectNamespace, apiVersion, apiModels, apiFileName));
+                openApiDocument.Components.Schemas.Select(x => new ApiModel(x.Key, x.Value, projectNamespace, apiVersion, apiModels, apiFileName, _autoApiGeneratorSettings));
 
             return models.ToDictionary(x => x.Name);
         }

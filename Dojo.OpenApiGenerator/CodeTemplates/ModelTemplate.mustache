@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace {{Namespace}}
 {
     [GeneratedCode("Dojo.OpenApiGenerator", "{{AssemblyVersion}}")]
-    public class {{TypeName}}{{#IsDerivedModel}} : {{#BaseModel}}{{&TypeFullName}}{{/BaseModel}}{{/IsDerivedModel}}
+    public{{#IsAbstract}} abstract{{/IsAbstract}} class {{TypeName}}{{#IsDerivedModel}} : {{#BaseModel}}{{&TypeFullName}}{{/BaseModel}}{{/IsDerivedModel}}
     {
         {{#Properties}}
         {{#IsRequired}}

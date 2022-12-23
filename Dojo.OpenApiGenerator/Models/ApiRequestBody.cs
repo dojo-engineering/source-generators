@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Dojo.OpenApiGenerator.Configuration;
 using Dojo.OpenApiGenerator.Extensions;
 using Microsoft.OpenApi.Models;
 
@@ -12,6 +13,7 @@ namespace Dojo.OpenApiGenerator.Models
         private readonly OpenApiRequestBody _openApiRequestBody;
 
         public string Version { get; }
+        public AutoApiGeneratorSettings AutoApiGeneratorSettings { get; }
         public string Name { get; set; }
         public ApiModel ApiModel { get; set; }
         public bool IsRequired { get; }
@@ -23,13 +25,15 @@ namespace Dojo.OpenApiGenerator.Models
             OpenApiRequestBody openApiRequestBody,
             IDictionary<string, ApiModel> apiModels,
             string apiVersion,
-            string apiFileName)
+            string apiFileName,
+            AutoApiGeneratorSettings autoApiGeneratorSettings)
         {
             _apiModels = apiModels;
             _apiFileName = apiFileName;
             _openApiRequestBody = openApiRequestBody;
 
             Version = apiVersion;
+            AutoApiGeneratorSettings = autoApiGeneratorSettings;
             IsRequired = _openApiRequestBody.Required;
             ApiModel = ResolveApiModel();
             Name = openApiRequestBody.Description ?? ApiModel.Name;
@@ -40,7 +44,7 @@ namespace Dojo.OpenApiGenerator.Models
         {
             //TODO add support multiple request body types
             var content = _openApiRequestBody.Content.FirstOrDefault();
-            var apiContent = new ApiContent(content.Key, content.Value, _apiModels, Version, _apiFileName);
+            var apiContent = new ApiContent(content.Key, content.Value, _apiModels, Version, _apiFileName, AutoApiGeneratorSettings);
 
             return apiContent.ApiModel;
         }

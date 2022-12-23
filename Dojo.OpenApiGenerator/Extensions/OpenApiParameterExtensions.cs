@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Dojo.OpenApiGenerator.Configuration;
 using Dojo.OpenApiGenerator.Models;
 using Microsoft.OpenApi.Models;
 
@@ -11,6 +12,7 @@ namespace Dojo.OpenApiGenerator.Extensions
             string apiVersion,
             IDictionary<string, ApiModel> apiModels,
             string apiFileName,
+            AutoApiGeneratorSettings autoApiGeneratorSettings,
             IDictionary<string, ApiParameterBase> globalParameters = null,
             string projectNamespace = null) where T : ApiParameterBase
         {
@@ -20,7 +22,7 @@ namespace Dojo.OpenApiGenerator.Extensions
                 return globalParameters[parameterName] as T;
             }
 
-            return GetApiParameterInternal(null, openApiParameter, apiVersion, projectNamespace, apiModels, apiFileName) as T;
+            return GetApiParameterInternal(null, openApiParameter, apiVersion, projectNamespace, apiModels, apiFileName, autoApiGeneratorSettings) as T;
         }
 
         public static IDictionary<string, ApiParameterBase> GetApiParameters(
@@ -28,12 +30,13 @@ namespace Dojo.OpenApiGenerator.Extensions
             string projectNamespace, 
             Dictionary<string, ApiModel> apiModels,
             string apiVersion,
-            string apiFileName)
+            string apiFileName,
+            AutoApiGeneratorSettings autoApiGeneratorSettings)
         {
             var apiParameters = new Dictionary<string, ApiParameterBase>();
             foreach (var (sourceCodeName, openApiParameter) in openApiParameters.Select(x => (x.Key, x.Value)))
             {
-                apiParameters.Add(sourceCodeName, GetApiParameterInternal(sourceCodeName, openApiParameter, apiVersion, projectNamespace, apiModels, apiFileName));
+                apiParameters.Add(sourceCodeName, GetApiParameterInternal(sourceCodeName, openApiParameter, apiVersion, projectNamespace, apiModels, apiFileName, autoApiGeneratorSettings));
             }
 
             return apiParameters;
@@ -44,22 +47,23 @@ namespace Dojo.OpenApiGenerator.Extensions
             string apiVersion,
             string projectNamespace, 
             IDictionary<string, ApiModel> apiModels,
-            string apiFileName)
+            string apiFileName,
+            AutoApiGeneratorSettings autoApiGeneratorSettings)
         {
             switch (apiParameter.In)
             {
                 case ParameterLocation.Path:
                 {
-                    return new ApiRouteParameter(sourceCodeName, apiParameter, apiVersion, apiModels, apiFileName);
+                    return new ApiRouteParameter(sourceCodeName, apiParameter, apiVersion, apiModels, apiFileName, autoApiGeneratorSettings);
                 }
 
                 case ParameterLocation.Header:
                 {
-                    return new ApiHeaderParameter(sourceCodeName, apiParameter, projectNamespace, apiModels, apiVersion, apiFileName);
+                    return new ApiHeaderParameter(sourceCodeName, apiParameter, projectNamespace, apiModels, apiVersion, apiFileName, autoApiGeneratorSettings);
                 }
                 case ParameterLocation.Query:
                 {
-                    return new ApiQueryParameter(sourceCodeName, apiParameter, projectNamespace, apiModels, apiVersion, apiFileName);
+                    return new ApiQueryParameter(sourceCodeName, apiParameter, projectNamespace, apiModels, apiVersion, apiFileName, autoApiGeneratorSettings);
                 }
             }
 

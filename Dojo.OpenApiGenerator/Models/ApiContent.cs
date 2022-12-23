@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Dojo.OpenApiGenerator.Configuration;
 using Dojo.OpenApiGenerator.Extensions;
 using Microsoft.OpenApi.Models;
 
@@ -18,22 +19,24 @@ namespace Dojo.OpenApiGenerator.Models
             OpenApiMediaType openApiMediaType, 
             IDictionary<string, ApiModel> apiModels, 
             string apiVersion,
-            string apiFileName)
+            string apiFileName, 
+            AutoApiGeneratorSettings autoApiGeneratorSettings)
         {
             _apiModels = apiModels;
             _apiFileName = apiFileName;
             Type = contentType;
             Version = apiVersion;
-            ApiModel = GetApiModel(openApiMediaType, apiModels);
+            ApiModel = GetApiModel(openApiMediaType, apiModels, autoApiGeneratorSettings);
         }
 
         private ApiModel GetApiModel(
             OpenApiMediaType openApiMediaType,
-            IDictionary<string, ApiModel> apiModels)
+            IDictionary<string, ApiModel> apiModels,
+            AutoApiGeneratorSettings autoApiGeneratorSettings)
         {
             if (!openApiMediaType.Schema.IsReferenceType())
             {
-                return new ApiModel(openApiMediaType.Schema, _apiModels, _apiFileName);
+                return new ApiModel(openApiMediaType.Schema, _apiModels, _apiFileName, autoApiGeneratorSettings);
             }
 
             var refName = openApiMediaType.Schema.Reference.GetApiModelReference(_apiFileName);

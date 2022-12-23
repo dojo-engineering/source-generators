@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dojo.OpenApiGenerator.Configuration;
 using Dojo.OpenApiGenerator.Extensions;
 using Dojo.OpenApiGenerator.OpenApi;
 using Microsoft.OpenApi.Any;
@@ -15,6 +16,7 @@ namespace Dojo.OpenApiGenerator.Models
         protected OpenApiSchema OpenApiSchema { get; }
         protected IDictionary<string, ApiModel> ApiModels { get; }
         protected string ApiFileName { get; }
+        public AutoApiGeneratorSettings AutoApiGeneratorSettings { get; }
 
         public bool IsEnum { get; }
         public IList<string> EnumValues { get; }
@@ -40,11 +42,13 @@ namespace Dojo.OpenApiGenerator.Models
             OpenApiSchema openApiSchema,
             IDictionary<string, ApiModel> apiModels,
             string apiFileName,
-            string projectNamespace) : base(projectNamespace)
+            string projectNamespace,
+            AutoApiGeneratorSettings autoApiGeneratorSettings) : base(projectNamespace)
         {
             OpenApiSchema = openApiSchema?.OneOf != null && openApiSchema.OneOf.Any() ? openApiSchema.OneOf.FirstOrDefault() : openApiSchema;
             ApiModels = apiModels;
             ApiFileName = apiFileName;
+            AutoApiGeneratorSettings = autoApiGeneratorSettings;
             IsEnum = OpenApiSchema != null && OpenApiSchema.Enum.Any();
             IsDerivedModel = TryResolveDerivedModel(OpenApiSchema);
             IsReferenceType = TryResolveReferenceModel(OpenApiSchema);
@@ -127,7 +131,7 @@ namespace Dojo.OpenApiGenerator.Models
 
         private void ResolveArray(OpenApiSchema openApiSchema)
         {
-            var arrayItemType = new ApiModel(openApiSchema.Items, ApiModels, ApiFileName);
+            var arrayItemType = new ApiModel(openApiSchema.Items, ApiModels, ApiFileName, AutoApiGeneratorSettings);
 
             InnerTypes = new List<ApiModel>
             {
@@ -241,8 +245,8 @@ namespace Dojo.OpenApiGenerator.Models
         private void ResolveDictionaryType(OpenApiSchema additionalProperties)
         {
             //TODO resolve reference types
-            var dictArgType1 = new ApiModel(new OpenApiSchema { Type = OpenApiSchemaTypes.String }, ApiModels, ApiFileName);
-            var dictArgType2 = new ApiModel(additionalProperties, ApiModels, ApiFileName);
+            var dictArgType1 = new ApiModel(new OpenApiSchema { Type = OpenApiSchemaTypes.String }, ApiModels, ApiFileName, AutoApiGeneratorSettings);
+            var dictArgType2 = new ApiModel(additionalProperties, ApiModels, ApiFileName, AutoApiGeneratorSettings);
 
             InnerTypes = new List<ApiModel>
             {

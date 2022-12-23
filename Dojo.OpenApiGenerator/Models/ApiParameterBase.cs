@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Dojo.OpenApiGenerator.Configuration;
 using Dojo.OpenApiGenerator.Extensions;
 using Microsoft.OpenApi.Models;
 
@@ -9,6 +10,7 @@ namespace Dojo.OpenApiGenerator.Models
         public string Version { get; }
         public IDictionary<string, ApiModel> ApiModels { get; }
         public string ApiFileName { get; }
+        public AutoApiGeneratorSettings AutoApiGeneratorSettings { get; }
         public string Name { get; set; }
         public ApiModel ApiModel { get; set; }
         public bool IsRequired { get; }
@@ -24,11 +26,13 @@ namespace Dojo.OpenApiGenerator.Models
             OpenApiParameter openApiParameter,
             string apiVersion,
             IDictionary<string, ApiModel> apiModels,
-            string apiFileName)
+            string apiFileName,
+            AutoApiGeneratorSettings autoApiGeneratorSettings)
         {
             Version = apiVersion;
             ApiModels = apiModels;
             ApiFileName = apiFileName;
+            AutoApiGeneratorSettings = autoApiGeneratorSettings;
             OpenApiParameter = openApiParameter;
             Name = openApiParameter.Name;
             ApiModel = ResolveApiModel();

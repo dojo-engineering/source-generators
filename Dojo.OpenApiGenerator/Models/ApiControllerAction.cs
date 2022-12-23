@@ -63,7 +63,7 @@ namespace Dojo.OpenApiGenerator.Models
             IsDeprecated = operation.Deprecated;
             HttpMethod = GetHttpMethodAttributeName(operationType);
             ActionName = ToActionName(!string.IsNullOrWhiteSpace(operation.OperationId) ? operation.OperationId : operation.Summary);
-            ResponseTypes = operation.Responses.Select(x => new ApiResponse(x.Key, x.Value, apiModels, apiVersion, apiFileName));
+            ResponseTypes = operation.Responses.Select(x => new ApiResponse(x.Key, x.Value, apiModels, apiVersion, apiFileName, _apiGeneratorSettings));
             RouteParameters = apiRouteParameters;
             Version = apiVersion;
             SuccessResponse = GetSuccessResponse();
@@ -90,7 +90,7 @@ namespace Dojo.OpenApiGenerator.Models
                 return null;
             }
 
-            return new ApiRequestBody(operationRequestBody, apiModels, Version, _apiFileName);
+            return new ApiRequestBody(operationRequestBody, apiModels, Version, _apiFileName, _apiGeneratorSettings);
         }
 
         private void ResolveParameters(IEnumerable<OpenApiParameter> operationParameters)
@@ -105,7 +105,7 @@ namespace Dojo.OpenApiGenerator.Models
                         {
                             QueryParameters ??= new List<ApiQueryParameter>();
 
-                            var parameter = operationParameter.GetApiParameter<ApiQueryParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
+                            var parameter = operationParameter.GetApiParameter<ApiQueryParameter>(Version, _apiModels, _apiFileName, _apiGeneratorSettings, _apiParameters, _projectNamespace);
 
                             QueryParameters.Add(parameter);
                             AllParameters.Add(parameter);
@@ -118,7 +118,7 @@ namespace Dojo.OpenApiGenerator.Models
                         {
                             HeaderParameters ??= new List<ApiHeaderParameter>();
 
-                            var parameter = operationParameter.GetApiParameter<ApiHeaderParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
+                            var parameter = operationParameter.GetApiParameter<ApiHeaderParameter>(Version, _apiModels, _apiFileName, _apiGeneratorSettings, _apiParameters, _projectNamespace);
 
                             HeaderParameters.Add(parameter);
                             AllParameters.Add(parameter);
@@ -136,7 +136,7 @@ namespace Dojo.OpenApiGenerator.Models
                                 break;
                             }
 
-                            var parameter = operationParameter.GetApiParameter<ApiRouteParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
+                            var parameter = operationParameter.GetApiParameter<ApiRouteParameter>(Version, _apiModels, _apiFileName, _apiGeneratorSettings, _apiParameters, _projectNamespace);
 
                             RouteParameters.Add(parameter);
 

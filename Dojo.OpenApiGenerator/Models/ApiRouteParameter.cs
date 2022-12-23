@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Dojo.OpenApiGenerator.Configuration;
 using Dojo.OpenApiGenerator.Mvc;
 using Microsoft.OpenApi.Models;
 
@@ -9,6 +10,7 @@ namespace Dojo.OpenApiGenerator.Models
 {
     internal class ApiRouteParameter : ApiParameterBase
     {
+        public AutoApiGeneratorSettings AutoApiGeneratorSettings { get; }
         private const string ConstraintSeparator = ":";
 
         public IEnumerable<string> Constraints { get; }
@@ -20,15 +22,17 @@ namespace Dojo.OpenApiGenerator.Models
             OpenApiParameter openApiParameter, 
             string apiVersion,
             IDictionary<string, ApiModel> apiModels,
-            string apiFileName) : base(sourceCodeName, openApiParameter, apiVersion, apiModels, apiFileName)
+            string apiFileName,
+            AutoApiGeneratorSettings autoApiGeneratorSettings) : base(sourceCodeName, openApiParameter, apiVersion, apiModels, apiFileName, autoApiGeneratorSettings)
         {
+            AutoApiGeneratorSettings = autoApiGeneratorSettings;
             Constraints = GetRouteConstraints();
             RouteConstraintsString = GetRouteConstrainsString();
         }
 
         protected override ApiModel ResolveApiModel()
         {
-            return new ApiModel(OpenApiParameter.Schema, ApiModels, ApiFileName);
+            return new ApiModel(OpenApiParameter.Schema, ApiModels, ApiFileName, AutoApiGeneratorSettings);
         }
 
         private IEnumerable<string> GetRouteConstraints()

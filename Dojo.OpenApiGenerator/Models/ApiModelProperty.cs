@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Dojo.OpenApiGenerator.Configuration;
 using Dojo.OpenApiGenerator.Extensions;
 using Microsoft.OpenApi.Models;
 
@@ -14,7 +15,8 @@ namespace Dojo.OpenApiGenerator.Models
             ISet<string> required,
             IDictionary<string, ApiModel> apiModels,
             string apiFileName,
-            string projectNamespace) : base(openApiSchema, apiModels, apiFileName, projectNamespace)
+            string projectNamespace,
+            AutoApiGeneratorSettings autoApiGeneratorSettings) : base(openApiSchema, apiModels, apiFileName, projectNamespace, autoApiGeneratorSettings)
         {
             Name = name;
             SourceName = name.FirstCharToUpper();
