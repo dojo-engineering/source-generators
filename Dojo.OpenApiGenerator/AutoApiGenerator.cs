@@ -145,7 +145,7 @@ namespace Dojo.OpenApiGenerator
             var apiControllerDefinition = new ApiControllerDefinition(projectNamespace)
             {
                 Title = openApiDocument.Info.Title,
-                Routes = openApiDocument.Paths.Select(x => new ApiControllerRoute(x.Key, x.Value, _apiModels, projectNamespace, parameters, apiVersion, apiFileName, _autoApiGeneratorSettings)).ToList(),
+                Routes = openApiDocument.Paths.Select(x => new ApiControllerRoute(x.Key, x.Value, _apiModels, projectNamespace, parameters, apiVersion, apiFileName, _autoApiGeneratorSettings, controllerApiVersions)).ToList(),
                 CanOverride = apisToOverride.Contains(openApiDocument.Info.Title),
                 Parameters = parameters,
                 AuthorizationPolicies = openApiDocument.TryGetApiAuthorizationPolicies(_autoApiGeneratorSettings.ApiAuthorizationPoliciesExtension),

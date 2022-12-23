@@ -53,9 +53,14 @@ namespace Dojo.OpenApiGenerator.Extensions
             return authPolicies.Any() ? authPolicies : null;
         }
 
-        public static HashSet<string> TryGetSupportedApiVersions(this IOpenApiExtensible openApiConfiguration, string supportedVersionExtensionName, string dateTimeVersionFormat, string declaredVersion = null)
+        public static HashSet<string> TryGetSupportedApiVersions(this IOpenApiExtensible openApiConfiguration, string supportedVersionExtensionName, string dateTimeVersionFormat, string declaredVersion = null, IList<string> defaultApiVersions = null)
         {
             var supportedVersions = new HashSet<string>();
+
+            if (defaultApiVersions != null && defaultApiVersions.Any())
+            {
+                supportedVersions.UnionWith(defaultApiVersions);
+            }
 
             if (!string.IsNullOrWhiteSpace(declaredVersion))
             {

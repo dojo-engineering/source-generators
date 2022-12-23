@@ -22,14 +22,15 @@ namespace Dojo.OpenApiGenerator.Models
             IDictionary<string, ApiParameterBase> apiParameters,
             string apiVersion,
             string apiFileName,
-            AutoApiGeneratorSettings apiGeneratorSettings)
+            AutoApiGeneratorSettings apiGeneratorSettings,
+            IEnumerable<string> defaultApiVersions)
         {
             Version = apiVersion;
             var routeParameters = openApiPathItem.Parameters.Select(p => p.GetApiParameter<ApiRouteParameter>(Version, apiModels, apiFileName, apiParameters, projectNamespace)).ToList();
 
             Route = BuildRoute(route, routeParameters);
             Actions = openApiPathItem.Operations.Select(x =>
-                new ApiControllerAction(x.Key, x.Value, apiModels, routeParameters, projectNamespace, apiParameters, apiVersion, apiFileName, apiGeneratorSettings));
+                new ApiControllerAction(x.Key, x.Value, apiModels, routeParameters, projectNamespace, apiParameters, apiVersion, apiFileName, apiGeneratorSettings, defaultApiVersions.ToList()));
             RouteParameters = routeParameters;
         }
 

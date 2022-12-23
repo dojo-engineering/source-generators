@@ -93,6 +93,31 @@
         ]
       }
     },
+    "/extended-hello-generated": {
+      "get": {
+        "summary": "HelloGenerated2",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtendedHelloFromSource"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "extended-get-hello-generated",
+        "description": "",
+        "x-authorization-policies": [
+          "read",
+          "write"
+        ]
+      },
+      "parameters": []
+    },
     "/hello_generated2": {
       "get": {
         "summary": "ObsoleteHelloGenerated2",
@@ -163,6 +188,22 @@
         "enum": [
           "Salut",
           "Buna"
+        ]
+      },
+      "ExtendedHelloFromSource": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/HelloFromSource"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "extraProperty": {
+                "type": "string"
+              }
+            }
+          }
         ]
       }
     },

@@ -52,7 +52,8 @@ namespace Dojo.OpenApiGenerator.Models
             IDictionary<string, ApiParameterBase> apiParameters,
             string apiVersion,
             string apiFileName,
-            AutoApiGeneratorSettings apiGeneratorSettings)
+            AutoApiGeneratorSettings apiGeneratorSettings,
+            IList<string> defaultApiVersions)
         {
             _apiModels = apiModels;
             _projectNamespace = projectNamespace;
@@ -78,7 +79,7 @@ namespace Dojo.OpenApiGenerator.Models
             InputServiceParametersString = GetInputServiceParametersString();
             AuthorizationPolicies = operation.TryGetApiAuthorizationPolicies(apiGeneratorSettings.ApiAuthorizationPoliciesExtension);
             Description = operation.Description;
-            SupportedVersions = operation.TryGetSupportedApiVersions(_apiGeneratorSettings.OpenApiSupportedVersionsExtension, _apiGeneratorSettings.DateTimeVersionFormat, apiVersion) ?? new HashSet<string>();
+            SupportedVersions = operation.TryGetSupportedApiVersions(_apiGeneratorSettings.OpenApiSupportedVersionsExtension, _apiGeneratorSettings.DateTimeVersionFormat, defaultApiVersions: defaultApiVersions) ?? new HashSet<string>();
         }
 
         private ApiRequestBody GetRequestBody(OpenApiRequestBody operationRequestBody, IDictionary<string, ApiModel> apiModels)

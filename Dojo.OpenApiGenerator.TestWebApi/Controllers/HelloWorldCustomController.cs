@@ -18,22 +18,27 @@ namespace Dojo.OpenApiGenerator.TestWebApi.Controllers
         }
 
         public override Task<ActionResult<HelloFromSourceApiModel>>
-            HelloFromSourceActionAsync([FromQuery, BindRequired, MaxLength(5)] System.String message, [FromRoute, BindRequired] System.Int64 number)
+            HelloFromSourceAsync([FromQuery, BindRequired, MaxLength(5)] System.String message, [FromRoute, BindRequired] System.Int64 number)
         {
-            return base.HelloFromSourceActionAsync(message, number);
+            return base.HelloFromSourceAsync(message, number);
         }
 
-        protected override async Task<ActionResult<HelloFromSourceApiModel>> HelloFromSourceAsync(string message, long number)
+        protected override async Task<ActionResult<HelloFromSourceApiModel>> HelloFromSourceExecutorAsync(string message, long number)
         {
             return Ok(await _helloWorldService.HelloFromSourceAsync(number));
         }
 
-        protected override async Task<ActionResult<string>> GetHelloGenerated2Async()
+        protected override async Task<ActionResult<string>> GetHelloGenerated2ExecutorAsync()
         {
             return Ok(await _helloWorldService.HelloGenerated2Async());
         }
 
-        protected override Task<ActionResult<string>> ObsoleteGetHelloGenerated2Async()
+        protected override Task<ActionResult<ExtendedHelloFromSourceApiModel>> ExtendedGetHelloGeneratedExecutorAsync()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override Task<ActionResult<string>> ObsoleteGetHelloGenerated2ExecutorAsync()
         {
             throw new System.NotImplementedException();
         }

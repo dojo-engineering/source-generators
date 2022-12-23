@@ -35,8 +35,12 @@ namespace Dojo.OpenApiGenerator.Models
             }
             else
             {
+                var properties = IsDerivedModel
+                    ? openApiSchema.AllOf?.ElementAt(1)?.Properties ?? new Dictionary<string, OpenApiSchema>()
+                    : openApiSchema.Properties;
+
                 IsCustomModel = true;
-                Properties = openApiSchema.Properties.Select(x => new ApiModelProperty(x.Key, x.Value, openApiSchema.Required, apiModels, apiFileName, ProjectNamespace));
+                Properties = properties.Select(x => new ApiModelProperty(x.Key, x.Value, openApiSchema.Required, apiModels, apiFileName, ProjectNamespace));
             }
         }
 

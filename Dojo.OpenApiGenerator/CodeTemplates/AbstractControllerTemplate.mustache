@@ -50,13 +50,13 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
         [Produces({{&ContentTypesStringList}})]
         {{/ContentTypesStringList}}
         {{#IsDeprecated}}[Obsolete("{{&Description}}")]{{/IsDeprecated}}
-        public virtual {{#SuccessResponse}}{{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}}{{/SuccessResponse}}  {{ActionName}}ActionAsync({{&InputActionParametersString}})
+        public virtual {{#SuccessResponse}}{{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}}{{/SuccessResponse}}  {{ActionName}}Async({{&InputActionParametersString}})
         {    
-            return this.{{ActionName}}Async({{&InputServiceCallParametersString}});
+            return this.{{ActionName}}ExecutorAsync({{&InputServiceCallParametersString}});
         }
 
         {{#SuccessResponse}} 
-        protected abstract {{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}} {{ActionName}}Async({{&InputServiceParametersString}});
+        protected abstract {{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}} {{ActionName}}ExecutorAsync({{&InputServiceParametersString}});
 
         {{/SuccessResponse}} 
         {{/Actions}}     
