@@ -13,7 +13,6 @@ namespace Dojo.OpenApiGenerator.Models
         public bool IsCustomModel { get; set; }
         public bool IsAbstract { get; set; }
 
-
         public ApiModel(string name,
             OpenApiSchema openApiSchema,
             string projectNamespace,

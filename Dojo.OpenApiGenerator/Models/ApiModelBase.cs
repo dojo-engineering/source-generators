@@ -17,7 +17,6 @@ namespace Dojo.OpenApiGenerator.Models
         protected IDictionary<string, ApiModel> ApiModels { get; }
         protected string ApiFileName { get; }
         public AutoApiGeneratorSettings AutoApiGeneratorSettings { get; }
-
         public bool IsEnum { get; }
         public IList<string> EnumValues { get; }
         public bool IsDerivedModel { get; }
@@ -35,6 +34,7 @@ namespace Dojo.OpenApiGenerator.Models
         public ApiModel ReferenceModel => ApiModels[ModelReference];
         public object DefaultValue { get; private set; }
         public bool IsNullable { get; private set; }
+        public bool IsUri { get; private set; }
         public int? MaxLength { get; }
         public int? MinLength { get; }
 
@@ -45,7 +45,22 @@ namespace Dojo.OpenApiGenerator.Models
             string projectNamespace,
             AutoApiGeneratorSettings autoApiGeneratorSettings) : base(projectNamespace)
         {
-            OpenApiSchema = openApiSchema?.OneOf != null && openApiSchema.OneOf.Any() ? openApiSchema.OneOf.FirstOrDefault() : openApiSchema;
+            if (openApiSchema.OneOf != null && openApiSchema.OneOf.Any())
+            {
+                OpenApiSchema = openApiSchema.OneOf.FirstOrDefault();
+            }
+            else if (openApiSchema.AnyOf != null && openApiSchema.AnyOf.Any())
+            {
+                OpenApiSchema =  openApiSchema.AnyOf.FirstOrDefault();
+
+                var nullableType = openApiSchema.AnyOf.ElementAt(1);
+                IsNullable = nullableType is { Nullable: true };
+            }
+            else
+            {
+                OpenApiSchema = openApiSchema;
+            }
+
             ApiModels = apiModels;
             ApiFileName = apiFileName;
             AutoApiGeneratorSettings = autoApiGeneratorSettings;
@@ -106,24 +121,26 @@ namespace Dojo.OpenApiGenerator.Models
 
         protected virtual string GetTypeFullName()
         {
+            var typeFullName = IsReferenceType ? ReferenceModel.GetTypeFullName() : Type?.FullName;
+
             if (IsReferenceType)
             {
-                return ReferenceModel.GetTypeFullName();
+                return typeFullName;
             }
 
             if (IsNullable)
             {
-                return $"{Type.Namespace}.Nullable<{Type?.FullName}>";
+                return $"System.Nullable<{typeFullName}>";
             }
 
             if (Type == typeof(IDictionary<,>))
             {
-                return $"{Type.Namespace}.IDictionary<{InnerTypes[0].TypeFullName},{InnerTypes[1].TypeFullName}>";
+                return $"System.Collections.Generic.IDictionary<{InnerTypes[0].TypeFullName},{InnerTypes[1].TypeFullName}>";
             }
 
             if (Type == typeof(IEnumerable<>))
             {
-                return $"{Type.Namespace}.IEnumerable<{InnerTypes[0].TypeFullName}>";
+                return $"System.Collections.Generic.IEnumerable<{InnerTypes[0].TypeFullName}>";
             }
 
             return Type?.FullName;
@@ -152,15 +169,22 @@ namespace Dojo.OpenApiGenerator.Models
             {
                 case OpenApiTypeFormats.Date:
                 case OpenApiTypeFormats.DateTime:
-                {
-                    ResolveDateTime(openApiSchema);
+                    {
+                        ResolveDateTime(openApiSchema);
 
-                    break;
-                }
+                        break;
+                    }
                 case OpenApiTypeFormats.Email:
                     {
                         IsEmail = true;
                         ResolveTypeAndDefaultValue<string>(openApiSchema.Default);
+
+                        break;
+                    }
+                case OpenApiTypeFormats.Uri:
+                    {
+                        IsUri = true;
+                        ResolveUri(openApiSchema);
 
                         break;
                     }
@@ -178,6 +202,19 @@ namespace Dojo.OpenApiGenerator.Models
             IsNullable = openApiSchema.Nullable;
 
             ResolveTypeAndDefaultValue<DateTime>(openApiSchema.Default);
+        }
+
+        private void ResolveUri(OpenApiSchema openApiSchema)
+        {
+            IsNullable = openApiSchema.Nullable;
+
+            Type = typeof(Uri);
+            if (openApiSchema.Default is not OpenApiString @default)
+            {
+                return;
+            }
+
+            DefaultValue = new Uri(@default.Value);
         }
 
         private void ResolveInteger(OpenApiSchema openApiSchema)
@@ -293,6 +330,5 @@ namespace Dojo.OpenApiGenerator.Models
                 yield return enumValue.Value;
             }
         }
-
     }
 }

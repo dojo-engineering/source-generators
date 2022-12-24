@@ -153,7 +153,6 @@
       "HelloFromSource": {
         "type": "object",
         "title": "HelloFromSource",
-        "description": "",
         "additionalProperties": false,
         "properties": {
           "Message": {
@@ -174,6 +173,21 @@
             "format": "email"
           },
           "type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HelloType"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "Url": {
+            "type": "string",
+            "format": "uri",
+            "default": "https://default-url.com"
+          },
+          "type2": {
             "$ref": "#/components/schemas/HelloType"
           }
         },

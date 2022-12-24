@@ -30,7 +30,7 @@ namespace Dojo.OpenApiGenerator.Models
         {
             var typeFullName = base.GetTypeFullName();
 
-            if (IsReferenceType && !IsRequired && ReferenceModel.IsEnum)
+            if (IsReferenceType && ReferenceModel.IsEnum && IsNullable)
             {
                 return  $"System.Nullable<{typeFullName}>";
             }
