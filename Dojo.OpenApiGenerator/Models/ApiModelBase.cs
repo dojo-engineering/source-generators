@@ -35,8 +35,8 @@ namespace Dojo.OpenApiGenerator.Models
         public object DefaultValue { get; private set; }
         public bool IsNullable { get; private set; }
         public bool IsUri { get; private set; }
-        public int? MaxLength { get; }
-        public int? MinLength { get; }
+        public int? MaxLength { get; private set; }
+        public int? MinLength { get; private set; }
 
         protected ApiModelBase(
             OpenApiSchema openApiSchema,
@@ -66,8 +66,6 @@ namespace Dojo.OpenApiGenerator.Models
             IsReferenceType = TryResolveReferenceModel(OpenApiSchema);
             IsBuiltInType = (OpenApiSchema?.Type != OpenApiSchemaTypes.Object || OpenApiSchema.AdditionalPropertiesAllowed) && !IsEnum && !IsDerivedModel && !IsReferenceType;
             EnumValues = IsEnum ? GetEnumValues(OpenApiSchema.Enum).ToList() : null;
-            MaxLength = openApiSchema.MaxLength;
-            MinLength = openApiSchema.MinLength;
         }
 
         private void ResolveFromSchemaOperators(ICollection<OpenApiSchema> openApiSchemas)
@@ -91,6 +89,9 @@ namespace Dojo.OpenApiGenerator.Models
 
                 return;
             }
+
+            MaxLength = openApiSchema.MaxLength;
+            MinLength = openApiSchema.MinLength;
 
             var openApiType = openApiSchema.Type;
 
@@ -160,6 +161,8 @@ namespace Dojo.OpenApiGenerator.Models
         {
             var arrayItemType = new ApiModel(openApiSchema.Items, ApiModels, ApiFileName, AutoApiGeneratorSettings);
 
+            MinLength = openApiSchema.MinItems;
+            MaxLength = openApiSchema.MaxItems;
             InnerTypes = new List<ApiModel>
             {
                 arrayItemType

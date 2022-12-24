@@ -189,6 +189,13 @@
           },
           "type2": {
             "$ref": "#/components/schemas/HelloType"
+          },
+          "someItems": {
+            "type": "array",
+            "maxItems": 10,
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
