@@ -128,7 +128,7 @@ namespace Dojo.OpenApiGenerator.Models
                 return typeFullName;
             }
 
-            if (IsNullable)
+            if (IsNullable && !IsUri && Type != typeof(string))
             {
                 return $"System.Nullable<{typeFullName}>";
             }
