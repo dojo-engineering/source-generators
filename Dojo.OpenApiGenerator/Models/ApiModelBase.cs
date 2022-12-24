@@ -13,7 +13,7 @@ namespace Dojo.OpenApiGenerator.Models
     {
         protected string BaseModelReference;
         protected string ModelReference { get; set; }
-        protected OpenApiSchema OpenApiSchema { get; }
+        protected OpenApiSchema OpenApiSchema { get; set; }
         protected IDictionary<string, ApiModel> ApiModels { get; }
         protected string ApiFileName { get; }
         public AutoApiGeneratorSettings AutoApiGeneratorSettings { get; }
@@ -47,14 +47,11 @@ namespace Dojo.OpenApiGenerator.Models
         {
             if (openApiSchema.OneOf != null && openApiSchema.OneOf.Any())
             {
-                OpenApiSchema = openApiSchema.OneOf.FirstOrDefault();
+                ResolveFromSchemaOperators(openApiSchema.OneOf);
             }
             else if (openApiSchema.AnyOf != null && openApiSchema.AnyOf.Any())
             {
-                OpenApiSchema =  openApiSchema.AnyOf.FirstOrDefault();
-
-                var nullableType = openApiSchema.AnyOf.ElementAt(1);
-                IsNullable = nullableType is { Nullable: true };
+                ResolveFromSchemaOperators(openApiSchema.AnyOf);
             }
             else
             {
@@ -71,6 +68,19 @@ namespace Dojo.OpenApiGenerator.Models
             EnumValues = IsEnum ? GetEnumValues(OpenApiSchema.Enum).ToList() : null;
             MaxLength = openApiSchema.MaxLength;
             MinLength = openApiSchema.MinLength;
+        }
+
+        private void ResolveFromSchemaOperators(ICollection<OpenApiSchema> openApiSchemas)
+        {
+            OpenApiSchema = openApiSchemas.FirstOrDefault();
+
+            if (openApiSchemas.Count <= 1)
+            {
+                return;
+            }
+
+            var nullableType = openApiSchemas.ElementAt(1);
+            IsNullable = nullableType is { Nullable: true };
         }
 
         protected virtual void ResolveType(OpenApiSchema openApiSchema)
