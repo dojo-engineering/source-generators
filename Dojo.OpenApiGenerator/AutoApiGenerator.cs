@@ -56,14 +56,21 @@ namespace Dojo.OpenApiGenerator
 
         public void Execute(GeneratorExecutionContext context)
         {
-            _projectDir = context.GetProjectDir();
-            _autoApiGeneratorSettings = AutoApiGeneratorSettings.GetAutoApiGeneratorSettings(_projectDir);
-            var projectNamespace = context.GetProjectDefaultNamespace();
-            var apisToOverride = new List<string>();
-
-            GenerateApiConfiguratorSourceCode(context, projectNamespace);
-            GenerateInheritedApiVersionAttributeSourceCode(context, projectNamespace);
-            GenerateApisSourceCode(context, apisToOverride, projectNamespace);
+            try
+            {
+                _projectDir = context.GetProjectDir();
+                _autoApiGeneratorSettings = AutoApiGeneratorSettings.GetAutoApiGeneratorSettings(_projectDir);
+                var projectNamespace = context.GetProjectDefaultNamespace();
+                var apisToOverride = new List<string>();
+            
+                GenerateApiConfiguratorSourceCode(context, projectNamespace);
+                GenerateInheritedApiVersionAttributeSourceCode(context, projectNamespace);
+                GenerateApisSourceCode(context, apisToOverride, projectNamespace);  
+            }
+            catch (DirectoryNotFoundException exception)
+            {
+                Console.WriteLine($"Ignore auto api generator for directory {_projectDir} because of exception: {exception.Message}");
+            }
         }
 
         private void GenerateApisSourceCode(GeneratorExecutionContext context, ICollection<string> apisToOverride, string projectNamespace)
