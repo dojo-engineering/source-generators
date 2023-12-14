@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dojo.OpenApiGenerator.Configuration;
 using Dojo.OpenApiGenerator.Extensions;
@@ -42,6 +43,12 @@ namespace Dojo.OpenApiGenerator.Models
 
             foreach (var apiRouteParameter in routeParameters)
             {
+                if (apiRouteParameter == null)
+                {
+                    Console.WriteLine($"Could not generate parameter for route '${route}', value is null. Check OpenApi specification configuration.");
+                    continue;
+                }
+
                 route = route.Replace($"{{{apiRouteParameter.Name}}}", $"{{{apiRouteParameter.RouteConstraintsString}}}");
             }
 
