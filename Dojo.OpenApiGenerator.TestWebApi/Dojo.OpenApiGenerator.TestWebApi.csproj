@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,21 +16,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Dojo.OpenApiGenerator.TestWebApi.csproj.DotSettings" />
     <None Remove="OpenApiSchemas\payment-intents\payment-intents.json.disabled" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Controllers\PaymentIntentsController.cs" />
     <Content Include="OpenApiSchemas\payment-intents\payment-intents.json.disabled" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Controllers\PaymentIntentsController.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.25" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
+    <PackageReference Include="Asp.Versioning.Mvc" Version="8.0.0" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.14" />
     <PackageReference Include="Microsoft.OpenApi" Version="1.6.11" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NSwag.AspNetCore" Version="13.20.0" />
