@@ -53,13 +53,13 @@ namespace {{ProjectNamespace}}.Generated.Controllers{{#SourceCodeVersion}}.V{{So
         [Produces({{&ContentTypesStringList}})]
         {{/ContentTypesStringList}}
         {{^IsDeprecated}}[Route("{{Route}}")]{{/IsDeprecated}}
-        public virtual {{#SuccessResponse}}{{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}}{{/SuccessResponse}}  {{ActionName}}ActionAsync({{&InputActionParametersString}})
+        public virtual {{#SuccessResponse}}{{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}}{{/SuccessResponse}}  {{ActionName}}ActionAsync({{&InputActionParametersString}}, CancellationToken cancellationToken)
         {    
             return this.{{ActionName}}Async({{&InputServiceCallParametersString}});
         }
 
         {{#SuccessResponse}} 
-        protected abstract {{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}} {{ActionName}}Async({{&InputServiceParametersString}});
+        protected abstract {{#ApiModel}}Task<ActionResult<{{&TypeFullName}}>>{{/ApiModel}}{{^ApiModel}}Task<IActionResult>{{/ApiModel}} {{ActionName}}Async({{&InputServiceParametersString}}, CancellationToken cancellationToken);
         {{/SuccessResponse}} 
         {{/Actions}}     
         {{/Routes}}
