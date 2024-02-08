@@ -173,12 +173,13 @@ namespace Dojo.OpenApiGenerator.Models
 
         private string GetInputActionParametersString()
         {
+            var actionParameterBuilder = new StringBuilder();
+
             if (!HasAnyParameters && !HasRequestBody)
             {
-                return null;
+                AppendCancellationTokenParameterSignature(actionParameterBuilder);
+                return actionParameterBuilder.ToString();
             }
-
-            var actionParameterBuilder = new StringBuilder();
 
             if (HasRequestBody)
             {
@@ -222,6 +223,7 @@ namespace Dojo.OpenApiGenerator.Models
 
                 TryAppendParameterDefaultValue(apiParameter, actionParameterBuilder);
             }
+
             AppendCancellationTokenParameterSignature(actionParameterBuilder);
 
             return actionParameterBuilder.ToString();
@@ -235,12 +237,14 @@ namespace Dojo.OpenApiGenerator.Models
 
         private string GetInputServiceCallParametersString()
         {
+            var builder = new StringBuilder();
+
             if (!HasAnyParameters && !HasRequestBody)
             {
-                return null;
+                AppendCancellationTokenParameter(builder);
+                return builder.ToString();
             }
 
-            var builder = new StringBuilder();
             var index = 0;
 
             var parametersWithoutVersion = AllParameters
@@ -276,12 +280,15 @@ namespace Dojo.OpenApiGenerator.Models
 
         private string GetInputServiceParametersString()
         {
+            var builder = new StringBuilder();
+
             if (!HasAnyParameters && !HasRequestBody)
             {
-                return null;
+                AppendCancellationTokenParameterSignature(builder);
+                return builder.ToString();
             }
 
-            var builder = new StringBuilder();
+            
             var index = 0;
             var parametersWithoutVersion = AllParameters
                 .Where(p => !ExcludeVersionParameter(p))
