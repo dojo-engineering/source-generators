@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework> 
     <!-- If you want to see genereted code, then please uncomment EmitCompilerGeneratedFiles and CompilerGeneratedFilesOutputPath blocks -->
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>  
-    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+    <!-- <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>  
+    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath> -->
     </PropertyGroup>
 
   <ItemGroup>
