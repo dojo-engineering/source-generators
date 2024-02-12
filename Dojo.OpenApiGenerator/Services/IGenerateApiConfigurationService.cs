@@ -1,6 +1,8 @@
 using CSharpFunctionalExtensions;
+using Microsoft.CodeAnalysis;
+using Stubble.Core;
 
 public interface IGenerateApiConfigurationService
 {
-    Result GenerateApiConfiguratorSourceCode();
+    Result GenerateApiConfiguratorSourceCode(GeneratorExecutionContext context, string projectNamespace, StubbleVisitorRenderer stubbleBuilder);
 }

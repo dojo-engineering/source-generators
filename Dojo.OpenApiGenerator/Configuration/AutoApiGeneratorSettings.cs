@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Dojo.OpenApiGenerator.Configuration
 {
-    internal class AutoApiGeneratorSettings
+    public class AutoApiGeneratorSettings
     {
         public string VersionParameterName { get; set; }
         public bool IncludeVersionParameterInActionSignature { get; set; }
