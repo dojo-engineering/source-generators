@@ -1,89 +1,74 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<NuspecProperties>version=$(Version)</NuspecProperties>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<!-- Generates a package at build -->
-		<IncludeBuildOutput>false</IncludeBuildOutput>
-		<!-- Do not include the generator as a lib dependency -->
-		<PackageId>Dojo.OpenApiGenerator</PackageId>
-		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-		<Description>This library contains source generators used in PaymentSense DOJO</Description>
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <None Remove="autoApiGeneratorSettings.json.sample" />
-	  <None Remove="CodeTemplates\AbstractControllerTemplate.mustache" />
-	  <None Remove="CodeTemplates\ApiConfiguratorTemplate.mustache" />
-	  <None Remove="CodeTemplates\ApiConstantsTemplate.mustache" />
-	  <None Remove="CodeTemplates\EnumTemplate.mustache" />
-	  <None Remove="CodeTemplates\InheritedApiVersionAttribute.mustache" />
-	  <None Remove="CodeTemplates\ModelTemplate.mustache" />
-	  <None Remove="CodeTemplates\ServiceInterfaceTemplate.mustache" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Include="CodeTemplates\ApiConfiguratorTemplate.mustache" />
-	  <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate.mustache">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </EmbeddedResource>
-	  <EmbeddedResource Include="CodeTemplates\InheritedApiVersionAttribute.mustache" />
-	  <EmbeddedResource Include="CodeTemplates\EnumTemplate.mustache" />
-	  <EmbeddedResource Include="CodeTemplates\ApiConstantsTemplate.mustache" />
-	  <EmbeddedResource Include="CodeTemplates\ServiceInterfaceTemplate.mustache" />
-	  <EmbeddedResource Include="CodeTemplates\ModelTemplate.mustache" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<!-- Package the generator in the analyzer directory of the nuget package -->
-		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(OutputPath)\Dojo.Generators.Abstractions.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Abstractions.dll" Visible="false" />
-		<None Include="$(OutputPath)\Dojo.Generators.Core.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Core.dll" Visible="false" />
-
-		<!-- Package the third pary assemblies longside the generator assembly -->
-		<None Include="$(PKGSharpYaml)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(PKGStubble_Core)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(PKGMicrosoft_OpenApi)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(PKGMicrosoft_OpenApi_Readers)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Include="autoApiGeneratorSettings.json.sample">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	</ItemGroup>
-
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.OpenApi" Version="1.6.11" PrivateAssets="all" GeneratePathProperty="true" />
-		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.11" PrivateAssets="all" GeneratePathProperty="true" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" PrivateAssets="all" GeneratePathProperty="true" />
-		<PackageReference Include="SharpYaml" Version="2.1.0" PrivateAssets="all" GeneratePathProperty="true" />
-		<PackageReference Include="Stubble.Core" Version="1.10.8" PrivateAssets="all" GeneratePathProperty="true" />
-		<PackageReference Include="System.Text.Encodings.Web" Version="4.7.2" />
-		<ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
-		<ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" OutputItemType="Analyzer" />
-	</ItemGroup>
-
-	<!-- Sections below allow to referrence project directly -->
-	<PropertyGroup>
-		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
-		<Version>1.2.4</Version>
-	</PropertyGroup>
-
-	<Target Name="GetDependencyTargetPaths">
-		<ItemGroup>
-			<TargetPathWithTargetPlatformMoniker Include="$(PKGSharpYaml)\lib\netstandard2.0\SharpYaml.dll" IncludeRuntimeDependency="false" />
-			<TargetPathWithTargetPlatformMoniker Include="$(PKGStubble_Core)\lib\netstandard2.0\Stubble.Core.dll" IncludeRuntimeDependency="false" />
-			<TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_OpenApi)\lib\netstandard2.0\Microsoft.OpenApi.dll" IncludeRuntimeDependency="false" />
-			<TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_OpenApi_Readers)\lib\netstandard2.0\Microsoft.OpenApi.Readers.dll" IncludeRuntimeDependency="false" />
-			<TargetPathWithTargetPlatformMoniker Include="$(PKGNewtonsoft_Json)\lib\netstandard2.0\Newtonsoft.Json.dll" IncludeRuntimeDependency="false" />
-		</ItemGroup>
-	</Target>
-
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <NuspecProperties>version=$(Version)</NuspecProperties>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <PackageId>Dojo.OpenApiGenerator</PackageId>
+    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+    <Description>This library contains source generators used in PaymentSense DOJO</Description>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+    <Version>1.2.4</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="autoApiGeneratorSettings.json.sample"/>
+    <None Remove="CodeTemplates\AbstractControllerTemplate.mustache"/>
+    <None Remove="CodeTemplates\ApiConfiguratorTemplate.mustache"/>
+    <None Remove="CodeTemplates\ApiConstantsTemplate.mustache"/>
+    <None Remove="CodeTemplates\EnumTemplate.mustache"/>
+    <None Remove="CodeTemplates\InheritedApiVersionAttribute.mustache"/>
+    <None Remove="CodeTemplates\ModelTemplate.mustache"/>
+    <None Remove="CodeTemplates\ServiceInterfaceTemplate.mustache"/>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CodeTemplates\ApiConfiguratorTemplate.mustache"/>
+    <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate.mustache">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CodeTemplates\InheritedApiVersionAttribute.mustache"/>
+    <EmbeddedResource Include="CodeTemplates\EnumTemplate.mustache"/>
+    <EmbeddedResource Include="CodeTemplates\ApiConstantsTemplate.mustache"/>
+    <EmbeddedResource Include="CodeTemplates\ServiceInterfaceTemplate.mustache"/>
+    <EmbeddedResource Include="CodeTemplates\ModelTemplate.mustache"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    <None Include="$(OutputPath)\Dojo.Generators.Abstractions.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Abstractions.dll" Visible="false"/>
+    <None Include="$(OutputPath)\Dojo.Generators.Core.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Core.dll" Visible="false"/>
+    <None Include="$(PKGSharpYaml)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    <None Include="$(PKGStubble_Core)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    <None Include="$(PKGMicrosoft_OpenApi)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    <None Include="$(PKGMicrosoft_OpenApi_Readers)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    <None Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="autoApiGeneratorSettings.json.sample">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all"/>
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all"/>
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.11" PrivateAssets="all" GeneratePathProperty="true"/>
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.11" PrivateAssets="all" GeneratePathProperty="true"/>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" PrivateAssets="all" GeneratePathProperty="true"/>
+    <PackageReference Include="SharpYaml" Version="2.1.0" PrivateAssets="all" GeneratePathProperty="true"/>
+    <PackageReference Include="Stubble.Core" Version="1.10.8" PrivateAssets="all" GeneratePathProperty="true"/>
+    <PackageReference Include="System.Text.Encodings.Web" Version="4.7.2"/>
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.40.3"/>
+    <ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj"/>
+    <ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" OutputItemType="Analyzer"/>
+  </ItemGroup>
+  <Target Name="GetDependencyTargetPaths">
+    <ItemGroup>
+      <TargetPathWithTargetPlatformMoniker Include="$(PKGSharpYaml)\lib\netstandard2.0\SharpYaml.dll" IncludeRuntimeDependency="false"/>
+      <TargetPathWithTargetPlatformMoniker Include="$(PKGStubble_Core)\lib\netstandard2.0\Stubble.Core.dll" IncludeRuntimeDependency="false"/>
+      <TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_OpenApi)\lib\netstandard2.0\Microsoft.OpenApi.dll" IncludeRuntimeDependency="false"/>
+      <TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_OpenApi_Readers)\lib\netstandard2.0\Microsoft.OpenApi.Readers.dll" IncludeRuntimeDependency="false"/>
+      <TargetPathWithTargetPlatformMoniker Include="$(PKGNewtonsoft_Json)\lib\netstandard2.0\Newtonsoft.Json.dll" IncludeRuntimeDependency="false"/>
+    </ItemGroup>
+  </Target>
 </Project>
