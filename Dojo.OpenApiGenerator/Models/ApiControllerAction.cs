@@ -197,6 +197,7 @@ namespace Dojo.OpenApiGenerator.Models
 
             if (!parametersWithoutVersion.Any())
             {
+                AppendCancellationTokenParameterSignature(actionParameterBuilder);
                 return actionParameterBuilder.ToString();
             }
 

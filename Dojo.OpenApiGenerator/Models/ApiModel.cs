@@ -40,10 +40,16 @@ namespace Dojo.OpenApiGenerator.Models
             }
         }
 
-        public ApiModel(OpenApiSchema openApiSchema, IDictionary<string, ApiModel> apiModels, string apiFileName) : base(openApiSchema, apiModels, apiFileName, string.Empty)
+        public ApiModel(OpenApiSchema openApiSchema, IDictionary<string, ApiModel> apiModels, string apiFileName, string name = null) : base(openApiSchema, apiModels, apiFileName, string.Empty)
         {
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                Name = name;
+            }
+
             if (IsBuiltInType)
             {
+
                 ResolveType(openApiSchema);
             }
         }

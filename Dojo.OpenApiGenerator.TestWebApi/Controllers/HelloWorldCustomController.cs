@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Dojo.OpenApiGenerator.TestWebApi.Generated.Controllers.V1;
 using Dojo.OpenApiGenerator.TestWebApi.Generated.Models;
@@ -32,6 +33,16 @@ namespace Dojo.OpenApiGenerator.TestWebApi.Controllers
         protected override async Task<ActionResult<string>> GetHelloGenerated2Async(CancellationToken cancellationToken)
         {
             return Ok(await _helloWorldService.HelloGenerated2Async(cancellationToken));
+        }
+
+        protected override Task<ActionResult<HelloFromSourceItemsApiModel>> GetHelloGeneratePostArrayAsync(CancellationToken cancellationToken)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override Task<ActionResult<IEnumerable<HelloFromSourceApiModel>>> PostHelloGeneratePostArrayAsync(IEnumerable<HelloFromSourceApiModel> helloFromSources, CancellationToken cancellationToken)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
