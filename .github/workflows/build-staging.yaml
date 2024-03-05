@@ -12,6 +12,9 @@ on:
       - 'task/*'
       - 'migration/*'
 
+concurrency:
+  group: ${{ github.workflow }}
+
 jobs:
   build_auto_generators:
     uses: dojo-engineering/github-workflows/.github/workflows/remote-payments-dotnet-basic.yaml@main
