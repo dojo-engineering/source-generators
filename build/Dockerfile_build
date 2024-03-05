@@ -1,0 +1,7 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0 as builder
+
+WORKDIR /src
+ADD . .
+RUN dotnet restore /src/Dojo.Generators.sln --configfile /src/NuGet.config
+RUN dotnet build --no-restore /src/Dojo.Generators.sln -c Release
+RUN dotnet test --no-build /src/Dojo.Generators.Tests/Dojo.Generators.Tests.csproj -c Release
