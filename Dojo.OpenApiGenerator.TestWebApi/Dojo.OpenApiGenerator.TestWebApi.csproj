@@ -23,6 +23,7 @@
 	    <PrivateAssets>analyzers</PrivateAssets>
 	</ProjectReference>
 	<ProjectReference Include="..\Dojo.Generators.Abstractions\Dojo.Generators.Abstractions.csproj" />
+	<ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" />
     <ProjectReference Include="..\Dojo.OpenApiGenerator\Dojo.OpenApiGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true">
 	    <IncludeAssets>all</IncludeAssets>
 	    <PrivateAssets>analyzers</PrivateAssets>
