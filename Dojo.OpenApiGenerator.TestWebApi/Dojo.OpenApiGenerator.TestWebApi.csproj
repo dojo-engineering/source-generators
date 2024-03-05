@@ -8,29 +8,6 @@
     </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="OpenApiSchemas\accounts\**" />
-    <Content Remove="OpenApiSchemas\accounts\**" />
-    <EmbeddedResource Remove="OpenApiSchemas\accounts\**" />
-    <None Remove="OpenApiSchemas\accounts\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Controllers\PaymentIntentsController.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="OpenApiSchemas\payment-intents\payment-intents.json.disabled" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="OpenApiSchemas\payment-intents\payment-intents.json.disabled" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Controllers\PaymentIntentsController.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.25" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
