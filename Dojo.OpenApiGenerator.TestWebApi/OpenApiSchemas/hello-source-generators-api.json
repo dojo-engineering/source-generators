@@ -92,6 +92,56 @@
           "write"
         ]
       }
+    },
+    "/hello-generate-post-array": {
+      "get": {
+        "summary": "Your GET endpoint",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelloFromSourceItems"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-hello-generate-post-array"
+      },
+      "post": {
+        "summary": "",
+        "operationId": "post-hello-generate-post-array",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HelloFromSource"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/HelloFromSource"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -135,6 +185,16 @@
           "Salut",
           "Buna"
         ]
+      },
+      "HelloFromSourceItems": {
+        "title": "HelloFromSourceItems",
+        "x-stoplight": {
+          "id": "d63g7y1xtilld"
+        },
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/HelloFromSource"
+        }
       }
     },
     "responses": {}

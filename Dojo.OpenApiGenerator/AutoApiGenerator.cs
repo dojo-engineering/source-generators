@@ -47,11 +47,11 @@ namespace Dojo.OpenApiGenerator
 //#if DEBUG
 //            if (!Debugger.IsAttached)
 //            {
-//                Debugger.Launch();
+//                 Debugger.Launch();
 //            }
 //#endif
 
-//            Debug.WriteLine("Initialize code generator");
+//         Debug.WriteLine("Initialize code generator");
         }
 
         public void Execute(GeneratorExecutionContext context)
