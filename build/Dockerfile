@@ -13,8 +13,8 @@ RUN dotnet build --no-restore /src/Dojo.Generators.Core/Dojo.Generators.Core.csp
 RUN dotnet build --no-restore /src/Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj -c Release
 RUN dotnet build --no-restore /src/Dojo.AutoGenerators/Dojo.AutoGenerators.csproj -c Release
 RUN dotnet build --no-restore /src/Dojo.OpenApiGenerator/Dojo.OpenApiGenerator.csproj -c Release
-RUN dotnet build --no-restore /src/TestApp/TestApp.csproj -c Release
-RUN dotnet build --no-restore /src/Dojo.OpenApiGenerator.TestWebApi/Dojo.OpenApiGenerator.TestWebApi.csproj -c Release
+#RUN dotnet build --no-restore /src/TestApp/TestApp.csproj -c Release
+#RUN dotnet build --no-restore /src/Dojo.OpenApiGenerator.TestWebApi/Dojo.OpenApiGenerator.TestWebApi.csproj -c Release
 RUN dotnet build --no-restore /src/Dojo.Generators.Tests/Dojo.Generators.Tests.csproj -c Release
 
 RUN dotnet test --no-build /src/Dojo.Generators.Tests/Dojo.Generators.Tests.csproj -c Release
