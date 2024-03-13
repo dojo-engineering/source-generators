@@ -42,10 +42,6 @@ namespace Level1.Level2
         public TestException(string message, Exception innerException) : base(message, innerException)
         {{
         }}
-
-        protected TestException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {{
-        }}
     }}
 }}";
             // Act
