@@ -47,11 +47,10 @@ namespace Dojo.OpenApiGenerator
 //#if DEBUG
 //            if (!Debugger.IsAttached)
 //            {
-//                 Debugger.Launch();
+//                Debugger.Launch();
 //            }
 //#endif
-
-//         Debug.WriteLine("Initialize code generator");
+//            Debug.WriteLine("Initialize code generator");
         }
 
         public void Execute(GeneratorExecutionContext context)
@@ -219,6 +218,12 @@ namespace Dojo.OpenApiGenerator
                     case OpenApiDateTime openApiDateTime:
                     {
                         supportedVersions.Add(openApiDateTime.Value.ToString(_autoApiGeneratorSettings.DateTimeVersionFormat));
+
+                        break;
+                    }
+                    case OpenApiDate openApiDate:
+                    {
+                            supportedVersions.Add(openApiDate.Value.ToString(_autoApiGeneratorSettings.DateTimeVersionFormat));
 
                         break;
                     }
