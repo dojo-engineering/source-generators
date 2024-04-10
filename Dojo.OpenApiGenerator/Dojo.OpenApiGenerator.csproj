@@ -59,17 +59,17 @@
 	  <Folder Include="Properties\" />
 	</ItemGroup>
 
-	<!-- Sections below allow to referrence project directly -->
-	<PropertyGroup>
-		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<!-- Package the generator in the analyzer directory of the nuget package -->
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(OutputPath)\Dojo.Generators.Abstractions.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Abstractions.dll" Visible="false" />
 		<None Include="$(OutputPath)\Dojo.Generators.Core.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Core.dll" Visible="false" />
 	</ItemGroup>
+
+	<!-- Sections below allow to referrence project directly -->
+	<PropertyGroup>
+		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+	</PropertyGroup>
 
 	<Target Name="GetDependencyTargetPaths">
 		<ItemGroup>
