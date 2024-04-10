@@ -48,7 +48,7 @@ namespace Dojo.OpenApiGenerator.TestWebApi
                 options.Path = "/api/swagger/{documentName}/swagger.json";
             });
 
-            app.UseSwaggerUi3(x =>
+            app.UseSwaggerUi(x =>
             {
                 x.Path = "/api/swagger";
                 x.DocumentPath = "/api/swagger/{documentName}/swagger.json";
