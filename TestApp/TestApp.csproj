@@ -11,7 +11,7 @@
 		<!--            <PrivateAssets>analyzers</PrivateAssets>-->
 		<!--        </PackageReference>-->
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
 		<PackageReference Include="Unity.Microsoft.DependencyInjection" Version="5.11.5" />
 	</ItemGroup>

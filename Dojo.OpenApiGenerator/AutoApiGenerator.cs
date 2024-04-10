@@ -51,7 +51,7 @@ namespace Dojo.OpenApiGenerator
 //            }
 //#endif
 
-//         Debug.WriteLine("Initialize code generator");
+//            Debug.WriteLine("Initialize code generator");
         }
 
         public void Execute(GeneratorExecutionContext context)

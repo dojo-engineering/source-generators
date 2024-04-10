@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 
 namespace Dojo.OpenApiGenerator.Models
@@ -13,9 +12,9 @@ namespace Dojo.OpenApiGenerator.Models
         public IEnumerable<ApiContent> ContentTypes { get; set; }
         public ApiModel ApiModel => GetResponseApiModel();
         public bool IsSuccessResponse => HttpStatusCode is >= 200 and <= 299;
-        public bool IsBadRequestResponse => HttpStatusCode == StatusCodes.Status400BadRequest;
-        public bool IsNotFoundResponse => HttpStatusCode == StatusCodes.Status404NotFound;
-        public bool HasNoContent => HttpStatusCode == StatusCodes.Status204NoContent;
+        public bool IsBadRequestResponse => HttpStatusCode == 400;
+        public bool IsNotFoundResponse => HttpStatusCode == 404;
+        public bool HasNoContent => HttpStatusCode == 204;
 
         public ApiResponse(
             string statusCode, 

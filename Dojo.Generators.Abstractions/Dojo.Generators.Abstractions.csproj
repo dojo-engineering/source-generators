@@ -7,7 +7,4 @@
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
     <Description>This library contains source generators used in PaymentSense DOJO</Description>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-  </ItemGroup>
 </Project>
