@@ -66,10 +66,6 @@ namespace {classDefinition.Namespace}
         public {classDefinition.Name}(string message, Exception innerException) : base(message, innerException)
         {{
         }}
-
-        protected {classDefinition.Name}(SerializationInfo info, StreamingContext context) : base(info, context)
-        {{
-        }}
     }}
 }}
 ");

@@ -173,12 +173,13 @@ namespace Dojo.OpenApiGenerator.Models
 
         private string GetInputActionParametersString()
         {
+            var actionParameterBuilder = new StringBuilder();
+
             if (!HasAnyParameters && !HasRequestBody)
             {
-                return null;
+                AppendCancellationTokenParameterSignature(actionParameterBuilder);
+                return actionParameterBuilder.ToString();
             }
-
-            var actionParameterBuilder = new StringBuilder();
 
             if (HasRequestBody)
             {
@@ -196,6 +197,7 @@ namespace Dojo.OpenApiGenerator.Models
 
             if (!parametersWithoutVersion.Any())
             {
+                AppendCancellationTokenParameterSignature(actionParameterBuilder);
                 return actionParameterBuilder.ToString();
             }
 
@@ -223,6 +225,8 @@ namespace Dojo.OpenApiGenerator.Models
                 TryAppendParameterDefaultValue(apiParameter, actionParameterBuilder);
             }
 
+            AppendCancellationTokenParameterSignature(actionParameterBuilder);
+
             return actionParameterBuilder.ToString();
         }
 
@@ -234,12 +238,14 @@ namespace Dojo.OpenApiGenerator.Models
 
         private string GetInputServiceCallParametersString()
         {
+            var builder = new StringBuilder();
+
             if (!HasAnyParameters && !HasRequestBody)
             {
-                return null;
+                AppendCancellationTokenParameter(builder);
+                return builder.ToString();
             }
 
-            var builder = new StringBuilder();
             var index = 0;
 
             var parametersWithoutVersion = AllParameters
@@ -268,17 +274,22 @@ namespace Dojo.OpenApiGenerator.Models
                 builder.Append(RequestBody.SourceCodeName);
             }
 
+            AppendCancellationTokenParameter(builder);
+
             return builder.ToString();
         }
 
         private string GetInputServiceParametersString()
         {
+            var builder = new StringBuilder();
+
             if (!HasAnyParameters && !HasRequestBody)
             {
-                return null;
+                AppendCancellationTokenParameterSignature(builder);
+                return builder.ToString();
             }
 
-            var builder = new StringBuilder();
+            
             var index = 0;
             var parametersWithoutVersion = AllParameters
                 .Where(p => !ExcludeVersionParameter(p))
@@ -309,6 +320,8 @@ namespace Dojo.OpenApiGenerator.Models
                 builder.Append(" ");
                 builder.Append(RequestBody.SourceCodeName);
             }
+
+            AppendCancellationTokenParameterSignature(builder);
 
             return builder.ToString();
         }
@@ -474,5 +487,11 @@ namespace Dojo.OpenApiGenerator.Models
         {
             return $"{constraints} {typeFullName} {parameterName}";
         }
+
+        private static void AppendCancellationTokenParameterSignature(StringBuilder builder)
+            =>  builder.Append(builder.Length > 0 ? $"{InputParametersSeparator}CancellationToken cancellationToken" : "CancellationToken cancellationToken");
+
+        private static void AppendCancellationTokenParameter(StringBuilder builder)
+            =>  builder.Append(builder.Length > 0 ? $"{InputParametersSeparator}cancellationToken" : "cancellationToken");
     }
 }

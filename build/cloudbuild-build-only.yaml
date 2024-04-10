@@ -1,0 +1,9 @@
+steps:
+  - name: gcr.io/cloud-builders/gsutil
+    id: 'nexus-nuget-config'
+    args: ["cp", "gs://firefly-devops-2018-configuration/NuGet.config", "."]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-and-test'
+    entrypoint: 'bash'
+    args: ['-c', 'docker build  -f ./build/Dockerfile_build .']

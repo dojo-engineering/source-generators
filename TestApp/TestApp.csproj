@@ -22,6 +22,7 @@
 			<PrivateAssets>analyzers</PrivateAssets>
 		</ProjectReference>
 		<ProjectReference Include="..\Dojo.Generators.Abstractions\Dojo.Generators.Abstractions.csproj" />
+		<ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" />
 	</ItemGroup>
 
 </Project>

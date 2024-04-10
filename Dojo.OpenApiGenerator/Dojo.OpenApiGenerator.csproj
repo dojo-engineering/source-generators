@@ -70,6 +70,11 @@
 		<ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" OutputItemType="Analyzer" />
 	</ItemGroup>
 
+
+	<ItemGroup>
+	  <Folder Include="Properties\" />
+	</ItemGroup>
+
 	<!-- Sections below allow to referrence project directly -->
 	<PropertyGroup>
 		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>

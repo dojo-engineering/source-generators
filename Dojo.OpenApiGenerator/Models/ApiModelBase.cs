@@ -28,9 +28,9 @@ namespace Dojo.OpenApiGenerator.Models
         public IList<ApiModel> InnerTypes { get; private set; }
         public string Version { get; set; }
         public string SourceCodeVersion { get; set; }
-        public ApiModel BaseModel => ApiModels[BaseModelReference];
+        public ApiModel BaseModel => !string.IsNullOrWhiteSpace(BaseModelReference) ? ApiModels[BaseModelReference] : null;
         public bool IsReferenceType { get; }
-        public ApiModel ReferenceModel => ApiModels[ModelReference];
+        public ApiModel ReferenceModel => !string.IsNullOrWhiteSpace(ModelReference) ? ApiModels[ModelReference] : null;
         public object DefaultValue { get; private set; }
         public bool IsNullable { get; private set; }
         public int? MaxLength { get; }
@@ -128,6 +128,13 @@ namespace Dojo.OpenApiGenerator.Models
         private void ResolveArray(OpenApiSchema openApiSchema)
         {
             var arrayItemType = new ApiModel(openApiSchema.Items, ApiModels, ApiFileName);
+
+            if (string.IsNullOrWhiteSpace(Name))
+            {
+                var typeName = arrayItemType.IsBuiltInType ? arrayItemType.TypeName : arrayItemType.Name ?? arrayItemType.ReferenceModel?.Name;
+                var name = openApiSchema.Description ?? $"{typeName}s";
+                Name = name;
+            }
 
             InnerTypes = new List<ApiModel>
             {
