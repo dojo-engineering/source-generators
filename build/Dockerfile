@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 as builder
+FROM mcr.microsoft.com/dotnet/sdk:8.0 as builder
 ARG VERSION_SUFFIX
 ARG NEXUS_URL
 ARG NEXUS_KEY

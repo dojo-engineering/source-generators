@@ -43,27 +43,7 @@ namespace Dojo.OpenApiGenerator.TestWebApi
 
             var serverUrl = string.Empty;
 
-            app.UseOpenApi(options =>
-            {
-                options.Path = "/api/swagger/{documentName}/swagger.json";
-            });
-
-            app.UseSwaggerUi3(x =>
-            {
-                x.Path = "/api/swagger";
-                x.DocumentPath = "/api/swagger/{documentName}/swagger.json";
-
-                if (!env.IsDevelopment())
-                {
-                    x.TransformToExternalPath = (url, _) =>
-                    {
-                        x.ServerUrl = serverUrl;
-                        return url.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
-                            ? x.ServerUrl + url
-                            : url;
-                    };
-                }
-            });
+            app.UseOpenApiSwaggerUi(env);
 
             app.UseHttpsRedirection();
 

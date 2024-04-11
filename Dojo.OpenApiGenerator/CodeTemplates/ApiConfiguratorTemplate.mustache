@@ -1,9 +1,14 @@
-﻿using System.CodeDom.Compiler;
-using {{ProjectNamespace}}.Generated.Common;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
+﻿using Asp.Versioning;
+using Dojo.OpenApiGenerator.TestWebApi.Generated.Common;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NSwag.Generation.AspNetCore;
+using System;
+using System.CodeDom.Compiler;
+using System.Linq;
+using {{ProjectNamespace}}.Generated.Common;
 
 namespace {{ProjectNamespace}}.Generated.StartupConfiguration
 {
@@ -16,25 +21,20 @@ namespace {{ProjectNamespace}}.Generated.StartupConfiguration
             string versionHeaderName = "version",
             string infoTitle = "API",
             IApiVersionReader versionReader = null,
-            IErrorResponseProvider errorResponseProvider = null,
             ApiVersion defaultVersion = null,
             bool assumeDefaultVersionWhenUnspecified = true,
             bool reportApiVersions = true)
         {
-            services.AddApiVersioning(options =>
-            {
-                options.AssumeDefaultVersionWhenUnspecified = assumeDefaultVersionWhenUnspecified;
-                options.DefaultApiVersion = defaultVersion ?? ApiVersion.Default;
-                options.ApiVersionReader = versionReader ?? new HeaderApiVersionReader(versionHeaderName);
-                options.ReportApiVersions = reportApiVersions;
-
-                if (errorResponseProvider != null)
+            services
+                .AddApiVersioning(options =>
                 {
-                    options.ErrorResponses = errorResponseProvider;
-                }
-            });
-
-            services.AddVersionedApiExplorer();
+                    options.AssumeDefaultVersionWhenUnspecified = assumeDefaultVersionWhenUnspecified;
+                    options.DefaultApiVersion = defaultVersion ?? ApiVersion.Default;
+                    options.ApiVersionReader = versionReader ?? new HeaderApiVersionReader(versionHeaderName);
+                    options.ReportApiVersions = reportApiVersions;
+                })
+                .AddMvc()
+                .AddApiExplorer();
 
             foreach (var apiVersion in ApiConstants.ApiVersions)
             {
@@ -42,6 +42,42 @@ namespace {{ProjectNamespace}}.Generated.StartupConfiguration
             }
 
             return services;
+        }
+
+        public static IApplicationBuilder UseOpenApiSwaggerUi(this IApplicationBuilder app, IWebHostEnvironment env, bool prefixWithEnvironmentName = true, string serverUrl = "", string swaggerPath = "/api/swagger", string docPath = "/api/swagger/{documentName}/swagger.json")
+        {
+             app.UseOpenApi(options =>
+             {
+                 options.Path = docPath;
+
+                 if (prefixWithEnvironmentName && !env.IsDevelopment())
+                 {
+                     options.PostProcess = (document, _) =>
+                     {
+                         document.Servers.First().Url += $"/{env.EnvironmentName}";
+                         serverUrl = document.Servers.First().Url;
+                     };
+                 }
+             });
+
+             app.UseSwaggerUi(x =>
+             {
+                 x.Path = swaggerPath;
+                 x.DocumentPath = docPath;
+
+                 if (prefixWithEnvironmentName && !env.IsDevelopment())
+                 {
+                     x.TransformToExternalPath = (url, _) =>
+                     {
+                         x.ServerUrl = serverUrl;
+                         return url.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+                                                         ? x.ServerUrl + url
+                                                         : url;
+                     };
+                 }
+             });
+
+             return app;
         }
 
         private static void ConfigureSingleVersion(
