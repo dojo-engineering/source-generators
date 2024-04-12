@@ -19,8 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dojo.Generators.Core", "Doj
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{B31EDD61-3FF0-44D0-92D3-1E1B2ADFF4B7}"
 	ProjectSection(SolutionItems) = preProject
-		build\cloudbuild.yaml = build\cloudbuild.yaml
 		build\cloudbuild-build-only.yaml = build\cloudbuild-build-only.yaml
+		build\cloudbuild.yaml = build\cloudbuild.yaml
 		build\Dockerfile = build\Dockerfile
 		build\Dockerfile_build = build\Dockerfile_build
 		build\publish.sh = build\publish.sh
@@ -31,8 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{C0B6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{12A8E779-D8A6-44CA-8AFE-EBD9E8896DDD}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\build-production.yaml = .github\workflows\build-production.yaml
-		.github\workflows\build-staging.yaml = .github\workflows\build-staging.yaml
+		.github\workflows\build-production.yaml.disabled = .github\workflows\build-production.yaml.disabled
+		.github\workflows\build-staging.yaml.disabled = .github\workflows\build-staging.yaml.disabled
 	EndProjectSection
 EndProject
 Global
