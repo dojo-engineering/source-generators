@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Dojo.OpenApiGenerator.Configuration;
+using Dojo.OpenApiGenerator.Exceptions;
 using Dojo.OpenApiGenerator.Extensions;
 using Dojo.OpenApiGenerator.Mvc;
 using Microsoft.OpenApi.Models;
@@ -69,7 +71,7 @@ namespace Dojo.OpenApiGenerator.Models
             SuccessResponse = GetSuccessResponse();
             UnsuccessfulResponses = GetUnsuccessfulResponses();
             HasUnsuccessfulResponses = UnsuccessfulResponses != null && UnsuccessfulResponses.Any();
-            RequestBody = GetRequestBody(operation.RequestBody, apiModels);
+            RequestBody = GetRequestBody(apiModels);
             HasRequestBody = RequestBody != null;
 
             ResolveParameters(operation.Parameters);
@@ -80,15 +82,24 @@ namespace Dojo.OpenApiGenerator.Models
             AuthorizationPolicies = _operation.TryGetApiAuthorizationPolicies(apiGeneratorSettings.ApiAuthorizationPoliciesExtension);
         }
 
-        private ApiRequestBody GetRequestBody(OpenApiRequestBody operationRequestBody, IDictionary<string, ApiModel> apiModels)
+        private ApiRequestBody GetRequestBody(IDictionary<string, ApiModel> apiModels)
         {
-            var content = operationRequestBody?.Content?.FirstOrDefault();
-            if (content == null)
+            try
             {
-                return null;
+                var operationRequestBody = _operation?.RequestBody;
+                var content = operationRequestBody?.Content?.FirstOrDefault();
+                if (content == null)
+                {
+                    return null;
+                }
+
+                return new ApiRequestBody(operationRequestBody, apiModels, Version, _apiFileName);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOpenApiSchemaException($"Could not generate request body for operation '{ActionName}'. Check OpenApi specification configuration for version '{Version}'. {e.Message}", e, _apiFileName);;
             }
 
-            return new ApiRequestBody(operationRequestBody, apiModels, Version, _apiFileName);
         }
 
         private void ResolveParameters(IEnumerable<OpenApiParameter> operationParameters)
@@ -101,44 +112,67 @@ namespace Dojo.OpenApiGenerator.Models
                 {
                     case ParameterLocation.Query:
                         {
-                            QueryParameters ??= new List<ApiQueryParameter>();
+                            try
+                            {
+                                QueryParameters ??= new List<ApiQueryParameter>();
 
-                            var parameter = operationParameter.GetApiParameter<ApiQueryParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
+                                var parameter = operationParameter.GetApiParameter<ApiQueryParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
 
-                            QueryParameters.Add(parameter);
-                            AllParameters.Add(parameter);
-                            HasQueryParameters = true;
-                            HasAnyParameters = true;
+                                QueryParameters.Add(parameter);
+                                AllParameters.Add(parameter);
+                                HasQueryParameters = true;
+                                HasAnyParameters = true;
 
-                            break;
+                                break;
+                            }
+                            catch (Exception e)
+                            {
+                                throw new InvalidOpenApiSchemaException($"Could not generate query parameter for operation '{ActionName}'. Check OpenApi specification configuration for version '{Version}'. {e.Message}", e, _apiFileName);
+                            }
+
                         }
                     case ParameterLocation.Header:
                         {
-                            HeaderParameters ??= new List<ApiHeaderParameter>();
+                            try
+                            {
+                                HeaderParameters ??= new List<ApiHeaderParameter>();
 
-                            var parameter = operationParameter.GetApiParameter<ApiHeaderParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
+                                var parameter = operationParameter.GetApiParameter<ApiHeaderParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
 
-                            HeaderParameters.Add(parameter);
-                            AllParameters.Add(parameter);
-                            HasHeaderParameters = true;
-                            HasAnyParameters = true;
+                                HeaderParameters.Add(parameter);
+                                AllParameters.Add(parameter);
+                                HasHeaderParameters = true;
+                                HasAnyParameters = true;
 
-                            break;
+                                break;
+                            }
+                            catch (Exception e)
+                            {
+                                throw new InvalidOpenApiSchemaException($"Could not generate header parameter for operation '{ActionName}'. Check OpenApi specification configuration for version '{Version}'. {e.Message}", e, _apiFileName);
+                            }
+
                         }
                     case ParameterLocation.Path:
                         {
-                            RouteParameters ??= new List<ApiRouteParameter>();
-
-                            if (RouteParameters.Any(p => p.Name == operationParameter.Name))
+                            try
                             {
+                                RouteParameters ??= new List<ApiRouteParameter>();
+
+                                if (RouteParameters.Any(p => p.Name == operationParameter.Name))
+                                {
+                                    break;
+                                }
+
+                                var parameter = operationParameter.GetApiParameter<ApiRouteParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
+
+                                RouteParameters.Add(parameter);
+
                                 break;
                             }
-
-                            var parameter = operationParameter.GetApiParameter<ApiRouteParameter>(Version, _apiModels, _apiFileName, _apiParameters, _projectNamespace);
-
-                            RouteParameters.Add(parameter);
-
-                            break;
+                            catch (Exception e)
+                            {
+                                throw new InvalidOpenApiSchemaException($"Could not generate route parameter for operation '{ActionName}'. Check OpenApi specification configuration for version '{Version}'. {e.Message}", e, _apiFileName);
+                            }
                         }
                 }
             }
