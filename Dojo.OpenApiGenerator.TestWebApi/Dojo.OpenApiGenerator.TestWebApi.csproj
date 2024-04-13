@@ -5,7 +5,8 @@
     <!-- If you want to see genereted code, then please uncomment EmitCompilerGeneratedFiles and CompilerGeneratedFilesOutputPath blocks -->
     <!-- <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>  
     <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath> -->
-    </PropertyGroup>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
