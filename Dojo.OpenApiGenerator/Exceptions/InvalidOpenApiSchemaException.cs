@@ -1,5 +1,4 @@
-﻿using SharpYaml.Schemas;
-using System;
+﻿using System;
 
 namespace Dojo.OpenApiGenerator.Exceptions
 {
