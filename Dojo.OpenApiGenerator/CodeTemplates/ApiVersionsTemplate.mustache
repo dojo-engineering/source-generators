@@ -1,0 +1,13 @@
+﻿using System;
+using System.CodeDom.Compiler;
+
+namespace {{ProjectNamespace}}.Generated.Common
+{
+    [GeneratedCode("Dojo.OpenApiGenerator", "{{AssemblyVersion}}")]
+    public static class ApiVersions
+    {
+        {{#SourceCodeApiVersionNames}}
+        public const string {{Key}} = "{{Value}}";
+        {{/SourceCodeApiVersionNames}}
+    }
+}

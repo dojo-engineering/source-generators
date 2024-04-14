@@ -9,6 +9,7 @@ namespace Dojo.OpenApiGenerator.CodeTemplates
         public static string AbstractController => "AbstractControllerTemplate.mustache";
         public static string Enum => "EnumTemplate.mustache";
         public static string ApiConstantsTemplate => "ApiConstantsTemplate.mustache";
+        public static string ApiVersionsTemplate => "ApiVersionsTemplate.mustache";
         public static string InheritedApiVersionAttribute => "InheritedApiVersionAttribute.mustache";
         public static string ApiConfiguratorTemplate => "ApiConfiguratorTemplate.mustache";
 

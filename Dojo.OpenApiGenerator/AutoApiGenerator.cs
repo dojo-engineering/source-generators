@@ -36,6 +36,7 @@ namespace Dojo.OpenApiGenerator
         private Dictionary<string, ApiModel> _apiModels;
         private AutoApiGeneratorSettings _autoApiGeneratorSettings;
         private string _apiConfiguratorTemplateString;
+        private string _apiVersionsTemplateString;
 
         public AutoApiGenerator()
         {
@@ -83,6 +84,7 @@ namespace Dojo.OpenApiGenerator
                 GenerateApiSourceCode(context, apisToOverride, openApiDocument.Value, projectNamespace, openApiDocument.Key);
             }
 
+            GenerateApiConstantsSourceCode(context, projectNamespace);
             GenerateApiVersionsSourceCode(context, projectNamespace);
         }
 
@@ -106,12 +108,22 @@ namespace Dojo.OpenApiGenerator
             context.AddSource(fileName, SourceText.From(source, Encoding.UTF8));
         }
 
-        private void GenerateApiVersionsSourceCode(GeneratorExecutionContext context, string projectNamespace)
+        private void GenerateApiConstantsSourceCode(GeneratorExecutionContext context, string projectNamespace)
         {
             _apiConstantsTemplateString ??= Templates.ReadTemplate(Templates.ApiConstantsTemplate);
 
             const string fileName = "ApiConstants.g.cs";
             var source = _stubbleBuilder.Render(_apiConstantsTemplateString, new ApiConstants(ApiVersions.ToList(), projectNamespace));
+
+            context.AddSource(fileName, SourceText.From(source, Encoding.UTF8));
+        }
+
+        private void GenerateApiVersionsSourceCode(GeneratorExecutionContext context, string projectNamespace)
+        {
+            _apiVersionsTemplateString ??= Templates.ReadTemplate(Templates.ApiVersionsTemplate);
+
+            const string fileName = "ApiVersions.g.cs";
+            var source = _stubbleBuilder.Render(_apiVersionsTemplateString, new ApiConstants(ApiVersions.ToList(), projectNamespace));
 
             context.AddSource(fileName, SourceText.From(source, Encoding.UTF8));
         }

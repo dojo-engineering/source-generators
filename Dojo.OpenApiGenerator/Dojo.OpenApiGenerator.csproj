@@ -16,6 +16,7 @@
 	  <None Remove="CodeTemplates\AbstractControllerTemplate.mustache" />
 	  <None Remove="CodeTemplates\ApiConfiguratorTemplate.mustache" />
 	  <None Remove="CodeTemplates\ApiConstantsTemplate.mustache" />
+	  <None Remove="CodeTemplates\ApiVersionsTemplate.mustache" />
 	  <None Remove="CodeTemplates\EnumTemplate.mustache" />
 	  <None Remove="CodeTemplates\InheritedApiVersionAttribute.mustache" />
 	  <None Remove="CodeTemplates\ModelTemplate.mustache" />
@@ -25,6 +26,7 @@
 	<ItemGroup>
 	  <EmbeddedResource Include="CodeTemplates\ApiConfiguratorTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate.mustache" />
+	  <EmbeddedResource Include="CodeTemplates\ApiVersionsTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\InheritedApiVersionAttribute.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\EnumTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ApiConstantsTemplate.mustache" />
