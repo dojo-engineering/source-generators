@@ -39,6 +39,13 @@
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 		<None Include="$(OutputPath)\Dojo.Generators.Abstractions.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Abstractions.dll" Visible="false" />
 		<None Include="$(OutputPath)\Dojo.Generators.Core.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Core.dll" Visible="false" />
+
+		<!-- Package the third pary assemblies longside the generator assembly -->
+		<None Include="$(PKGSharpYaml)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PKGStubble_Core)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PKGMicrosoft_OpenApi)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PKGMicrosoft_OpenApi_Readers)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -51,14 +58,12 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.OpenApi" Version="1.6.14" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.14" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="SharpYaml" Version="2.1.1" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="Stubble.Core" Version="1.10.8" PrivateAssets="all" GeneratePathProperty="true" />
-		<PackageReference Include="System.Text.Encodings.Web" Version="4.7.2" />
+		<PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
 		<ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
 		<ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" OutputItemType="Analyzer" />
 	</ItemGroup>
@@ -71,6 +76,7 @@
 	<!-- Sections below allow to referrence project directly -->
 	<PropertyGroup>
 		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+		<Version>8.0.0</Version>
 	</PropertyGroup>
 
 	<Target Name="GetDependencyTargetPaths">
