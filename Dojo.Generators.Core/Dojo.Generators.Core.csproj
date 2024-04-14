@@ -8,7 +8,7 @@
 		<PackageId>Dojo.Generators.Core</PackageId>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<Description>This library contains core functionality used by source generators in PaymentSense DOJO</Description>
-		<Version>8.0.0</Version>
+		<Version>1.1.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
