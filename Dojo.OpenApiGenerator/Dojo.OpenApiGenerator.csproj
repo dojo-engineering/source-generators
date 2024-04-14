@@ -24,28 +24,12 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="CodeTemplates\ApiConfiguratorTemplate.mustache" />
-	  <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate.mustache">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </EmbeddedResource>
+	  <EmbeddedResource Include="CodeTemplates\AbstractControllerTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\InheritedApiVersionAttribute.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\EnumTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ApiConstantsTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ServiceInterfaceTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ModelTemplate.mustache" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<!-- Package the generator in the analyzer directory of the nuget package -->
-		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(OutputPath)\Dojo.Generators.Abstractions.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Abstractions.dll" Visible="false" />
-		<None Include="$(OutputPath)\Dojo.Generators.Core.dll" Pack="true" PackagePath="lib/$(TargetFramework)/Dojo.Generators.Core.dll" Visible="false" />
-
-		<!-- Package the third pary assemblies longside the generator assembly -->
-		<None Include="$(PKGSharpYaml)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(PKGStubble_Core)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(PKGMicrosoft_OpenApi)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(PKGMicrosoft_OpenApi_Readers)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -64,10 +48,21 @@
 		<PackageReference Include="SharpYaml" Version="2.1.1" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="Stubble.Core" Version="1.10.8" PrivateAssets="all" GeneratePathProperty="true" />
 		<PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
-		<ProjectReference Include="../Dojo.Generators.Abstractions/Dojo.Generators.Abstractions.csproj" />
+		<ProjectReference Include="..\Dojo.Generators.Abstractions\Dojo.Generators.Abstractions.csproj" OutputItemType="Analyzer" />
 		<ProjectReference Include="..\Dojo.Generators.Core\Dojo.Generators.Core.csproj" OutputItemType="Analyzer" />
-	</ItemGroup>
 
+		<!-- Package the generator in the analyzer directory of the nuget package -->
+		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(OutputPath)\Dojo.Generators.Abstractions.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(OutputPath)\Dojo.Generators.Core.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+		<!-- Package the third pary assemblies longside the generator assembly -->
+		<None Include="$(PKGSharpYaml)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PKGStubble_Core)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PKGMicrosoft_OpenApi)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PKGMicrosoft_OpenApi_Readers)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Properties\" />
@@ -76,7 +71,6 @@
 	<!-- Sections below allow to referrence project directly -->
 	<PropertyGroup>
 		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
-		<Version>1.1.0</Version>
 	</PropertyGroup>
 
 	<Target Name="GetDependencyTargetPaths">
