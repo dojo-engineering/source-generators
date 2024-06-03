@@ -11,6 +11,9 @@ namespace Dojo.OpenApiGenerator.Models
         public IEnumerable<ApiModelProperty> Properties { get; set; }
         public bool IsCustomModel { get; set; }
 
+        public bool IsDictionary { get; set; }
+
+        public ApiModel DictionaryValueType { get; set; }
 
         public ApiModel(
             string name, 
@@ -36,7 +39,16 @@ namespace Dojo.OpenApiGenerator.Models
             else
             {
                 IsCustomModel = true;
-                Properties = openApiSchema.Properties.Select(x => new ApiModelProperty(x.Key, x.Value, openApiSchema.Required, apiModels, apiFileName, ProjectNamespace));
+                IsDictionary = IsDictionaryType(openApiSchema);
+
+                if (!IsDictionary)
+                {
+                    Properties = openApiSchema.Properties.Select(x => new ApiModelProperty(x.Key, x.Value, openApiSchema.Required, apiModels, apiFileName, ProjectNamespace));
+                }
+                else
+                {
+                    DictionaryValueType = new ApiModel(openApiSchema.AdditionalProperties, apiModels, apiFileName);
+                }
             }
         }
 
@@ -57,6 +69,13 @@ namespace Dojo.OpenApiGenerator.Models
         protected override string GetTypeFullName()
         {
             return !IsCustomModel ? base.GetTypeFullName() : $"{Namespace}.{TypeName}";
+        }
+
+        private static bool IsDictionaryType(OpenApiSchema openApiSchema)
+        {
+            return openApiSchema.AdditionalPropertiesAllowed &&
+                   openApiSchema.AdditionalProperties != null &&
+                   (openApiSchema.Properties == null || openApiSchema.Properties.Count == 0);
         }
 
         //private static void SetRequiredProperties(ApiModel apiModel, ISet<string> requiredProperties)

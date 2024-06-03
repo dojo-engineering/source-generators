@@ -37,6 +37,7 @@ namespace Dojo.OpenApiGenerator
         private AutoApiGeneratorSettings _autoApiGeneratorSettings;
         private string _apiConfiguratorTemplateString;
         private string _apiVersionsTemplateString;
+        private string _dictionaryModelTemplate;
 
         public AutoApiGenerator()
         {
@@ -284,6 +285,10 @@ namespace Dojo.OpenApiGenerator
                 {
                     GenerateEnum(context, apiModel, name);
                 }
+                else if (apiModel.IsDictionary)
+                {
+                    GenerateDictionaryModel(context, apiModel, name);
+                }
                 else
                 {
                     GenerateApiModel(context, apiModel, name);
@@ -309,6 +314,16 @@ namespace Dojo.OpenApiGenerator
             var enumSource = _stubbleBuilder.Render(_enumTemplateString, apiModel);
 
             context.AddSource(fileName, SourceText.From(enumSource, Encoding.UTF8));
+        }
+
+        private void GenerateDictionaryModel(GeneratorExecutionContext context, ApiModel apiModel, string name)
+        {
+            _dictionaryModelTemplate ??= Templates.ReadTemplate(Templates.DictionaryModelTemplate);
+
+            var fileName = $"{name}.g.cs";
+            var dictionarySource = _stubbleBuilder.Render(_dictionaryModelTemplate, apiModel);
+
+            context.AddSource(fileName, SourceText.From(dictionarySource, Encoding.UTF8));
         }
 
         private void GenerateController(GeneratorExecutionContext context, ApiControllerDefinition data, string apiFileName)

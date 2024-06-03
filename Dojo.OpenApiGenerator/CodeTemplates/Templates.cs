@@ -12,6 +12,7 @@ namespace Dojo.OpenApiGenerator.CodeTemplates
         public static string ApiVersionsTemplate => "ApiVersionsTemplate.mustache";
         public static string InheritedApiVersionAttribute => "InheritedApiVersionAttribute.mustache";
         public static string ApiConfiguratorTemplate => "ApiConfiguratorTemplate.mustache";
+        public static string DictionaryModelTemplate => "DictionaryModelTemplate.mustache";
 
         public static string ReadTemplate(string templateName)
         {

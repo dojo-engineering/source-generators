@@ -66,9 +66,6 @@
         }
       ]
     },
-    "": {
-      "parameters": []
-    },
     "/hello-generated2": {
       "get": {
         "summary": "HelloGenerated2",
@@ -171,6 +168,12 @@
           },
           "type": {
             "$ref": "#/components/schemas/HelloType"
+          },
+          "stringsDictionary": {
+            "$ref": "#/components/schemas/StringsDictionary"
+          },
+          "objectsDictionary": {
+            "$ref": "#/components/schemas/ObjectsDictionary"
           }
         },
         "required": [
@@ -193,6 +196,21 @@
         },
         "type": "array",
         "items": {
+          "$ref": "#/components/schemas/HelloFromSource"
+        }
+      },
+      "StringsDictionary": {
+        "type": "object",
+        "title": "Dictionary",
+        "description": "",
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "ObjectsDictionary": {
+        "type": "object",
+        "title": "Dictionary",
+        "additionalProperties": {
           "$ref": "#/components/schemas/HelloFromSource"
         }
       }
