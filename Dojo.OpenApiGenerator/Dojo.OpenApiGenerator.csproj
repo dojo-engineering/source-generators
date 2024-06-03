@@ -17,6 +17,7 @@
 	  <None Remove="CodeTemplates\ApiConfiguratorTemplate.mustache" />
 	  <None Remove="CodeTemplates\ApiConstantsTemplate.mustache" />
 	  <None Remove="CodeTemplates\ApiVersionsTemplate.mustache" />
+	  <None Remove="CodeTemplates\DictionaryModelTemplate.mustache" />
 	  <None Remove="CodeTemplates\EnumTemplate.mustache" />
 	  <None Remove="CodeTemplates\InheritedApiVersionAttribute.mustache" />
 	  <None Remove="CodeTemplates\ModelTemplate.mustache" />
@@ -30,6 +31,7 @@
 	  <EmbeddedResource Include="CodeTemplates\InheritedApiVersionAttribute.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\EnumTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ApiConstantsTemplate.mustache" />
+	  <EmbeddedResource Include="CodeTemplates\DictionaryModelTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ServiceInterfaceTemplate.mustache" />
 	  <EmbeddedResource Include="CodeTemplates\ModelTemplate.mustache" />
 	</ItemGroup>
