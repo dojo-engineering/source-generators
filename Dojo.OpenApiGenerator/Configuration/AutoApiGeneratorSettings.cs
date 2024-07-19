@@ -6,10 +6,16 @@ namespace Dojo.OpenApiGenerator.Configuration
     internal class AutoApiGeneratorSettings
     {
         public string VersionParameterName { get; set; }
+        
         public bool IncludeVersionParameterInActionSignature { get; set; }
+        
         public string OpenApiSupportedVersionsExtension { get; set; }
+        
         public string DateTimeVersionFormat { get; set; }
+        
         public string ApiAuthorizationPoliciesExtension { get; set; }
+
+        public bool GenerateApiExplorer { get; set; } = true;
 
         public static AutoApiGeneratorSettings GetAutoApiGeneratorSettings(string projectDir)
         {

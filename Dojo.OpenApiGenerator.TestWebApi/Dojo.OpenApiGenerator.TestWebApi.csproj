@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework> 
     <!-- If you want to see genereted code, then please uncomment EmitCompilerGeneratedFiles and CompilerGeneratedFilesOutputPath blocks -->
     <!-- <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>  
-    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath> -->
+    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>-->
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
 
