@@ -19,5 +19,7 @@
        "Sec2"
      ]
    */
-  "ApiAuthorizationPoliciesExtension": "x-authorization-policies"
+  "ApiAuthorizationPoliciesExtension": "x-authorization-policies",
+  /* This will prevent swagger open api explorer generation*/
+  "GenerateApiExplorer": false
 }

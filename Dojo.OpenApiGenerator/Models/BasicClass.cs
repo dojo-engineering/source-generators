@@ -4,7 +4,7 @@
     {
         public BasicClass(string projectNamespace, bool generateApiExplorer = false) : base(projectNamespace)
         {
-            generateApiExplorer = GenerateApiExplorer;
+            GenerateApiExplorer = generateApiExplorer;
         }
 
         public bool GenerateApiExplorer { get; private set; }

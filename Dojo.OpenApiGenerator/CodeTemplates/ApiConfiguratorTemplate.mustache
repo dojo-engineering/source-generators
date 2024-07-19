@@ -24,7 +24,7 @@ namespace {{ProjectNamespace}}.Generated.StartupConfiguration
             bool assumeDefaultVersionWhenUnspecified = true,
             bool reportApiVersions = true)
         {
-            services
+            var versioningBuilder = services
                 .AddApiVersioning(options =>
                 {
                     options.AssumeDefaultVersionWhenUnspecified = assumeDefaultVersionWhenUnspecified;
@@ -35,7 +35,7 @@ namespace {{ProjectNamespace}}.Generated.StartupConfiguration
                 .AddMvc();
 
 {{#GenerateApiExplorer}}
-            services.AddApiExplorer();
+            versioningBuilder.AddApiExplorer();
 {{/GenerateApiExplorer}}
 
             foreach (var apiVersion in ApiConstants.ApiVersions)
