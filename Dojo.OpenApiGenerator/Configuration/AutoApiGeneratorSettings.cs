@@ -11,6 +11,8 @@ namespace Dojo.OpenApiGenerator.Configuration
         public string DateTimeVersionFormat { get; set; }
         public string ApiAuthorizationPoliciesExtension { get; set; }
 
+        public bool GenerateApiExplorer { get; set; } = true;
+
         public static AutoApiGeneratorSettings GetAutoApiGeneratorSettings(string projectDir)
         {
             var settingFilePath = $"{projectDir}/{Constants.AutoApiGeneratorSettingsFile}";

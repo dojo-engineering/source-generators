@@ -63,8 +63,8 @@ namespace Dojo.OpenApiGenerator
                 _autoApiGeneratorSettings = AutoApiGeneratorSettings.GetAutoApiGeneratorSettings(_projectDir);
                 var projectNamespace = context.GetProjectDefaultNamespace();
                 var apisToOverride = new List<string>();
-            
-                GenerateApiConfiguratorSourceCode(context, projectNamespace);
+
+                GenerateApiConfiguratorSourceCode(context, projectNamespace, _autoApiGeneratorSettings.GenerateApiExplorer);
                 GenerateInheritedApiVersionAttributeSourceCode(context, projectNamespace);
                 GenerateApisSourceCode(context, apisToOverride, projectNamespace);  
             }
@@ -89,12 +89,12 @@ namespace Dojo.OpenApiGenerator
             GenerateApiVersionsSourceCode(context, projectNamespace);
         }
 
-        private void GenerateApiConfiguratorSourceCode(GeneratorExecutionContext context, string projectNamespace)
+        private void GenerateApiConfiguratorSourceCode(GeneratorExecutionContext context, string projectNamespace, bool generateApiExplorer)
         {
             _apiConfiguratorTemplateString ??= Templates.ReadTemplate(Templates.ApiConfiguratorTemplate);
 
             const string fileName = "ApiConfigurator.g.cs";
-            var source = _stubbleBuilder.Render(_apiConfiguratorTemplateString, new BasicClass(projectNamespace));
+            var source = _stubbleBuilder.Render(_apiConfiguratorTemplateString, new BasicClass(projectNamespace, generateApiExplorer));
 
             context.AddSource(fileName, SourceText.From(source, Encoding.UTF8));
         }

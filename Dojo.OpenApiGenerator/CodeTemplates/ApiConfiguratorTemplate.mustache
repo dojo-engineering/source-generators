@@ -32,8 +32,11 @@ namespace {{ProjectNamespace}}.Generated.StartupConfiguration
                     options.ApiVersionReader = versionReader ?? new HeaderApiVersionReader(versionHeaderName);
                     options.ReportApiVersions = reportApiVersions;
                 })
-                .AddMvc()
-                .AddApiExplorer();
+                .AddMvc();
+
+{{#GenerateApiExplorer}}
+            services.AddApiExplorer();
+{{/GenerateApiExplorer}}
 
             foreach (var apiVersion in ApiConstants.ApiVersions)
             {
