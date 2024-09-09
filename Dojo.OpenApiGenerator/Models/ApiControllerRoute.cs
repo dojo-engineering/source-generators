@@ -18,6 +18,7 @@ namespace Dojo.OpenApiGenerator.Models
         public ApiControllerRoute(
             string route,
             OpenApiPathItem openApiPathItem,
+            IDictionary<OperationType, OpenApiOperation> operations,
             IDictionary<string, ApiModel> apiModels,
             string projectNamespace,
             IDictionary<string, ApiParameterBase> apiParameters,
@@ -29,8 +30,8 @@ namespace Dojo.OpenApiGenerator.Models
             var routeParameters = openApiPathItem.Parameters.Select(p => p.GetApiParameter<ApiRouteParameter>(Version, apiModels, apiFileName, apiParameters, projectNamespace)).ToList();
 
             Route = BuildRoute(route, routeParameters);
-            Actions = openApiPathItem.Operations.Select(x =>
-                new ApiControllerAction(x.Key, x.Value, apiModels, routeParameters, projectNamespace, apiParameters, apiVersion, apiFileName, apiGeneratorSettings));
+            Actions = operations.Select(x =>
+                new ApiControllerAction(Route, x.Key, x.Value, apiModels, routeParameters, projectNamespace, apiParameters, apiVersion, apiFileName, apiGeneratorSettings));
             RouteParameters = routeParameters;
         }
 

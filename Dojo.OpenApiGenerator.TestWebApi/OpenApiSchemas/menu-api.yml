@@ -1,0 +1,1919 @@
+openapi: 3.0.0
+info:
+  title: MenuManagementApi
+  version: '2024-02-06'
+  description: Order Menu Management API specification
+servers:
+  - url: 'https://virtserver.swaggerhub.com/DojoPaymentProducts/Order-Menu-Api/2024-02-06'
+    description: SwaggerHub API Auto Mocking
+paths:
+  /api/menus/search:
+    post:
+      tags:
+        - Menu
+      operationId: SearchMenu
+      description: Search for menu
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchMenuRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchMenuResponse'
+      summary: Search Menu
+  /api/menu-items:
+    post:
+      tags:
+        - MenuItem
+      operationId: CreateMenuItem
+      summary: Create Menu Item
+      parameters:
+        - in: header
+          schema:
+            type: string
+          required: true
+          name: Customer-Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertMenuItemRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItemDraft'
+      description: Add new product for merchant or a location.
+  /api/menu-items/search:
+    post:
+      tags:
+        - MenuItem
+      summary: Search Menu Item
+      operationId: SearchMenuItem
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchMenuItemRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchMenuItemResponse'
+      description: Get list of products for merchant
+  '/api/menus/{menuId}':
+    get:
+      tags:
+        - Menu
+      parameters:
+        - name: menuId
+          schema:
+            type: string
+          in: path
+          required: true
+        - in: header
+          name: Location-Id
+          schema:
+            type: string
+        - schema:
+            type: string
+          in: header
+          name: Account-Id
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+          description: Successful response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: ''
+        '500':
+          description: ''
+      operationId: GetPublishedMenu
+      summary: Get Published Menu
+      description: Get a single published menu.
+    parameters:
+      - schema:
+          type: string
+        name: menuId
+        in: path
+        required: true
+    delete:
+      summary: Unpublish Menu
+      tags:
+        - Menu
+      responses:
+        '200':
+          description: OK
+      operationId: DeletePublishedMenu
+      parameters:
+        - in: header
+          name: Location-Id
+          schema:
+            type: string
+        - schema:
+            type: string
+          in: header
+          name: Account-Id
+          required: true
+      description: Unpublish menu. This operation will softly remove the menu and make it unavailable for any of the channels / products which used it in the past.
+  '/api/menu-items/{menuItemId}':
+    get:
+      tags:
+        - MenuItem
+      summary: Get menu item details
+      operationId: GetMenuItemDetails
+      parameters:
+        - name: menuItemId
+          schema:
+            type: string
+          in: path
+          required: true
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItemDraft'
+      description: Get menu item details
+    delete:
+      tags:
+        - MenuItem
+      summary: Delete menu item
+      operationId: DeleteMenuItem
+      parameters:
+        - name: menuItemId
+          schema:
+            type: string
+          in: path
+          required: true
+        - in: header
+          schema:
+            type: string
+          name: Customer-Id
+      responses:
+        '200':
+          description: OK
+    patch:
+      tags:
+        - MenuItem
+      summary: Update menu item
+      operationId: UpdateMenuItem
+      parameters:
+        - in: header
+          schema:
+            type: string
+          name: Customer-Id
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertMenuItemRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItemDraft'
+      description: Update/override item details
+    parameters:
+      - schema:
+          type: string
+        name: menuItemId
+        in: path
+        required: true
+  /api/modifier-groups:
+    post:
+      tags:
+        - ModifierGroup
+      summary: Create modifier group
+      operationId: CreateModifierGroup
+      parameters:
+        - in: header
+          schema:
+            type: string
+          name: Customer-Id
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertModifierGroupRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModifierGroupDraft'
+      description: Add new modifier group for merchant
+  /api/modifier-groups/search:
+    post:
+      tags:
+        - ModifierGroup
+      summary: Search modifier group
+      operationId: SearchModifierGroup
+      parameters:
+        - in: header
+          schema:
+            type: string
+          name: Customer-Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchModifierGroupRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchModifierGroupResponse'
+      description: Get list of modifier groups for merchant
+  '/api/modifier-groups/{groupId}':
+    get:
+      tags:
+        - ModifierGroup
+      summary: Get Modifier Group
+      operationId: GetModifierGroup
+      parameters:
+        - name: groupId
+          schema:
+            type: string
+          in: path
+          required: true
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModifierGroupDraft'
+      description: Get modifier group details
+    delete:
+      tags:
+        - ModifierGroup
+      summary: Delete modifier group
+      operationId: DeleteModifierGroup
+      parameters:
+        - name: groupId
+          schema:
+            type: string
+          in: path
+          required: true
+        - in: header
+          schema:
+            type: string
+          name: Customer-Id
+      responses:
+        '200':
+          description: OK
+    patch:
+      tags:
+        - ModifierGroup
+      summary: Update Modifier Group
+      operationId: UpdateModifierGroup
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertModifierGroupRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModifierGroupDraft'
+      description: Update/override modifier group details
+    parameters:
+      - schema:
+          type: string
+        name: groupId
+        in: path
+        required: true
+  /api/upsell-groups:
+    post:
+      tags:
+        - UpsellGroup
+      summary: Create Upsell Group
+      operationId: CreateUpsellGroup
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertUpsellGroupRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpsellGroupDraft'
+      description: Add new upsell group for merchant
+  /api/upsell-groups/search:
+    post:
+      tags:
+        - UpsellGroup
+      summary: Search Upsell Group
+      operationId: SearchUpsellGroup
+      parameters:
+        - in: header
+          schema:
+            type: string
+          name: Customer-Id
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchUpsellGroupRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchUpsellGroupResponse'
+      description: Get list of upsell groups for merchant
+  '/api/upsell-groups/{groupId}':
+    get:
+      tags:
+        - UpsellGroup
+      summary: Get Upsell Group
+      operationId: GetUpsellGroup
+      parameters:
+        - name: groupId
+          schema:
+            type: string
+          in: path
+          required: true
+        - in: header
+          schema:
+            type: string
+          name: Customer-Id
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpsellGroupDraft'
+      description: Get upsell group details
+    delete:
+      tags:
+        - UpsellGroup
+      summary: Delete upsell group
+      operationId: DeleteUpsellGroup
+      parameters:
+        - name: groupId
+          schema:
+            type: string
+          in: path
+          required: true
+        - in: header
+          name: Customer-Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    patch:
+      tags:
+        - UpsellGroup
+      summary: Update Upsell Group
+      operationId: UpdateUpsellGroup
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertUpsellGroupRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpsellGroupDraft'
+      description: Update/override upsell group details
+    parameters:
+      - schema:
+          type: string
+        name: groupId
+        in: path
+        required: true
+  /api/menu-item-groups:
+    get:
+      tags:
+        - MenuItemGroup
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MenuItemGroup'
+      operationId: GetMenuItemGroup
+      summary: Get MenuItem Group
+      parameters:
+        - in: header
+          schema:
+            type: string
+          name: Customer-Id
+          required: true
+      description: Get the list of all item groups
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertMenuItemGroupRequest'
+        required: true
+      tags:
+        - MenuItemGroup
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItemGroup'
+      summary: Create MenuItem Group
+      operationId: CreateMenuItemGroup
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+      description: Create a new menu items group.
+  '/api/menu-item-groups/{menuItemGroupId}':
+    delete:
+      tags:
+        - MenuItemGroup
+      responses:
+        '200':
+          description: OK
+      summary: Delete menu items group
+      operationId: DeleteMenuItemGroup
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+    patch:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertMenuItemGroupRequest'
+        required: true
+      tags:
+        - MenuItemGroup
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItemGroup'
+      summary: Update menu item group
+      operationId: UpdateMenuItemGroup
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+    parameters:
+      - schema:
+          type: string
+        name: menuItemGroupId
+        in: path
+        required: true
+  /api/menus/drafts:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMenuDraftRequest'
+        required: true
+      tags:
+        - Menu
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuDraft'
+      summary: Create draft menu
+      operationId: CreateDraftMenu
+      parameters:
+        - in: header
+          required: true
+          name: Customer-Id
+          schema:
+            type: string
+  /api/menus/drafts/search:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchDraftMenuRequest'
+        required: true
+      tags:
+        - Menu
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchDraftMenuResponse'
+      summary: Search draft menus
+      operationId: SearchDraftMenu
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+  '/api/menus/drafts/{menuId}/':
+    get:
+      tags:
+        - Menu
+      parameters:
+        - name: menuId
+          schema:
+            type: string
+          in: path
+          required: true
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuDraft'
+          description: Successful response
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: ''
+        '500':
+          description: ''
+      operationId: GetDraftMenu
+      summary: Get draft menu
+      description: Get a single draft menu
+    delete:
+      tags:
+        - Menu
+      responses:
+        '200':
+          description: OK
+      summary: Soft delete menu draft
+      operationId: SoftDeleteDraftMenu
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+    patch:
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMenuDraftRequest'
+        required: true
+      tags:
+        - Menu
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuDraft'
+      summary: Update dragt menu
+      operationId: UpdateDraftMenu
+      description: Update menu draft details
+    parameters:
+      - schema:
+          type: string
+        name: menuId
+        in: path
+        required: true
+  '/api/menus/drafts/{menuId}/categories':
+    post:
+      parameters:
+        - in: header
+          schema:
+            type: string
+          name: Customer-Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMenuCategoryRequest'
+        required: true
+      tags:
+        - MenuCategory
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCategoryDraft'
+      summary: Add draft menu category
+      operationId: AddDraftMenuCategories
+    parameters:
+      - schema:
+          type: string
+        name: menuId
+        in: path
+        required: true
+  '/api/menus/drafts/{menuId}/categories/search':
+    post:
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchCategoriesRequest'
+        required: true
+      tags:
+        - MenuCategory
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchCategoriesResponse'
+      summary: Search draft menu category
+      operationId: SearchDraftMenuCategories
+    parameters:
+      - schema:
+          type: string
+        name: menuId
+        in: path
+        required: true
+  '/api/menus/drafts/{menuId}/categories/{categoryId}':
+    get:
+      tags:
+        - MenuCategory
+      summary: Get draft menu category details
+      operationId: GetDraftMenuCategoryDetails
+      parameters:
+        - in: header
+          schema:
+            type: string
+          name: Customer-Id
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCategoryDraft'
+    delete:
+      tags:
+        - MenuCategory
+      summary: Delete draft menu category details
+      operationId: DeleteDraftMenuCategoryDetails
+      parameters:
+        - in: header
+          schema:
+            type: string
+          name: Customer-Id
+          required: true
+      responses:
+        '200':
+          description: OK
+    patch:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMenuCategoryRequest'
+        required: true
+      tags:
+        - MenuCategory
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuCategoryDraft'
+      summary: Update draft menu category details
+      operationId: UpdateDraftMenuCategoryDetails
+      parameters:
+        - in: header
+          name: Customer-Id
+          schema:
+            type: string
+          required: true
+    parameters:
+      - schema:
+          type: string
+        name: menuId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: categoryId
+        in: path
+        required: true
+  '/api/menus/drafts/{menuId}/publish':
+    post:
+      tags:
+        - Menu
+      description: 'Publish menu to channels, e.g. Order&Pay, RMS'
+      operationId: PublishDraftMenu
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishMenusRequest'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Customer-Id
+          required: true
+      summary: Publish draft menu
+    parameters:
+      - schema:
+          type: string
+        name: menuId
+        in: path
+        required: true
+components:
+  schemas:
+    Menu:
+      type: object
+      required:
+        - type
+        - description
+        - orderTypes
+        - categories
+        - id
+        - name
+        - customerId
+        - locationId
+        - publishedAt
+      properties:
+        type:
+          $ref: '#/components/schemas/MenuType'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        orderType:
+          $ref: '#/components/schemas/OrderType'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuCategory'
+        categoriesOrder:
+          type: array
+          x-stoplight:
+            id: bhoetpo438bs2
+          items:
+            x-stoplight:
+              id: fhikv1gbn68ax
+            type: string
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        imageUrl:
+          type: string
+        currency:
+          type: string
+        customerId:
+          type: string
+        locationId:
+          type: string
+          x-stoplight:
+            id: 4ylg87r60g2u5
+        publishedAt:
+          type: string
+          x-stoplight:
+            id: lvzf021bbdfq8
+          format: date-time
+    Availability:
+      type: object
+      required:
+        - dayOfWeek
+        - endTime
+        - startTime
+      properties:
+        dayOfWeek:
+          $ref: '#/components/schemas/DayOfWeek'
+        endTime:
+          description: |-
+            The end time of availability in 24-hour HH:MM
+            format, expressed in the local time of the location.
+          type: string
+          format: time
+        startTime:
+          description: |-
+            The start time of availability in 24-hour HH
+            format, expressed in the local time of the location.
+          type: string
+          format: time
+        fromDate:
+          type: string
+          x-stoplight:
+            id: rztkkjdpaqujr
+          format: date
+        toDate:
+          type: string
+          x-stoplight:
+            id: vbcb2hwz1wmv2
+          format: date
+    MenuCategory:
+      type: object
+      required:
+        - name
+        - description
+        - items
+        - id
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        subCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuCategory'
+        subCategoriesOrder:
+          type: array
+          items:
+            type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuItem'
+        itemsOrder:
+          type: array
+          items:
+            type: string
+        availabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Availability'
+        id:
+          type: string
+        imageUrl:
+          type: string
+    MenuCategoryDraft:
+      type: object
+      required:
+        - name
+        - description
+        - items
+        - id
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        subCategories:
+          type: array
+          items:
+            type: string
+        subCategoriesOrder:
+          type: array
+          items:
+            type: string
+        items:
+          type: array
+          items:
+            type: string
+        itemsOrder:
+          type: array
+          items:
+            type: string
+        availabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Availability'
+        id:
+          type: string
+        imageUrl:
+          type: string
+        createdAt:
+          type: string
+          x-stoplight:
+            id: fdcv8xf3c3idi
+          format: date-time
+        updatedAt:
+          type: string
+          x-stoplight:
+            id: n331nxfrcb47q
+          format: date-time
+    ModifierGroupRestrictions:
+      type: object
+      properties:
+        maxPerGroup:
+          description: Specifies the maximum number of items that can be purchased within a group.
+          type: integer
+        minPerGroup:
+          description: Specifies the minimum number of items that must be purchased within a group.
+          type: integer
+        maxOfSame:
+          description: Sets the maximum quantity of a single item that can be purchased within a group
+          type: integer
+    LocalizedValue:
+      type: object
+      additionalProperties:
+        type: string
+      x-examples:
+        Example 1:
+          en: Hello world!
+          es: Hola Mundo!
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          nullable: true
+          type: string
+        title:
+          nullable: true
+          type: string
+        status:
+          nullable: true
+          format: int32
+          type: integer
+        detail:
+          nullable: true
+          type: string
+        instance:
+          nullable: true
+          type: string
+        extensions:
+          type: object
+          additionalProperties: {}
+      additionalProperties:
+        nullable: true
+      x-examples:
+        Example 1:
+          errors:
+            Reference:
+              - The Reference field is required.
+          type: 'https://tools.ietf.org/html/rfc7231#section-6.5.1'
+          title: One or more validation errors occurred.
+          status: 400
+          traceId: 00-a405f077df056a498323ffbcec05923f-aa63e6f4dbbc734a-01
+      description: The error response format proposed in RFC 7807
+    NutritionalInfo:
+      title: Root Type for NutritionalInfo
+      description: ''
+      type: object
+      properties:
+        calories:
+          type: integer
+      example:
+        calories: 200
+    Money:
+      title: Money
+      required:
+        - currencyCode
+        - value
+      type: object
+      properties:
+        value:
+          format: int64
+          description: 'The amount in the minor unit, for example ''100'' for 1.00 GBP.'
+          type: integer
+        currencyCode:
+          description: Three-letter currency code in ISO 4217 alpha-3 format.
+          maxLength: 10
+          minLength: 1
+          type: string
+      additionalProperties: false
+      example:
+        value: 1000
+        currencyCode: GBP
+    DayOfWeek:
+      description: ''
+      enum:
+        - Mon
+        - Tue
+        - Wed
+        - Thu
+        - Fri
+        - Sat
+        - Sun
+      type: string
+    MenuItemType:
+      description: ''
+      enum:
+        - Product
+        - Modifier
+      type: string
+    CreateMenuCategoryRequest:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        subCategories:
+          description: Not for MVP
+          type: array
+          items:
+            type: string
+        availabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Availability'
+        imageUrl:
+          type: string
+        subCategoriesOrder:
+          type: array
+          items:
+            type: string
+        items:
+          type: array
+          x-stoplight:
+            id: pjpptb604in91
+          items:
+            x-stoplight:
+              id: h7uapeiizk3dh
+            type: string
+        itemsOrder:
+          type: array
+          x-stoplight:
+            id: bk7ypxc9a9nop
+          items:
+            x-stoplight:
+              id: x53h0k33io4kp
+            type: string
+    UpdateMenuCategoryRequest:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        subCategories:
+          description: Not for MVP
+          type: array
+          items:
+            type: string
+        subCategoriesOrder:
+          type: array
+          items:
+            type: string
+        items:
+          type: array
+          items:
+            type: string
+        itemsOrder:
+          type: array
+          items:
+            type: string
+        availabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Availability'
+        imageUrl:
+          type: string
+    MenuItemGroup:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        items:
+          type: array
+          x-stoplight:
+            id: cew7g10sjof15
+          description: List of items in the group
+          items:
+            x-stoplight:
+              id: x5uk9jukq4tc0
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    UpsertMenuItemGroupRequest:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        items:
+          type: array
+          x-stoplight:
+            id: bu5lodwbm03gz
+          items:
+            x-stoplight:
+              id: 6mstaksmdkf5x
+            type: string
+    MenuDraft:
+      type: object
+      required:
+        - type
+        - description
+        - categories
+        - id
+        - name
+        - customerId
+        - createdAt
+      properties:
+        type:
+          $ref: '#/components/schemas/MenuType'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        orderType:
+          $ref: '#/components/schemas/OrderType'
+        categories:
+          type: array
+          items:
+            type: string
+        categoriesOrder:
+          type: array
+          items:
+            type: string
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        imageUrl:
+          type: string
+        currency:
+          type: string
+        customerId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateMenuDraftRequest:
+      type: object
+      required:
+        - description
+        - menuType
+        - name
+      properties:
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        menuType:
+          $ref: '#/components/schemas/MenuType'
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        imageUrl:
+          type: string
+        orderType:
+          $ref: '#/components/schemas/OrderType'
+    UpdateMenuDraftRequest:
+      type: object
+      properties:
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        menuType:
+          $ref: '#/components/schemas/MenuType'
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        imageUrl:
+          type: string
+        orderType:
+          $ref: '#/components/schemas/OrderType'
+        categories:
+          type: array
+          items:
+            type: string
+        categoriesOrder:
+          type: array
+          items:
+            type: string
+    UpsertMenuItemRequest:
+      type: object
+      title: UpsertMenuItemRequest
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        price:
+          $ref: '#/components/schemas/Money'
+        plu:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        type:
+          $ref: '#/components/schemas/MenuItemType'
+        subItems:
+          type: array
+          items:
+            type: string
+        subItemsOrder:
+          type: array
+          items:
+            type: string
+        imageUrl:
+          type: string
+        defaultQuantity:
+          description: 'specifies the initial quantity for pre-selected items. If set to a value greater than 0 (typically ''1''), the item will be automatically selected with that quantity by default.'
+          type: integer
+        upsells:
+          type: array
+          items:
+            type: string
+        allergens:
+          description: List of allergens
+          type: array
+          items:
+            type: string
+        nutritionalInfo:
+          $ref: '#/components/schemas/NutritionalInfo'
+    MenuItem:
+      required:
+        - id
+        - name
+        - plu
+        - price
+        - type
+        - description
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        price:
+          $ref: '#/components/schemas/Money'
+        id:
+          nullable: false
+          type: string
+        plu:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        type:
+          $ref: '#/components/schemas/MenuItemType'
+        modifierGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModifierGroup'
+        imageUrl:
+          type: string
+        defaultQuantity:
+          description: 'specifies the initial quantity for pre-selected items. If set to a value greater than 0 (typically ''1''), the item will be automatically selected with that quantity by default.'
+          type: integer
+        upsells:
+          type: array
+          items:
+            $ref: '#/components/schemas/UpsellGroup'
+        allergens:
+          description: List of allergens
+          type: array
+          items:
+            type: string
+        nutritionalInfo:
+          $ref: '#/components/schemas/NutritionalInfo'
+    MenuItemDraft:
+      type: object
+      required:
+        - name
+        - description
+        - price
+        - id
+        - plu
+        - type
+        - customerId
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        price:
+          $ref: '#/components/schemas/Money'
+        id:
+          nullable: false
+          type: string
+        plu:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        type:
+          $ref: '#/components/schemas/MenuItemType'
+        modifierGroups:
+          type: array
+          items:
+            type: string
+        modifierGroupsOrder:
+          type: array
+          items:
+            type: string
+        imageUrl:
+          type: string
+        defaultQuantity:
+          description: 'specifies the initial quantity for pre-selected items. If set to a value greater than 0 (typically ''1''), the item will be automatically selected with that quantity by default.'
+          type: integer
+        upsells:
+          type: array
+          items:
+            type: string
+        allergens:
+          description: List of allergens
+          type: array
+          items:
+            type: string
+        nutritionalInfo:
+          $ref: '#/components/schemas/NutritionalInfo'
+        customerId:
+          type: string
+          x-stoplight:
+            id: m8bbqgxx7icmx
+        locationId:
+          type: string
+          x-stoplight:
+            id: 8uqf05wk60atg
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ModifierGroup:
+      type: object
+      required:
+        - name
+        - description
+        - id
+        - plu
+        - type
+        - customerId
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        id:
+          nullable: false
+          type: string
+        plu:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuItem'
+        itemsOrder:
+          type: array
+          items:
+            type: string
+        restrictions:
+          $ref: '#/components/schemas/ModifierGroupRestrictions'
+        customerId:
+          type: string
+          x-stoplight:
+            id: m8bbqgxx7icmx
+        locationId:
+          type: string
+          x-stoplight:
+            id: 8uqf05wk60atg
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ModifierGroupDraft:
+      type: object
+      required:
+        - name
+        - description
+        - id
+        - plu
+        - customerId
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        id:
+          nullable: false
+          type: string
+        plu:
+          type: string
+        items:
+          type: array
+          items:
+            type: string
+        itemsOrder:
+          type: array
+          items:
+            type: string
+        restrictions:
+          $ref: '#/components/schemas/ModifierGroupRestrictions'
+        customerId:
+          type: string
+        locationId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    UpsertModifierGroupRequest:
+      type: object
+      required:
+        - name
+        - description
+        - plu
+        - type
+        - customerId
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        id:
+          nullable: false
+          type: string
+        plu:
+          type: string
+        items:
+          type: array
+          items:
+            type: string
+        itemsOrder:
+          type: array
+          items:
+            type: string
+        restrictions:
+          $ref: '#/components/schemas/ModifierGroupRestrictions'
+    UpsellGroup:
+      type: object
+      required:
+        - name
+        - id
+        - customerId
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        id:
+          nullable: false
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuItem'
+        itemsOrder:
+          type: array
+          items:
+            type: string
+        customerId:
+          type: string
+        locationId:
+          type: string
+    UpsellGroupDraft:
+      type: object
+      required:
+        - name
+        - id
+        - customerId
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        id:
+          nullable: false
+          type: string
+        items:
+          type: array
+          items:
+            type: string
+        itemsOrder:
+          type: array
+          items:
+            type: string
+        customerId:
+          type: string
+        locationId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    UpsertUpsellGroupRequest:
+      type: object
+      required:
+        - name
+        - id
+        - plu
+        - customerId
+      properties:
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        items:
+          type: array
+          items:
+            type: string
+        itemsOrder:
+          type: array
+          items:
+            type: string
+    PublishMenusRequest:
+      title: PublishMenuRequest
+      type: object
+      properties:
+        locationIds:
+          type: array
+          items:
+            type: string
+    OrderType:
+      title: OrderType
+      enum:
+        - DineIn
+        - Collection
+        - Preorder
+        - CollectionAndDineIn
+    MenuType:
+      title: MenuType
+      enum:
+        - SetMenu
+        - ALaCarte
+    SearchMenuRequest:
+      title: SearchMenuRequest
+      type: object
+      properties:
+        locationIds:
+          type: array
+          items:
+            type: string
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuType'
+        orderTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderType'
+        cursor:
+          $ref: '#/components/schemas/Cursor'
+    SearchMenuResponse:
+      title: SearchMenuResponse
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchMenuModel'
+        before:
+          type: string
+          description: A cursor for use in pagination for the previous page.
+        after:
+          type: string
+          description: A cursor for use in pagination for the next page.
+    SearchDraftMenuRequest:
+      title: SearchDraftMenuRequest
+      type: object
+      properties:
+        locationIds:
+          type: array
+          items:
+            type: string
+        type:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuType'
+        orderTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderType'
+        cursor:
+          $ref: '#/components/schemas/Cursor'
+    SearchDraftMenuResponse:
+      title: SearchDraftMenuResponse
+      type: object
+      properties:
+        data:
+          type: array
+          x-stoplight:
+            id: ut2hyhjljvhr9
+          items:
+            $ref: '#/components/schemas/SearchMenuDraftModel'
+        before:
+          type: string
+          x-stoplight:
+            id: r3o7a8e23dfed
+          description: A cursor for use in pagination for the previous page.
+        after:
+          type: string
+          x-stoplight:
+            id: 4xsji0n9bn33u
+          description: A cursor for use in pagination for the next page.
+    SearchMenuModel:
+      type: object
+      required:
+        - type
+        - description
+        - orderTypes
+        - id
+        - name
+        - customerId
+        - locationId
+      properties:
+        type:
+          $ref: '#/components/schemas/MenuType'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        orderType:
+          $ref: '#/components/schemas/OrderType'
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        imageUrl:
+          type: string
+        currency:
+          type: string
+        customerId:
+          type: string
+        locationId:
+          type: string
+    SearchMenuDraftModel:
+      type: object
+      required:
+        - type
+        - description
+        - orderTypes
+        - id
+        - name
+        - customerId
+      properties:
+        type:
+          $ref: '#/components/schemas/MenuType'
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+        orderType:
+          $ref: '#/components/schemas/OrderType'
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        imageUrl:
+          type: string
+        currency:
+          type: string
+        customerId:
+          type: string
+        locationId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    SearchMenuItemRequest:
+      title: SearchMenuItemRequest
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        cursor:
+          $ref: '#/components/schemas/Cursor'
+    SearchMenuItemResponse:
+      title: SearchMenuItemResponse
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuItemDraft'
+        before:
+          type: string
+          description: A cursor for use in pagination for the previous page.
+        after:
+          type: string
+          description: A cursor for use in pagination for the next page.
+    SearchModifierGroupRequest:
+      title: SearchModifierGroupRequest
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        cursor:
+          $ref: '#/components/schemas/Cursor'
+    SearchModifierGroupResponse:
+      title: SearchModifierGroupResponse
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModifierGroupDraft'
+        before:
+          type: string
+          description: A cursor for use in pagination for the previous page.
+        after:
+          type: string
+          description: A cursor for use in pagination for the next page.
+    SearchUpsellGroupRequest:
+      title: SearchUpsellGroupRequest
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        cursor:
+          $ref: '#/components/schemas/Cursor'
+    SearchUpsellGroupResponse:
+      title: SearchUpsellGroupResponse
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UpsellGroupDraft'
+        before:
+          type: string
+          description: A cursor for use in pagination for the previous page.
+        after:
+          type: string
+          description: A cursor for use in pagination for the next page.
+    SearchCategoriesRequest:
+      title: SearchCategoriesRequest
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        cursor:
+          $ref: '#/components/schemas/Cursor'
+    SearchCategoriesResponse:
+      title: SearchCategoriesResponse
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuCategoryDraft'
+        before:
+          type: string
+          description: A cursor for use in pagination for the previous page.
+        after:
+          type: string
+          description: A cursor for use in pagination for the next page.
+    Cursor:
+      title: Cursor
+      type: object
+      properties:
+        limit:
+          type: integer
+          description: The maximum number of results to be returned in a single page.
+        before:
+          type: string
+          description: A cursor for use in pagination for the previous page. `before` and `after` are mutually exclusive—only one of these may be used.
+        after:
+          type: string
+          description: A cursor for use in pagination for the next page. `before` and `after` are mutually exclusive—only one of these may be used.
+tags:
+  - name: Menu
+    description: ''
+  - name: MenuCategory
+    description: ''
+  - name: MenuItem
+    description: ''
+  - name: MenuItemGroup
+    description: ''
+  - name: ModifierGroup
+    description: ''
+  - name: UpsellGroup
+    description: ''

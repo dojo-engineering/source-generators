@@ -33,7 +33,7 @@ namespace Dojo.OpenApiGenerator.Models
             Name = openApiParameter.Name;
             ApiModel = ResolveApiModel();
             IsRequired = openApiParameter.Required;
-            SourceCodeName = sourceCodeName ?? Name.ToSourceCodeParameterName();
+            SourceCodeName = sourceCodeName ?? Name.ToSourceCodeName();
             MaxLength = openApiParameter.Schema?.MaxLength;
             MinLength = openApiParameter.Schema?.MinLength;
         }

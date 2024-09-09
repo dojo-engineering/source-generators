@@ -25,6 +25,7 @@ namespace Dojo.OpenApiGenerator.Models
         public IEnumerable<ApiResponse> ResponseTypes { get; }
         public ApiResponse SuccessResponse { get; }
         public IEnumerable<ApiResponse> UnsuccessfulResponses { get; }
+        public string Route { get; }
         public IList<ApiRouteParameter> RouteParameters { get; private set; }
         public string Version { get; }
         public string InputActionParametersString { get; }
@@ -46,6 +47,7 @@ namespace Dojo.OpenApiGenerator.Models
         public IEnumerable<string> AuthorizationPolicies { get; set; }
 
         public ApiControllerAction(
+            string route,
             OperationType operationType,
             OpenApiOperation operation,
             IDictionary<string, ApiModel> apiModels,
@@ -63,8 +65,9 @@ namespace Dojo.OpenApiGenerator.Models
             _apiFileName = apiFileName;
             _apiGeneratorSettings = apiGeneratorSettings;
             IsDeprecated = operation.Deprecated;
+            Route = route;
             HttpMethod = GetHttpMethodAttributeName(operationType);
-            ActionName = ToActionName(!string.IsNullOrWhiteSpace(operation.OperationId) ? operation.OperationId : operation.Summary);
+            ActionName = ToActionName(operation);
             ResponseTypes = operation.Responses.Select(x => new ApiResponse(x.Key, x.Value, apiModels, apiVersion, apiFileName));
             RouteParameters = apiRouteParameters;
             Version = apiVersion;
@@ -266,6 +269,12 @@ namespace Dojo.OpenApiGenerator.Models
 
         private bool ExcludeVersionParameter(ApiParameterBase apiParameter)
         {
+            if (apiParameter == null)
+            {
+                throw new InvalidOpenApiSchemaException($"Api Parameter is not defined for operation: {HttpMethod}: {Route}");
+            }
+                
+
             return !_apiGeneratorSettings.IncludeVersionParameterInActionSignature &&
                    apiParameter.Name == _apiGeneratorSettings.VersionParameterName;
         }
@@ -480,8 +489,17 @@ namespace Dojo.OpenApiGenerator.Models
             return $"{ActionConstraints.FromHeader}(Name = \"{parameterName}\")";
         }
 
-        private static string ToActionName(string actionName)
+        private string ToActionName(OpenApiOperation operation)
         {
+            var actionName = !string.IsNullOrWhiteSpace(operation.OperationId)
+                ? operation.OperationId
+                : operation.Summary;
+
+            if (string.IsNullOrWhiteSpace(actionName))
+            {
+                throw new InvalidOpenApiSchemaException($"Invalid action name for operation:  '{HttpMethod}: {Route}'.OperationId must be defined for each operation in the OpenApi specification.");
+            }
+
             var actionNameWords = actionName.Split('_', '-', ' ');
 
             return string.Join("", actionNameWords.Select(w => w.FirstCharToUpper()));

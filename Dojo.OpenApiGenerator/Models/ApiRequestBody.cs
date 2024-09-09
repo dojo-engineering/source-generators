@@ -33,7 +33,7 @@ namespace Dojo.OpenApiGenerator.Models
             IsRequired = _openApiRequestBody.Required;
             ApiModel = ResolveApiModel();
             Name = openApiRequestBody.Description ?? ApiModel.Name;
-            SourceCodeName = Name.ToSourceCodeParameterName();
+            SourceCodeName = Name.ToSourceCodeName();
         }
 
         private ApiModel ResolveApiModel()
