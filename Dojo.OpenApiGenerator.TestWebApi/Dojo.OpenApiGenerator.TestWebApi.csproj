@@ -9,6 +9,34 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\MenuApiController.cs" />
+    <Compile Remove="Controllers\MenuCategoryController.cs" />
+    <Compile Remove="Controllers\MenuController.cs" />
+    <Compile Remove="Controllers\MenuItemController.cs" />
+    <Compile Remove="Controllers\MenuItemGroupController.cs" />
+    <Compile Remove="Controllers\ModifierGroupController.cs" />
+    <Compile Remove="Controllers\UpsellGroupController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="OpenApiSchemas\menu-api.yml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="OpenApiSchemas\menu-api.yml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Controllers\MenuApiController.cs" />
+    <None Include="Controllers\MenuCategoryController.cs" />
+    <None Include="Controllers\MenuController.cs" />
+    <None Include="Controllers\MenuItemController.cs" />
+    <None Include="Controllers\MenuItemGroupController.cs" />
+    <None Include="Controllers\ModifierGroupController.cs" />
+    <None Include="Controllers\UpsellGroupController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
     <PackageReference Include="AutoMapper" Version="13.0.1" />

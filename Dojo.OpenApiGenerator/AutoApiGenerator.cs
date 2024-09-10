@@ -7,6 +7,7 @@ using System.Text;
 using Dojo.Generators.Core.Utils;
 using Dojo.OpenApiGenerator.CodeTemplates;
 using Dojo.OpenApiGenerator.Configuration;
+using Dojo.OpenApiGenerator.Exceptions;
 using Dojo.OpenApiGenerator.Extensions;
 using Dojo.OpenApiGenerator.Models;
 using Microsoft.CodeAnalysis;
@@ -52,7 +53,7 @@ namespace Dojo.OpenApiGenerator
 //                Debugger.Launch();
 //            }
 //#endif
-//            Debug.WriteLine("Initialize code generator");
+            Debug.WriteLine("Initialize code generator");
         }
 
         public void Execute(GeneratorExecutionContext context)
@@ -160,7 +161,11 @@ namespace Dojo.OpenApiGenerator
             string projectNamespace,
             string apiFileName)
         {
+            const string defaultTag = "defaultTag";
             var apiVersion = openApiDocument.Info.Version;
+            var controllerDefinitions = new List<ApiControllerDefinition>();
+            var operationsByTags = new Dictionary<string, Dictionary<string, (OpenApiPathItem Path, IDictionary<OperationType, OpenApiOperation> Operations)>>();
+
             var supportedApiVersions = TryGetSupportedApiVersions(openApiDocument) ?? new HashSet<string>();
             if (!string.IsNullOrWhiteSpace(apiVersion))
             {
@@ -168,16 +173,68 @@ namespace Dojo.OpenApiGenerator
             }
 
             var parameters = openApiDocument.Components.Parameters.GetApiParameters(projectNamespace, _apiModels, apiVersion, apiFileName);
-            var data = new ApiControllerDefinition(projectNamespace)
+
+            if (_autoApiGeneratorSettings.OrganizeControllersByTags)
             {
-                Title = openApiDocument.Info.Title,
-                SupportedVersions = supportedApiVersions,
-                SourceCodeVersion = StringHelpers.ToSourceCodeVersion(supportedApiVersions, apiVersion),
-                Routes = openApiDocument.Paths.Select(x => new ApiControllerRoute(x.Key, x.Value, _apiModels, projectNamespace, parameters, apiVersion, apiFileName, _autoApiGeneratorSettings)),
-                CanOverride = apisToOverride.Contains(openApiDocument.Info.Title),
-                Parameters = parameters,
-                AuthorizationPolicies = openApiDocument.TryGetApiAuthorizationPolicies(_autoApiGeneratorSettings.ApiAuthorizationPoliciesExtension)
-            };
+                foreach (var openApiPath in openApiDocument.Paths)
+                {
+                    if (openApiPath.Value?.Operations == null)
+                    {
+                        throw new InvalidOpenApiSchemaException($"No Operations defined for path: '{openApiPath.Key}'");
+                    }
+
+                    foreach (var openApiOperation in openApiPath.Value.Operations)
+                    {
+                        var tags = openApiOperation.Value.Tags;
+
+                        if (tags == null || tags.Count == 0)
+                        {
+                            tags = new List<OpenApiTag> { new() { Name = defaultTag } };
+                        }
+
+                        foreach (var tag in tags)
+                        {
+                            if (!operationsByTags.TryGetValue(tag.Name, out var operationsByTag))
+                            {
+                                operationsByTag = new Dictionary<string, (OpenApiPathItem Path, IDictionary<OperationType, OpenApiOperation> Operations)>();
+                                operationsByTags.Add(tag.Name, operationsByTag);
+                            }
+
+                            if (!operationsByTag.TryGetValue(openApiPath.Key, out var operationPathByTag))
+                            {
+                                operationPathByTag = (openApiPath.Value, new Dictionary<OperationType, OpenApiOperation>());
+                                operationsByTag.Add(openApiPath.Key, operationPathByTag);
+                            }
+
+                            operationPathByTag.Operations.Add(openApiOperation);
+                        }
+                    }
+                }
+
+                controllerDefinitions.AddRange(operationsByTags.Select(operationsByTag => new ApiControllerDefinition(projectNamespace)
+                {
+                    Title = operationsByTag.Key == defaultTag ? openApiDocument.Info.Title.ToSourceCodeName(true) : operationsByTag.Key.ToSourceCodeName(true),
+                    SupportedVersions = supportedApiVersions,
+                    SourceCodeVersion = StringHelpers.ToSourceCodeVersion(supportedApiVersions, apiVersion),
+                    Routes = operationsByTag.Value.Select(x => new ApiControllerRoute(x.Key, x.Value.Path, x.Value.Operations, _apiModels, projectNamespace, parameters, apiVersion, apiFileName, _autoApiGeneratorSettings)),
+                    CanOverride = apisToOverride.Contains(openApiDocument.Info.Title),
+                    Parameters = parameters,
+                    AuthorizationPolicies = openApiDocument.TryGetApiAuthorizationPolicies(_autoApiGeneratorSettings.ApiAuthorizationPoliciesExtension)
+                }));
+            }
+            else
+            {
+                controllerDefinitions.Add(new ApiControllerDefinition(projectNamespace)
+                {
+                    Title = openApiDocument.Info.Title.ToSourceCodeName(true),
+                    SupportedVersions = supportedApiVersions,
+                    SourceCodeVersion = StringHelpers.ToSourceCodeVersion(supportedApiVersions, apiVersion),
+                    Routes = openApiDocument.Paths.Select(x => new ApiControllerRoute(x.Key, x.Value, x.Value.Operations, _apiModels, projectNamespace, parameters, apiVersion, apiFileName, _autoApiGeneratorSettings)),
+                    CanOverride = apisToOverride.Contains(openApiDocument.Info.Title),
+                    Parameters = parameters,
+                    AuthorizationPolicies = openApiDocument.TryGetApiAuthorizationPolicies(_autoApiGeneratorSettings.ApiAuthorizationPoliciesExtension)
+                });
+            }
 
             foreach (var supportedApiVersion in supportedApiVersions)
             {
@@ -186,9 +243,16 @@ namespace Dojo.OpenApiGenerator
 
             //GenerateServiceInterface(context, data);
 
-            if (data.Routes.Any(x => x.Actions.Any()))
+            foreach (var apiControllerDefinition in controllerDefinitions)
             {
-                GenerateController(context, data, apiFileName);
+                if (apiControllerDefinition.Routes.Any(x => x.Actions.Any()))
+                {
+                    GenerateController(context, apiControllerDefinition, apiFileName);
+                }
+                else
+                {
+                    throw new InvalidOpenApiSchemaException($"No Routes or Actions found for api controller definition: {apiControllerDefinition.Title}");
+                }
             }
         }
 

@@ -21,5 +21,6 @@
    */
   "ApiAuthorizationPoliciesExtension": "x-authorization-policies",
   /* This will prevent swagger open api explorer generation*/
-  "GenerateApiExplorer": false
+  "GenerateApiExplorer": false,
+  "OrganizeControllersByTags": false,
 }

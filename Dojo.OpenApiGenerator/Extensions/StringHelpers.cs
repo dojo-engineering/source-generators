@@ -26,14 +26,6 @@ namespace Dojo.OpenApiGenerator.Extensions
             return char.ToLower(value[0]) + value.Substring(1);
         }
 
-        public static string ToSourceCodeName(this string value)
-        {
-            return string.IsNullOrEmpty(value) ? string.Empty : 
-                value
-                    .Replace("-", string.Empty)
-                    .Replace(".", string.Empty);
-        }
-
         public static string ToSourceCodeVersion(HashSet<string> supportedApiVersions, string version)
         {
             version = string.IsNullOrWhiteSpace(version) ? supportedApiVersions.FirstOrDefault() : version;
@@ -43,21 +35,28 @@ namespace Dojo.OpenApiGenerator.Extensions
 
         public static string ToSourceCodeVersion(this string version)
         {
-            return version.ToSourceCodeName().Trim('0');
+            version = string.IsNullOrEmpty(version) ? string.Empty :
+                version
+                    .Replace("-", string.Empty)
+                    .Replace(".", string.Empty);
+
+            return version.Trim('0');
         }
 
 
-        public static string ToSourceCodeParameterName(this string value)
+        public static string ToSourceCodeName(this string value, bool isPascalCase = false)
         {
-            var words = value.Split('-', '.');
-            var sb = new StringBuilder(words[0]);
+            var words = value.Split('-', '.', ' ');
+            var sb = new StringBuilder();
 
-            for (var i = 1; i < words.Length; i++)
+            foreach (var t in words)
             {
-                sb.Append(words[i].FirstCharToUpper());
+                sb.Append(t.Trim().FirstCharToUpper());
             }
 
-            return sb.ToString().FirstCharToLower();
+            var sourceCodeName = sb.ToString();
+
+            return isPascalCase ? sourceCodeName.FirstCharToUpper() : sourceCodeName.FirstCharToLower();
         }
 
         public static string GetApiModelKey(this string modelName, string fileName = null)
