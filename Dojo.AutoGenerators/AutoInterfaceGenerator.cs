@@ -13,6 +13,16 @@ namespace Dojo.AutoGenerators
     [Generator]
     public class AutoInterfaceGenerator : ISourceGenerator
     {
+        public AutoInterfaceGenerator()
+        {
+#if DEBUG
+            //if (!Debugger.IsAttached)
+            //{
+            //    Debugger.Launch();
+            //}
+#endif
+        }
+
         private class ClassDefinition
         {
             public string Name { get; set; }
@@ -41,7 +51,7 @@ namespace Dojo.AutoGenerators
             {
                 List<string> args = new();
                 bdr.Append('<');
-                foreach(var arg in method.TypeArguments)
+                foreach (var arg in method.TypeArguments)
                 {
                     args.Add(arg.ToString());
                 }
@@ -51,10 +61,11 @@ namespace Dojo.AutoGenerators
             }
 
             bdr.Append(GetParametersDefinition(method));
+            bdr.Append(GetGenericTypeConstraints(method));
             bdr.Append(';');
             return bdr.ToString();
         }
-        
+
         public static string GetPropertyDefinition(IPropertySymbol propertySymbol)
         {
             var bdr = new StringBuilder();
@@ -81,25 +92,29 @@ namespace Dojo.AutoGenerators
         {
             List<string> parameters = new();
             StringBuilder bdr = new();
-            foreach(var param in method.Parameters) {
+            foreach (var param in method.Parameters)
+            {
                 bdr.Clear();
                 bdr.Append(param.Type);
                 bdr.Append(' ');
                 bdr.Append(param.Name);
-                if(param.HasExplicitDefaultValue)
+                if (param.HasExplicitDefaultValue)
                 {
                     bdr.Append(" = ");
-                    if(param.ExplicitDefaultValue is null){
+                    if (param.ExplicitDefaultValue is null)
+                    {
                         bdr.Append("default(").Append(param.Type).Append(')');
                     }
-                    else if(param.ExplicitDefaultValue is string) {
+                    else if (param.ExplicitDefaultValue is string)
+                    {
                         bdr.Append('\"').Append(param.ExplicitDefaultValue).Append('\"');
                     }
                     else if (param.ExplicitDefaultValue is bool)
                     {
                         bdr.Append(param.ExplicitDefaultValue.ToString().ToLower());
                     }
-                    else {
+                    else
+                    {
                         bdr.Append(param.ExplicitDefaultValue);
                     }
                 }
@@ -108,6 +123,28 @@ namespace Dojo.AutoGenerators
             }
 
             return "(" + string.Join(", ", parameters) + ")";
+        }
+
+        public static string GetGenericTypeConstraints(IMethodSymbol method)
+        {
+            if (!method.IsGenericMethod
+                || method.TypeParameters.Length == 0
+                || method.TypeParameters[0].ConstraintTypes.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder bdr = new();
+            foreach (var typeParam in method.TypeParameters)
+            {
+                if (typeParam.ConstraintTypes.Length > 0)
+                {
+                    bdr.AppendLine();
+                    bdr.Append($"           where {typeParam.Name} : {string.Join(", ", typeParam.ConstraintTypes.Select(x => x.ToDisplayString()))}");
+                }
+            }
+
+            return bdr.ToString();
         }
 
         public static string GetTypeFullName(ITypeSymbol type)
@@ -121,12 +158,12 @@ namespace Dojo.AutoGenerators
 
             var classDefinitions = new List<ClassDefinition>();
 
-            foreach( var classNode in syntaxReceiver.CandidateClasses)
+            foreach (var classNode in syntaxReceiver.CandidateClasses)
             {
                 var semanticModel = context.Compilation.GetSemanticModel(classNode.GetReference().SyntaxTree);
 
                 var isPartial = classNode.IsPartial();
-                if(!isPartial)
+                if (!isPartial)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(
                         new DiagnosticDescriptor(
@@ -147,24 +184,28 @@ namespace Dojo.AutoGenerators
                     classDefinition.Name = GetInterfaceName(symbolModel);
                     classDefinition.Namespace = GetNamespaceFullName(symbolModel.ContainingNamespace);
 
-                    foreach(var member in symbolModel.GetMembers()) {
-                        if(!member.IsAbstract && !member.IsStatic && !member.IsVirtual && !member.IsOverride
+                    foreach (var member in symbolModel.GetMembers())
+                    {
+                        if (!member.IsAbstract && !member.IsStatic && !member.IsVirtual && !member.IsOverride
                         && member.DeclaredAccessibility == Accessibility.Public
                         && !member.IsImplicitlyDeclared
-                        ) {
+                        )
+                        {
                             if (member is IPropertySymbol property)
                             {
                                 var propertyDefinition = GetPropertyDefinition(property);
                                 classDefinition.Methods.Add(propertyDefinition);
                             }
-                            else if(member is IMethodSymbol method) {
-                                if(method.MethodKind == MethodKind.Constructor 
+                            else if (member is IMethodSymbol method)
+                            {
+                                if (method.MethodKind == MethodKind.Constructor
                                     || method.MethodKind == MethodKind.PropertyGet
                                     || method.MethodKind == MethodKind.PropertySet
                                     || method.MethodKind == MethodKind.EventAdd
                                     || method.MethodKind == MethodKind.EventRaise
                                     || method.MethodKind == MethodKind.EventRemove
-                                    || method.MethodKind == MethodKind.Destructor) {
+                                    || method.MethodKind == MethodKind.Destructor)
+                                {
                                     continue;
                                 }
                                 var methodDefinition = GetMethodDefinition(method);
@@ -178,10 +219,10 @@ namespace Dojo.AutoGenerators
                 }
             }
 
-            foreach(var classDefinition in classDefinitions)
+            foreach (var classDefinition in classDefinitions)
             {
-                        // begin creating the source we'll inject into the users compilation
-            var sourceBuilder = new StringBuilder(@$"
+                // begin creating the source we'll inject into the users compilation
+                var sourceBuilder = new StringBuilder(@$"
 using System;
 using System.CodeDom.Compiler;
 
@@ -222,7 +263,7 @@ namespace {classDefinition.Namespace}
 
             //Debug.WriteLine("Initialize code generator");
 
-            context.RegisterForSyntaxNotifications(()=>new ClassWithAttributeSyntaxReceiver("AutoInterface"));
+            context.RegisterForSyntaxNotifications(() => new ClassWithAttributeSyntaxReceiver("AutoInterface"));
         }
     }
 }
