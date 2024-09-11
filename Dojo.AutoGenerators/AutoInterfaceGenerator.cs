@@ -128,8 +128,7 @@ namespace Dojo.AutoGenerators
         public static string GetGenericTypeConstraints(IMethodSymbol method)
         {
             if (!method.IsGenericMethod
-                || method.TypeParameters.Length == 0
-                || method.TypeParameters[0].ConstraintTypes.Length == 0)
+                || method.TypeParameters.Length == 0)
             {
                 return string.Empty;
             }
@@ -141,6 +140,16 @@ namespace Dojo.AutoGenerators
                 {
                     bdr.AppendLine();
                     bdr.Append($"           where {typeParam.Name} : {string.Join(", ", typeParam.ConstraintTypes.Select(x => x.ToDisplayString()))}");
+                }
+                else if (typeParam.HasReferenceTypeConstraint)
+                {
+                    bdr.AppendLine();
+                    bdr.Append($"           where {typeParam.Name} : class");
+                }
+                else if (typeParam.HasValueTypeConstraint)
+                {
+                    bdr.AppendLine();
+                    bdr.Append($"           where {typeParam.Name} : struct");
                 }
             }
 
