@@ -28,6 +28,24 @@ namespace Dojo.AutoGenerators
             public string Name { get; set; }
             public string Namespace { get; set; }
             public List<string> Methods { get; set; } = new();
+            public bool IsGeneric { get; set; }
+            public string GenericArguments { get; set; }
+            public string GenericConstraints { get; set; }
+            public string FullName => IsGeneric ? $"{Name}{GenericArguments}" : Name;
+        }
+    
+        public static string GetGenericTypeArguments(INamedTypeSymbol classSymbol)
+        {
+            if (!classSymbol.IsGenericType) return null;
+
+            var bdr = new StringBuilder();
+
+            bdr.Append('<');
+            var args = classSymbol.TypeArguments.Select(arg => arg.ToString()).ToList();
+            bdr.Append(string.Join(", ", args));
+            bdr.Append('>');
+
+            return bdr.ToString();
         }
 
         public static string GetInterfaceName(ITypeSymbol typeSymbol)
@@ -61,7 +79,7 @@ namespace Dojo.AutoGenerators
             }
 
             bdr.Append(GetParametersDefinition(method));
-            bdr.Append(GetGenericTypeConstraints(method));
+            bdr.Append(GetGenericTypeConstraints(method, symbol => symbol.IsGenericMethod, symbol => symbol.TypeParameters));
             bdr.Append(';');
             return bdr.ToString();
         }
@@ -125,32 +143,50 @@ namespace Dojo.AutoGenerators
             return "(" + string.Join(", ", parameters) + ")";
         }
 
-        public static string GetGenericTypeConstraints(IMethodSymbol method)
+        public static string GetGenericTypeConstraints<T>(T symbol, Func<T, bool> isGeneric, Func<T, IEnumerable<ITypeParameterSymbol>> getTypeParameters)
         {
-            if (!method.IsGenericMethod
-                || method.TypeParameters.Length == 0)
+            var typeParameters = getTypeParameters(symbol)?.ToList() ?? new List<ITypeParameterSymbol>();
+            if (!isGeneric(symbol) || typeParameters.Count == 0)
             {
                 return string.Empty;
             }
 
             StringBuilder bdr = new();
-            foreach (var typeParam in method.TypeParameters)
+            foreach (var typeParam in typeParameters)
             {
+                if (typeParam.ConstraintTypes.Length > 0 || typeParam.HasReferenceTypeConstraint ||
+                    typeParam.HasValueTypeConstraint || typeParam.HasConstructorConstraint)
+                {
+                    bdr.AppendLine();
+                    bdr.Append($"           where {typeParam.Name} : ");
+                }
+                else
+                {
+                    continue;
+                }
+
+                var constraints = new List<string>();
                 if (typeParam.ConstraintTypes.Length > 0)
                 {
-                    bdr.AppendLine();
-                    bdr.Append($"           where {typeParam.Name} : {string.Join(", ", typeParam.ConstraintTypes.Select(x => x.ToDisplayString()))}");
+                    constraints.Add($"{string.Join(", ", typeParam.ConstraintTypes.Select(x => x.ToDisplayString()))}");
                 }
-                else if (typeParam.HasReferenceTypeConstraint)
+
+                if (typeParam.HasReferenceTypeConstraint)
                 {
-                    bdr.AppendLine();
-                    bdr.Append($"           where {typeParam.Name} : class");
+                    constraints.Add("class");
                 }
-                else if (typeParam.HasValueTypeConstraint)
+
+                if (typeParam.HasValueTypeConstraint)
                 {
-                    bdr.AppendLine();
-                    bdr.Append($"           where {typeParam.Name} : struct");
+                    constraints.Add("struct");
                 }
+                
+                if (typeParam.HasConstructorConstraint)
+                {
+                    constraints.Add("new()");
+                }
+
+                bdr.Append(string.Join(", ", constraints));
             }
 
             return bdr.ToString();
@@ -188,10 +224,13 @@ namespace Dojo.AutoGenerators
                 {
                     var classDefinition = new ClassDefinition();
 
-                    var symbolModel = semanticModel.GetDeclaredSymbol(classNode) as ITypeSymbol;
+                    var symbolModel = semanticModel.GetDeclaredSymbol(classNode) as INamedTypeSymbol;
 
                     classDefinition.Name = GetInterfaceName(symbolModel);
                     classDefinition.Namespace = GetNamespaceFullName(symbolModel.ContainingNamespace);
+                    classDefinition.IsGeneric = symbolModel.IsGenericType;
+                    classDefinition.GenericArguments = GetGenericTypeArguments(symbolModel);
+                    classDefinition.GenericConstraints = GetGenericTypeConstraints(symbolModel, symbol => symbol.IsGenericType, symbol => symbol.TypeParameters);
 
                     foreach (var member in symbolModel.GetMembers())
                     {
@@ -238,12 +277,12 @@ using System.CodeDom.Compiler;
 namespace {classDefinition.Namespace}
 {{
     [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
-    public partial class {classDefinition.Name}: I{classDefinition.Name}
+    public partial class {classDefinition.FullName}: I{classDefinition.FullName}{classDefinition.GenericConstraints}
     {{
     }}
 
     [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
-    public interface I{classDefinition.Name}
+    public interface I{classDefinition.FullName}{classDefinition.GenericConstraints}
     {{
 ");
                 // add the filepath of each tree to the class we're building

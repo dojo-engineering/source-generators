@@ -161,5 +161,56 @@ namespace Level1.Level2
             // Assert
             GeneratorTestHelper.CompareSources(expectedSource, actual);
         }
+
+        [Theory]
+        [InlineData("TestFoo<T>", "TestFoo<T>", "ITestFoo<T>")]
+        [InlineData("TestFoo<T>\n            where T : class", "TestFoo<T>", "ITestFoo<T>\n           where T : class")]
+        [InlineData("TestFoo<T>\n            where T : class, new()", "TestFoo<T>", "ITestFoo<T>\n           where T : class, new()")]
+        [InlineData("TestFoo<T>\n            where T : struct", "TestFoo<T>", "ITestFoo<T>\n           where T : struct")]
+        [InlineData("TestFoo<T>\n            where T : Dojo.Generators.Tests.AutoInterfaceTests", "TestFoo<T>", "ITestFoo<T>\n           where T : Dojo.Generators.Tests.AutoInterfaceTests")]
+        [InlineData("TestFoo<T1, T2>", "TestFoo<T1, T2>", "ITestFoo<T1, T2>")]
+        [InlineData("TestFoo<T1, T2> where T1 : class", "TestFoo<T1, T2>", "ITestFoo<T1, T2>\n           where T1 : class")]
+        [InlineData("TestFoo<T1, T2> where T1 : class where T2 : class", "TestFoo<T1, T2>", "ITestFoo<T1, T2>\n           where T1 : class\n           where T2 : class")]
+        public void GenericInterface_Generate(string source, string expectedType, string expectedInterface)
+        {
+            // Arrange
+            string userSource = $@"
+using System;
+using System.Text;
+namespace Level1.Level2
+{{
+    [AutoInterface]
+    public partial class {source}
+    {{
+        public void SomeMethod()
+        {{
+            return null;
+        }}
+    }}
+}}";
+
+            string expectedSource = $@"
+using System;
+using System.CodeDom.Compiler;
+
+namespace Level1.Level2
+{{
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
+    public partial class {expectedType}: {expectedInterface}
+    {{
+    }}
+
+    [GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
+    public interface {expectedInterface}
+    {{
+        void SomeMethod();
+    }}
+}}";
+            // Act
+            var actual = GeneratorTestHelper.GenerateFromSource<AutoInterfaceGenerator>(userSource);
+
+            // Assert
+            GeneratorTestHelper.CompareSources(expectedSource, actual);
+        }
     }
 }
