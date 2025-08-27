@@ -61,7 +61,7 @@
 </ItemGroup>
 
   <ItemGroup>
-    <Content Update="OpenApiSchemas\hello-source-generators-api.json">
+    <Content Update="OpenApiSchemas\hello-source-generators-api.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
