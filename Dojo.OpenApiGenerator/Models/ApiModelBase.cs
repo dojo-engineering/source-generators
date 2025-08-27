@@ -97,6 +97,12 @@ namespace Dojo.OpenApiGenerator.Models
 
                         break;
                     }
+                case OpenApiSchemaTypes.Number:
+                    {
+                        ResolveNumber(openApiSchema);
+
+                        break;
+                    }
             }
         }
 
@@ -297,5 +303,36 @@ namespace Dojo.OpenApiGenerator.Models
             }
         }
 
+        private void ResolveNumber(OpenApiSchema openApiSchema)
+        {
+            IsNullable = openApiSchema.Nullable;
+
+            if (string.IsNullOrWhiteSpace(openApiSchema.Format))
+            {
+                ResolveTypeAndDefaultValue<double>(openApiSchema.Default);
+            }
+
+            switch (openApiSchema.Format)
+            {
+                case OpenApiTypeFormats.Double:
+                {
+                    ResolveTypeAndDefaultValue<double>(openApiSchema.Default);
+
+                    break;
+                }
+                case OpenApiTypeFormats.Float:
+                {
+                    ResolveTypeAndDefaultValue<float>(openApiSchema.Default);
+
+                    break;
+                }
+                default:
+                {
+                    ResolveTypeAndDefaultValue<double>(openApiSchema.Default);
+
+                    break;
+                }
+            }
+        }
     }
 }

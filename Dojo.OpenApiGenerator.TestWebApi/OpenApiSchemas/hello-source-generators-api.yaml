@@ -1,0 +1,160 @@
+openapi: 3.0.1
+info:
+  title: HelloWorld
+  version: ''
+  description: ''
+paths:
+  /hello-generated/{number}:
+    get:
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelloFromSource'
+              examples: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/HelloFromSource'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '500':
+          description: Server Error
+      summary: HelloFromSource
+      operationId: ''
+      parameters:
+        - schema:
+            type: string
+            minLength: 100
+            maxLength: 500
+          in: query
+          name: message
+          required: true
+      description: ''
+      x-authorization-policies:
+        - read
+    parameters:
+      - schema:
+          type: integer
+          format: int64
+        name: number
+        in: path
+        required: true
+  /hello-generated2:
+    get:
+      summary: HelloGenerated2
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+      operationId: get-hello-generated2
+      description: ''
+      x-authorization-policies:
+        - read
+        - write
+  /hello-generate-post-array:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelloFromSourceItems'
+      operationId: get-hello-generate-post-array
+    post:
+      summary: ''
+      operationId: post-hello-generate-post-array
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HelloFromSource'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/HelloFromSource'
+components:
+  schemas:
+    HelloFromSource:
+      type: object
+      title: HelloFromSource
+      description: ''
+      additionalProperties: false
+      properties:
+        Message:
+          type: string
+          minLength: 100
+          maxLength: 500
+        Number:
+          type: integer
+          format: int64
+        Double:
+          type: number
+          format: double
+        Float:
+          type: number
+          format: float
+        DateTime:
+          type: string
+          format: date-time
+        Email:
+          type: string
+          format: email
+        type:
+          $ref: '#/components/schemas/HelloType'
+        stringsDictionary:
+          $ref: '#/components/schemas/StringsDictionary'
+        objectsDictionary:
+          $ref: '#/components/schemas/ObjectsDictionary'
+      required:
+        - Message
+        - Email
+    HelloType:
+      type: string
+      title: HelloType
+      enum:
+        - Salut
+        - Buna
+    HelloFromSourceItems:
+      title: HelloFromSourceItems
+      x-stoplight:
+        id: d63g7y1xtilld
+      type: array
+      items:
+        $ref: '#/components/schemas/HelloFromSource'
+    StringsDictionary:
+      type: object
+      title: Dictionary
+      description: ''
+      additionalProperties:
+        type: string
+    ObjectsDictionary:
+      type: object
+      title: Dictionary
+      additionalProperties:
+        $ref: '#/components/schemas/HelloFromSource'
+  responses: {}
+x-supported-api-versions:
+  - '1.0'
+  - '2022-01-03'
+  - '2022-04-07'
+x-authorization-policies:
+  - Sec1
+  - Sec2
