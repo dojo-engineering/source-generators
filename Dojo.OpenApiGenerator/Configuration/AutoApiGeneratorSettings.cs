@@ -19,6 +19,8 @@ namespace Dojo.OpenApiGenerator.Configuration
 
         public bool OrganizeControllersByTags { get; set; } = false;
 
+        public string OutputFolder { get; set; }
+
         public static AutoApiGeneratorSettings GetAutoApiGeneratorSettings(string projectDir)
         {
             var settingFilePath = $"{projectDir}/{Constants.AutoApiGeneratorSettingsFile}";

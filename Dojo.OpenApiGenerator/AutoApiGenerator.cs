@@ -94,7 +94,7 @@ namespace Dojo.OpenApiGenerator
         {
             _apiConfiguratorTemplateString ??= Templates.ReadTemplate(Templates.ApiConfiguratorTemplate);
 
-            const string fileName = "ApiConfigurator.g.cs";
+            var fileName = GetSourceFileName("ApiConfigurator.g.cs");
             var source = _stubbleBuilder.Render(_apiConfiguratorTemplateString, new BasicClass(projectNamespace, generateApiExplorer));
 
             context.AddSource(fileName, SourceText.From(source, Encoding.UTF8));
@@ -104,7 +104,7 @@ namespace Dojo.OpenApiGenerator
         {
             _inheritedApiVersionAttributeTemplateString ??= Templates.ReadTemplate(Templates.InheritedApiVersionAttribute);
 
-            const string fileName = "InheritedApiVersionAttribute.g.cs";
+            var fileName = GetSourceFileName("InheritedApiVersionAttribute.g.cs");
             var source = _stubbleBuilder.Render(_inheritedApiVersionAttributeTemplateString, new BasicClass(projectNamespace));
 
             context.AddSource(fileName, SourceText.From(source, Encoding.UTF8));
@@ -114,7 +114,7 @@ namespace Dojo.OpenApiGenerator
         {
             _apiConstantsTemplateString ??= Templates.ReadTemplate(Templates.ApiConstantsTemplate);
 
-            const string fileName = "ApiConstants.g.cs";
+            var fileName = GetSourceFileName("ApiConstants.g.cs");
             var source = _stubbleBuilder.Render(_apiConstantsTemplateString, new ApiConstants(ApiVersions.ToList(), projectNamespace));
 
             context.AddSource(fileName, SourceText.From(source, Encoding.UTF8));
@@ -124,7 +124,7 @@ namespace Dojo.OpenApiGenerator
         {
             _apiVersionsTemplateString ??= Templates.ReadTemplate(Templates.ApiVersionsTemplate);
 
-            const string fileName = "ApiVersions.g.cs";
+            var fileName = GetSourceFileName("ApiVersions.g.cs");
             var source = _stubbleBuilder.Render(_apiVersionsTemplateString, new ApiConstants(ApiVersions.ToList(), projectNamespace));
 
             context.AddSource(fileName, SourceText.From(source, Encoding.UTF8));
@@ -364,7 +364,7 @@ namespace Dojo.OpenApiGenerator
         {
             _modelTemplateString ??= Templates.ReadTemplate(Templates.Model);
 
-            var fileName = $"{name}ApiModel.g.cs";
+            var fileName = GetSourceFileName($"{name}ApiModel.g.cs");
             var modelSource = _stubbleBuilder.Render(_modelTemplateString, apiModel);
 
             context.AddSource(fileName, SourceText.From(modelSource, Encoding.UTF8));
@@ -374,7 +374,7 @@ namespace Dojo.OpenApiGenerator
         {
             _enumTemplateString ??= Templates.ReadTemplate(Templates.Enum);
 
-            var fileName = $"{name}.g.cs";
+            var fileName = GetSourceFileName($"{name}.g.cs");
             var enumSource = _stubbleBuilder.Render(_enumTemplateString, apiModel);
 
             context.AddSource(fileName, SourceText.From(enumSource, Encoding.UTF8));
@@ -384,7 +384,7 @@ namespace Dojo.OpenApiGenerator
         {
             _dictionaryModelTemplate ??= Templates.ReadTemplate(Templates.DictionaryModelTemplate);
 
-            var fileName = $"{name}.g.cs";
+            var fileName = GetSourceFileName($"{name}.g.cs");
             var dictionarySource = _stubbleBuilder.Render(_dictionaryModelTemplate, apiModel);
 
             context.AddSource(fileName, SourceText.From(dictionarySource, Encoding.UTF8));
@@ -394,7 +394,7 @@ namespace Dojo.OpenApiGenerator
         {
             _controllerTemplateString ??= Templates.ReadTemplate(Templates.AbstractController);
 
-            var fileName = $"{apiFileName}_{data.Title}ControllerBase.g.cs";
+            var fileName = GetSourceFileName($"{apiFileName}_{data.Title}ControllerBase.g.cs");
             var controllerSourceCode = _stubbleBuilder.Render(_controllerTemplateString, data);
 
             context.AddSource(fileName, SourceText.From(controllerSourceCode, Encoding.UTF8));
@@ -404,10 +404,30 @@ namespace Dojo.OpenApiGenerator
         {
             _serviceInterfaceTemplateString ??= Templates.ReadTemplate(Templates.ServiceInterface);
 
-            var fileName = $"I{data.Title}Service.g.cs";
+            var fileName = GetSourceFileName($"I{data.Title}Service.g.cs");
             var serviceInterfaceSourceCode = _stubbleBuilder.Render(_serviceInterfaceTemplateString, data);
 
             context.AddSource(fileName, SourceText.From(serviceInterfaceSourceCode, Encoding.UTF8));
+        }
+
+        private string GetSourceFileName(string fileName)
+        {
+            var outputFolder = _autoApiGeneratorSettings?.OutputFolder;
+            if (string.IsNullOrWhiteSpace(outputFolder))
+            {
+                return fileName;
+            }
+
+            var normalizedOutputFolder = outputFolder
+                .Replace('\\', '/')
+                .Trim('/');
+
+            if (string.IsNullOrWhiteSpace(normalizedOutputFolder))
+            {
+                return fileName;
+            }
+
+            return $"{normalizedOutputFolder}/{fileName}";
         }
 
         private static Dictionary<string, ApiModel> GetApiModels(OpenApiDocument openApiDocument, string projectNamespace, string apiVersion, IDictionary<string, ApiModel> apiModels, string apiFileName)

@@ -5,5 +5,6 @@
   "DateTimeVersionFormat": "yyyy-MM-dd",
   "ApiAuthorizationPoliciesExtension": "x-authorization-policies",
   "GenerateApiExplorer": false,
-  "OrganizeControllersByTags":  false
+  "OrganizeControllersByTags":  false,
+  "OutputFolder": "Generated/OpenApi"
 }

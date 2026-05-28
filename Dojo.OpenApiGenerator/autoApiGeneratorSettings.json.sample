@@ -23,4 +23,6 @@
   /* This will prevent swagger open api explorer generation*/
   "GenerateApiExplorer": false,
   "OrganizeControllersByTags": false,
+  /* Optional folder (relative path) for generated source files */
+  "OutputFolder": "Generated/OpenApi"
 }
