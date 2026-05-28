@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Reflection;
 using Xunit;
 using Dojo.AutoGenerators;
@@ -211,6 +212,91 @@ namespace Level1.Level2
 
             // Assert
             GeneratorTestHelper.CompareSources(expectedSource, actual);
+        }
+        [Fact]
+        public void DI_SingleClass_DefaultScoped_GeneratesAddScopedRegistration()
+        {
+            string userSource = @"
+using System;
+namespace Level1.Level2
+{
+    [AutoInterface]
+    public partial class MyService
+    {
+        public void Do() {}
+    }
+}";
+            var comp = GeneratorTestHelper.CreateCompilation(userSource);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, null, out var _, new AutoInterfaceGenerator());
+            var trees = newComp.SyntaxTrees.ToList();
+
+            Assert.Equal(3, trees.Count); // original + interface + DI extension
+            var diSource = trees[2].ToString();
+            Assert.Contains("AddScoped<Level1.Level2.IMyService, Level1.Level2.MyService>()", diSource);
+            Assert.Contains("AddAutoInterfaces", diSource);
+        }
+
+        [Fact]
+        public void DI_SingleClass_TransientLifetime_GeneratesAddTransientRegistration()
+        {
+            string userSource = @"
+using System;
+using Dojo.Generators.Abstractions;
+namespace Level1.Level2
+{
+    [AutoInterface(Lifetime = AutoInterfaceLifetime.Transient)]
+    public partial class MyService
+    {
+        public void Do() {}
+    }
+}";
+            var comp = GeneratorTestHelper.CreateCompilation(userSource);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, null, out var _, new AutoInterfaceGenerator());
+            var diSource = newComp.SyntaxTrees.ToList()[2].ToString();
+
+            Assert.Contains("AddTransient<Level1.Level2.IMyService, Level1.Level2.MyService>()", diSource);
+        }
+
+        [Fact]
+        public void DI_SingleClass_SingletonLifetime_GeneratesAddSingletonRegistration()
+        {
+            string userSource = @"
+using System;
+using Dojo.Generators.Abstractions;
+namespace Level1.Level2
+{
+    [AutoInterface(Lifetime = AutoInterfaceLifetime.Singleton)]
+    public partial class MyService
+    {
+        public void Do() {}
+    }
+}";
+            var comp = GeneratorTestHelper.CreateCompilation(userSource);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, null, out var _, new AutoInterfaceGenerator());
+            var diSource = newComp.SyntaxTrees.ToList()[2].ToString();
+
+            Assert.Contains("AddSingleton<Level1.Level2.IMyService, Level1.Level2.MyService>()", diSource);
+        }
+
+        [Fact]
+        public void DI_GenericClass_IsSkippedFromDIRegistration()
+        {
+            string userSource = @"
+using System;
+namespace Level1.Level2
+{
+    [AutoInterface]
+    public partial class MyService<T>
+    {
+        public void Do() {}
+    }
+}";
+            var comp = GeneratorTestHelper.CreateCompilation(userSource);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, null, out var _, new AutoInterfaceGenerator());
+            var trees = newComp.SyntaxTrees.ToList();
+
+            // Only original + interface file; no DI extension file for generic-only classes
+            Assert.Equal(2, trees.Count);
         }
     }
 }
