@@ -418,15 +418,13 @@ namespace Dojo.OpenApiGenerator
                 return fileName;
             }
 
-            var normalizedOutputFolder = outputFolder
-                .Replace('\\', '/')
-                .Trim('/');
-
-            if (string.IsNullOrWhiteSpace(normalizedOutputFolder))
+            var outputFolderSegments = outputFolder.Split(new[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+            if (outputFolderSegments.Length == 0)
             {
                 return fileName;
             }
 
+            var normalizedOutputFolder = string.Join("/", outputFolderSegments);
             return $"{normalizedOutputFolder}/{fileName}";
         }
 

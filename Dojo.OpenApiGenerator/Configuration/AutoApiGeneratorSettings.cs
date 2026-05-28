@@ -19,6 +19,9 @@ namespace Dojo.OpenApiGenerator.Configuration
 
         public bool OrganizeControllersByTags { get; set; } = false;
 
+        /// <summary>
+        /// Optional relative folder used to group generated source files.
+        /// </summary>
         public string OutputFolder { get; set; }
 
         public static AutoApiGeneratorSettings GetAutoApiGeneratorSettings(string projectDir)
