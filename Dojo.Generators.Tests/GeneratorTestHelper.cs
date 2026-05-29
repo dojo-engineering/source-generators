@@ -10,9 +10,11 @@ namespace Dojo.Generators.Tests
 {
     public static class GeneratorTestHelper
     {
-        public static Compilation CreateCompilation(string source) => CSharpCompilation.Create(
+        public static Compilation CreateCompilation(string source) => CreateCompilation(new[] { source });
+
+        public static Compilation CreateCompilation(params string[] sources) => CSharpCompilation.Create(
              assemblyName: "compilation",
-             syntaxTrees: new[] { CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Preview)) },
+             syntaxTrees: sources.Select(s => CSharpSyntaxTree.ParseText(s, new CSharpParseOptions(LanguageVersion.Preview))),
              references: new[]
              {
                  MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location),
