@@ -20,6 +20,13 @@ concurrency:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      NUGET_CONFIG_GCS_PATH: ${{ vars.NUGET_CONFIG_GCS_PATH || 'gs://firefly-devops-2018-configuration/NuGet.config' }}
+      GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER || 'projects/291751773399/locations/global/workloadIdentityPools/devops/providers/github-actions' }}
+      GCP_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT || 'github-actions-build@firefly-devops-2018.iam.gserviceaccount.com' }}
 
     steps:
       - name: Checkout
@@ -30,13 +37,34 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Create NuGet.config from secret
+      - name: Authenticate to Google Cloud
+        id: gcp-auth
+        continue-on-error: true
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
+          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
+
+      - name: Setup gcloud
+        if: ${{ steps.gcp-auth.outcome == 'success' }}
+        continue-on-error: true
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Download NuGet.config from GCS
+        if: ${{ steps.gcp-auth.outcome == 'success' }}
+        continue-on-error: true
+        shell: bash
+        run: gcloud storage cp "$NUGET_CONFIG_GCS_PATH" ./NuGet.config
+
+      - name: Create NuGet.config from secret fallback
         if: ${{ secrets.NUGET_CONFIG != '' }}
         shell: bash
         run: |
-          cat > NuGet.config <<'EOF'
-          ${{ secrets.NUGET_CONFIG }}
-          EOF
+          if [ ! -f NuGet.config ]; then
+            cat > NuGet.config <<'EOF'
+            ${{ secrets.NUGET_CONFIG }}
+            EOF
+          fi
 
       - name: Restore
         shell: bash
