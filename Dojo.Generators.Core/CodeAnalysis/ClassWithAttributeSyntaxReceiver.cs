@@ -18,13 +18,44 @@ namespace Dojo.Generators.Core.CodeAnalysis
         }
         public List<ClassDeclarationSyntax> CandidateClasses { get; } = new();
 
+        private bool IsExpectedAttributeName(string attributeName)
+        {
+            if (attributeName == ExpectedAttributeName)
+            {
+                return true;
+            }
+
+            if (attributeName == $"{ExpectedAttributeName}Attribute")
+            {
+                return true;
+            }
+
+            if (ExpectedAttributeName.EndsWith("Attribute")
+                && attributeName == ExpectedAttributeName.Substring(0, ExpectedAttributeName.Length - "Attribute".Length))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
         {
             if (syntaxNode is ClassDeclarationSyntax classSyntax)
             {
-                var attribute = classSyntax.AttributeLists.Select(
-                    a => a.Attributes.FirstOrDefault(b => b.Name.ToFullString() == ExpectedAttributeName)).FirstOrDefault(a => a != null);
-                
+                var attribute = classSyntax.AttributeLists
+                    .Select(a => a.Attributes.FirstOrDefault(b =>
+                    {
+                        var name = b.Name.ToString().Split('.').Last().Trim();
+                        if (name.StartsWith("global::"))
+                        {
+                            name = name.Substring("global::".Length);
+                        }
+
+                        return IsExpectedAttributeName(name);
+                    }))
+                    .FirstOrDefault(a => a != null);
+
                 if (attribute is not null)
                 {
                     CandidateClasses.Add(classSyntax);

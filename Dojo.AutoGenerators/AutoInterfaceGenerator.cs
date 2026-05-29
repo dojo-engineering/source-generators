@@ -35,7 +35,7 @@ namespace Dojo.AutoGenerators
             public string FullName => IsGeneric ? $"{Name}{GenericArguments}" : Name;
             public int Lifetime { get; set; } = 0; // 0=Scoped, 1=Singleton, 2=Transient
         }
-    
+
         public static string GetGenericTypeArguments(INamedTypeSymbol classSymbol)
         {
             if (!classSymbol.IsGenericType) return null;
@@ -57,6 +57,11 @@ namespace Dojo.AutoGenerators
 
         public static string GetNamespaceFullName(INamespaceSymbol namespaceSymbol)
         {
+            if (namespaceSymbol == null || namespaceSymbol.IsGlobalNamespace)
+            {
+                return string.Empty;
+            }
+
             return namespaceSymbol.ToString();
         }
 
@@ -182,7 +187,7 @@ namespace Dojo.AutoGenerators
                 {
                     constraints.Add("struct");
                 }
-                
+
                 if (typeParam.HasConstructorConstraint)
                 {
                     constraints.Add("new()");
@@ -202,7 +207,9 @@ namespace Dojo.AutoGenerators
         public static int GetLifetimeFromAttribute(INamedTypeSymbol classSymbol)
         {
             var attributeData = classSymbol.GetAttributes()
-                .FirstOrDefault(a => a.AttributeClass?.Name == "AutoInterfaceAttribute");
+                .FirstOrDefault(a =>
+                    a.AttributeClass?.Name == "AutoInterfaceAttribute"
+                    || a.AttributeClass?.Name == "AutoInterface");
 
             if (attributeData == null) return 0;
 
@@ -210,12 +217,53 @@ namespace Dojo.AutoGenerators
             {
                 if (namedArg.Key == "Lifetime" && namedArg.Value.Value != null)
                 {
-                    try { return Convert.ToInt32(namedArg.Value.Value); }
+                    try
+                    {
+                        return Convert.ToInt32(namedArg.Value.Value);
+                    }
                     catch { return 0; }
                 }
             }
 
             return 0; // Default: Scoped
+        }
+
+        private static int GetLifetimeFromAttributeSyntax(ClassDeclarationSyntax classNode)
+        {
+            foreach (var attribute in classNode.AttributeLists.SelectMany(list => list.Attributes))
+            {
+                var attributeName = attribute.Name.ToString();
+                if (!attributeName.EndsWith("AutoInterface") && !attributeName.EndsWith("AutoInterfaceAttribute"))
+                {
+                    continue;
+                }
+
+                var lifetimeArgument = attribute.ArgumentList?.Arguments
+                    .FirstOrDefault(arg => arg.NameEquals?.Name.Identifier.Text == "Lifetime");
+
+                var lifetimeExpression = lifetimeArgument?.Expression.ToString();
+                if (string.IsNullOrEmpty(lifetimeExpression))
+                {
+                    continue;
+                }
+
+                if (lifetimeExpression.EndsWith("Singleton"))
+                {
+                    return 1;
+                }
+
+                if (lifetimeExpression.EndsWith("Transient"))
+                {
+                    return 2;
+                }
+
+                if (lifetimeExpression.EndsWith("Scoped"))
+                {
+                    return 0;
+                }
+            }
+
+            return 0;
         }
 
         private static string GetDiMethodName(int lifetime) => lifetime switch
@@ -260,6 +308,10 @@ namespace Dojo.AutoGenerators
                     classDefinition.GenericArguments = GetGenericTypeArguments(symbolModel);
                     classDefinition.GenericConstraints = GetGenericTypeConstraints(symbolModel, symbol => symbol.IsGenericType, symbol => symbol.TypeParameters);
                     classDefinition.Lifetime = GetLifetimeFromAttribute(symbolModel);
+                    if (classDefinition.Lifetime == 0)
+                    {
+                        classDefinition.Lifetime = GetLifetimeFromAttributeSyntax(classNode);
+                    }
 
                     foreach (var member in symbolModel.GetMembers())
                     {
@@ -299,7 +351,27 @@ namespace Dojo.AutoGenerators
             foreach (var classDefinition in classDefinitions)
             {
                 // begin creating the source we'll inject into the users compilation
-                var sourceBuilder = new StringBuilder(@$"
+                var sourceBuilder = new StringBuilder();
+
+                if (string.IsNullOrEmpty(classDefinition.Namespace))
+                {
+                    sourceBuilder.Append(@$"
+using System;
+using System.CodeDom.Compiler;
+
+[GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
+public partial class {classDefinition.FullName}: I{classDefinition.FullName}{classDefinition.GenericConstraints}
+{{
+}}
+
+[GeneratedCode(""Dojo.SourceGenerator"", ""{Assembly.GetExecutingAssembly().GetName().Version}"")]
+public interface I{classDefinition.FullName}{classDefinition.GenericConstraints}
+{{
+");
+                }
+                else
+                {
+                    sourceBuilder.Append(@$"
 using System;
 using System.CodeDom.Compiler;
 
@@ -314,15 +386,24 @@ namespace {classDefinition.Namespace}
     public interface I{classDefinition.FullName}{classDefinition.GenericConstraints}
     {{
 ");
+                }
                 // add the filepath of each tree to the class we're building
                 foreach (var method in classDefinition.Methods)
                 {
-                    sourceBuilder.Append("        ").Append(method).AppendLine("\r");
+                    var indent = string.IsNullOrEmpty(classDefinition.Namespace) ? "    " : "        ";
+                    sourceBuilder.Append(indent).Append(method).AppendLine("\r");
                 }
 
                 // finish creating the source to inject
-                sourceBuilder.Append(@"    }
+                if (string.IsNullOrEmpty(classDefinition.Namespace))
+                {
+                    sourceBuilder.Append(@"}");
+                }
+                else
+                {
+                    sourceBuilder.Append(@"    }
 }");
+                }
 
                 // inject the created source into the users compilation
                 context.AddSource($"I{classDefinition.Name}.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
