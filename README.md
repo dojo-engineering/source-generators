@@ -207,16 +207,23 @@ Package publishing is triggered by Git tags.
 Release steps:
 
 1. Make sure the target commit is merged and CI is green.
-2. Create a SemVer tag in format `vX.Y.Z`:
+2. Fetch tags and check the latest published tag:
 
 ```bash
 git checkout main
 git pull origin main
+git fetch --tags
+git tag --sort=-v:refname | head -n 1
+```
+
+3. Create and push the next SemVer tag in format `vX.Y.Z`:
+
+```bash
 git tag v1.2.6
 git push origin v1.2.6
 ```
 
-3. Cloud Build picks up the tag and runs the publish pipeline.
-4. The pipeline validates the tag, writes the package version to `nuget-version`, packs, and pushes to Nexus.
+4. Cloud Build picks up the tag and runs the publish pipeline.
+5. The pipeline validates the tag, writes the package version to `nuget-version`, packs, and pushes to Nexus.
 
 For full release details (variables, suffix behavior, and checklist), see [CONTRIBUTING.md](CONTRIBUTING.md).

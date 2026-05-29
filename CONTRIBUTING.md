@@ -68,11 +68,14 @@ Cloud Build requires:
 
 1. Ensure main is green (build and tests passing).
 2. Merge the PR that should be released.
-3. Create and push a SemVer tag:
+3. Fetch tags and check the latest published tag:
+   - git fetch --tags
+   - git tag --sort=-v:refname | head -n 1
+4. Create and push the next SemVer tag:
    - git tag vX.Y.Z
    - git push origin vX.Y.Z
-4. Verify Cloud Build completed successfully.
-5. Confirm new package versions are available in Nexus feed.
+5. Verify Cloud Build completed successfully.
+6. Confirm new package versions are available in Nexus feed.
 
 ## Notes
 
