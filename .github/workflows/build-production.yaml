@@ -1,0 +1,117 @@
+name: Build & Push (production)
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  build-test-pack-push:
+    runs-on: ubuntu-latest
+    env:
+      # Cloud Build equivalent of _VERSION_SUFFIX; -release means no suffix in the package version.
+      VERSION_SUFFIX: ${{ vars.VERSION_SUFFIX || '-release' }}
+      # Cloud Build equivalent of _NEXUS.
+      NEXUS_BASE_URL: ${{ vars.NEXUS_URL || 'https://registry.paymentsense.tech' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Create NuGet.config from secret
+        if: ${{ secrets.NUGET_CONFIG != '' }}
+        shell: bash
+        run: |
+          cat > NuGet.config <<'EOF'
+          ${{ secrets.NUGET_CONFIG }}
+          EOF
+
+      - name: Resolve package version from tag
+        id: version
+        shell: bash
+        run: |
+          GIT_TAG="${GITHUB_REF_NAME}"
+          GIT_REGEX='^v[0-9]+\.[0-9]+\.[0-9]+$'
+
+          if [[ ! "$GIT_TAG" =~ $GIT_REGEX ]]; then
+            echo "Invalid git tag: $GIT_TAG. Expected format vX.Y.Z"
+            exit 1
+          fi
+
+          VERSION="${GIT_TAG#v}"
+
+          SUFFIX="${VERSION_SUFFIX}"
+          if [ "$SUFFIX" = "-release" ]; then
+            SUFFIX=""
+          fi
+
+          FULL_VERSION="${VERSION}${SUFFIX}"
+          echo "version=$FULL_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Resolved package version: $FULL_VERSION"
+
+      - name: Restore
+        shell: bash
+        run: |
+          if [ -f NuGet.config ]; then
+            dotnet restore Dojo.Generators.sln --configfile NuGet.config
+          else
+            dotnet restore Dojo.Generators.sln
+          fi
+
+      - name: Build
+        run: dotnet build Dojo.Generators.sln --configuration Release --no-restore -p:Version=${{ steps.version.outputs.version }}
+
+      - name: Test
+        run: dotnet test Dojo.Generators.Tests/Dojo.Generators.Tests.csproj --configuration Release --no-build
+
+      - name: Pack
+        run: dotnet pack Dojo.Generators.sln --configuration Release --no-build -p:Version=${{ steps.version.outputs.version }} --output nupkgs
+
+      - name: Resolve Nexus feed URL
+        id: nexus
+        shell: bash
+        run: |
+          BASE="${{ secrets.NEXUS_URL }}"
+          if [ -z "$BASE" ]; then
+            BASE="$NEXUS_BASE_URL"
+          fi
+
+          if [ -z "$BASE" ]; then
+            echo "NEXUS_URL secret or NEXUS_URL repo variable is required"
+            exit 1
+          fi
+
+          case "$BASE" in
+            */repository/nuget-hosted|*/repository/nuget-hosted/)
+              FEED_URL="${BASE%/}/"
+              ;;
+            *)
+              FEED_URL="${BASE%/}/repository/nuget-hosted/"
+              ;;
+          esac
+
+          echo "feed_url=$FEED_URL" >> "$GITHUB_OUTPUT"
+          echo "Publishing packages to: $FEED_URL"
+
+      - name: Push NuGet packages
+        shell: bash
+        env:
+          NEXUS_API_KEY: ${{ secrets.NEXUS_API_KEY }}
+        run: |
+          if [ -z "$NEXUS_API_KEY" ]; then
+            echo "NEXUS_API_KEY secret is required"
+            exit 1
+          fi
+
+          dotnet nuget push "nupkgs/*.nupkg" \
+            --api-key "$NEXUS_API_KEY" \
+            --source "${{ steps.nexus.outputs.feed_url }}" \
+            --skip-duplicate

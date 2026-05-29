@@ -1,0 +1,54 @@
+name: Build (staging)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - bugfix/*
+      - feature/*
+      - hotfix/*
+      - release/*
+      - task/*
+      - migration/*
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Create NuGet.config from secret
+        if: ${{ secrets.NUGET_CONFIG != '' }}
+        shell: bash
+        run: |
+          cat > NuGet.config <<'EOF'
+          ${{ secrets.NUGET_CONFIG }}
+          EOF
+
+      - name: Restore
+        shell: bash
+        run: |
+          if [ -f NuGet.config ]; then
+            dotnet restore Dojo.Generators.sln --configfile NuGet.config
+          else
+            dotnet restore Dojo.Generators.sln
+          fi
+
+      - name: Build
+        run: dotnet build Dojo.Generators.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test Dojo.Generators.Tests/Dojo.Generators.Tests.csproj --configuration Release --no-build
