@@ -28,7 +28,7 @@ namespace Dojo.OpenApiGenerator.TestWebApi
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             });
-            services.AddSingleton<IHelloWorldService, HelloWorldService>();
+            services.AddAutoInterfaces();
 
             services.AddOpenApiVersioning("Hello World Service");
         }
