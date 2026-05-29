@@ -232,6 +232,7 @@ namespace Level1.Level2
 
             Assert.Equal(3, trees.Count); // original + interface + DI extension
             var diSource = trees[2].ToString();
+            Assert.Contains("namespace Microsoft.Extensions.DependencyInjection", diSource);
             Assert.Contains("AddScoped<Level1.Level2.IMyService, Level1.Level2.MyService>()", diSource);
             Assert.Contains("AddAutoInterfaces", diSource);
         }
@@ -297,6 +298,57 @@ namespace Level1.Level2
 
             // Only original + interface file; no DI extension file for generic-only classes
             Assert.Equal(2, trees.Count);
+        }
+
+        [Fact]
+        public void DI_PartialClassMultipleFiles_GeneratesSingleRegistration()
+        {
+            string source1 = @"
+namespace Level1
+{
+    [Dojo.Generators.Abstractions.AutoInterface]
+    public partial class MyService
+    {
+        public void Do1() {}
+    }
+}";
+            string source2 = @"
+namespace Level1
+{
+    public partial class MyService
+    {
+        public void Do2() {}
+    }
+}";
+            var comp = GeneratorTestHelper.CreateCompilation(source1, source2);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, null, out var _, new AutoInterfaceGenerator());
+            var trees = newComp.SyntaxTrees.ToList();
+
+            // trees: source1, source2, interface, DI extension
+            Assert.Equal(4, trees.Count);
+            var diSource = trees[3].ToString();
+            
+            // Should only contain ONE registration for MyService
+            var registrations = System.Text.RegularExpressions.Regex.Matches(diSource, "services.AddScoped<Level1.IMyService, Level1.MyService>\\(\\);");
+            Assert.Single(registrations);
+        }
+
+        [Fact]
+        public void DI_GlobalNamespaceClass_GeneratesRegistrationWithoutLeadingDot()
+        {
+            string userSource = @"
+using System;
+[Dojo.Generators.Abstractions.AutoInterface]
+public partial class MyGlobalService
+{
+    public void Do() {}
+}";
+            var comp = GeneratorTestHelper.CreateCompilation(userSource);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, null, out var _, new AutoInterfaceGenerator());
+            var diSource = newComp.SyntaxTrees.ToList()[2].ToString();
+
+            Assert.Contains("services.AddScoped<IMyGlobalService, MyGlobalService>();", diSource);
+            Assert.DoesNotContain("<.IMyGlobalService", diSource);
         }
     }
 }
