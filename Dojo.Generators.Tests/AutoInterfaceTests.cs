@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Reflection;
 using Xunit;
 using Dojo.AutoGenerators;
@@ -6,6 +7,16 @@ namespace Dojo.Generators.Tests
 {
     public class AutoInterfaceTests
     {
+        private static string GetDiExtensionSource(Microsoft.CodeAnalysis.Compilation compilation)
+        {
+            var diSource = compilation.SyntaxTrees
+                .Select(tree => tree.ToString())
+                .FirstOrDefault(source => source.Contains("AutoInterfaceServiceCollectionExtensions"));
+
+            Assert.False(string.IsNullOrWhiteSpace(diSource), "Expected DI extension source to be generated.");
+            return diSource;
+        }
+
         [Theory]
         [InlineData(
             "StringBuilder DoNonPrimitiveType(StringBuilder bdr)",
@@ -116,7 +127,7 @@ namespace Level1.Level2
             // Assert
             GeneratorTestHelper.CompareSources(expectedSource, actual);
         }
-        
+
         [Fact]
         public void PropertySignature_Generate()
         {
@@ -211,6 +222,140 @@ namespace Level1.Level2
 
             // Assert
             GeneratorTestHelper.CompareSources(expectedSource, actual);
+        }
+        [Fact]
+        public void DI_SingleClass_DefaultScoped_GeneratesAddScopedRegistration()
+        {
+            string userSource = @"
+using System;
+namespace Level1.Level2
+{
+    [AutoInterface]
+    public partial class MyService
+    {
+        public void Do() {}
+    }
+}";
+            var comp = GeneratorTestHelper.CreateCompilation(userSource);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, null, out var _, new AutoInterfaceGenerator());
+            var trees = newComp.SyntaxTrees.ToList();
+
+            Assert.Equal(3, trees.Count); // original + interface + DI extension
+            var diSource = GetDiExtensionSource(newComp);
+            Assert.Contains("namespace Microsoft.Extensions.DependencyInjection", diSource);
+            Assert.Contains("AddScoped<Level1.Level2.IMyService, Level1.Level2.MyService>()", diSource);
+            Assert.Contains("AddAutoInterfaces", diSource);
+        }
+
+        [Fact]
+        public void DI_SingleClass_TransientLifetime_GeneratesAddTransientRegistration()
+        {
+            string userSource = @"
+using System;
+using Dojo.Generators.Abstractions;
+namespace Level1.Level2
+{
+    [AutoInterface(Lifetime = AutoInterfaceLifetime.Transient)]
+    public partial class MyService
+    {
+        public void Do() {}
+    }
+}";
+            var comp = GeneratorTestHelper.CreateCompilation(userSource);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, null, out var _, new AutoInterfaceGenerator());
+            var diSource = GetDiExtensionSource(newComp);
+
+            Assert.Contains("AddTransient<Level1.Level2.IMyService, Level1.Level2.MyService>()", diSource);
+        }
+
+        [Fact]
+        public void DI_SingleClass_SingletonLifetime_GeneratesAddSingletonRegistration()
+        {
+            string userSource = @"
+using System;
+using Dojo.Generators.Abstractions;
+namespace Level1.Level2
+{
+    [AutoInterface(Lifetime = AutoInterfaceLifetime.Singleton)]
+    public partial class MyService
+    {
+        public void Do() {}
+    }
+}";
+            var comp = GeneratorTestHelper.CreateCompilation(userSource);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, null, out var _, new AutoInterfaceGenerator());
+            var diSource = GetDiExtensionSource(newComp);
+
+            Assert.Contains("AddSingleton<Level1.Level2.IMyService, Level1.Level2.MyService>()", diSource);
+        }
+
+        [Fact]
+        public void DI_GenericClass_IsSkippedFromDIRegistration()
+        {
+            string userSource = @"
+using System;
+namespace Level1.Level2
+{
+    [AutoInterface]
+    public partial class MyService<T>
+    {
+        public void Do() {}
+    }
+}";
+            var comp = GeneratorTestHelper.CreateCompilation(userSource);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, null, out var _, new AutoInterfaceGenerator());
+            Assert.DoesNotContain(newComp.SyntaxTrees, tree => tree.ToString().Contains("AutoInterfaceServiceCollectionExtensions"));
+        }
+
+        [Fact]
+        public void DI_PartialClassMultipleFiles_GeneratesSingleRegistration()
+        {
+            string source1 = @"
+namespace Level1
+{
+    [Dojo.Generators.Abstractions.AutoInterface]
+    public partial class MyService
+    {
+        public void Do1() {}
+    }
+}";
+            string source2 = @"
+namespace Level1
+{
+    public partial class MyService
+    {
+        public void Do2() {}
+    }
+}";
+            var comp = GeneratorTestHelper.CreateCompilation(source1, source2);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, null, out var _, new AutoInterfaceGenerator());
+            var trees = newComp.SyntaxTrees.ToList();
+
+            // trees: source1, source2, interface, DI extension
+            Assert.Equal(4, trees.Count);
+            var diSource = GetDiExtensionSource(newComp);
+
+            // Should only contain ONE registration for MyService
+            var registrations = System.Text.RegularExpressions.Regex.Matches(diSource, "services.AddScoped<Level1.IMyService, Level1.MyService>\\(\\);");
+            Assert.Single(registrations);
+        }
+
+        [Fact]
+        public void DI_GlobalNamespaceClass_GeneratesRegistrationWithoutLeadingDot()
+        {
+            string userSource = @"
+using System;
+[Dojo.Generators.Abstractions.AutoInterface]
+public partial class MyGlobalService
+{
+    public void Do() {}
+}";
+            var comp = GeneratorTestHelper.CreateCompilation(userSource);
+            var newComp = GeneratorTestHelper.RunGenerators(comp, null, out var _, new AutoInterfaceGenerator());
+            var diSource = GetDiExtensionSource(newComp);
+
+            Assert.Contains("services.AddScoped<IMyGlobalService, MyGlobalService>();", diSource);
+            Assert.DoesNotContain("<.IMyGlobalService", diSource);
         }
     }
 }

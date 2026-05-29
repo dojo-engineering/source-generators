@@ -10,10 +10,16 @@ namespace Dojo.Generators.Tests
 {
     public static class GeneratorTestHelper
     {
-        public static Compilation CreateCompilation(string source) => CSharpCompilation.Create(
+        public static Compilation CreateCompilation(string source) => CreateCompilation(new[] { source });
+
+        public static Compilation CreateCompilation(params string[] sources) => CSharpCompilation.Create(
              assemblyName: "compilation",
-             syntaxTrees: new[] { CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Preview)) },
-             references: new[] { MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location) },
+             syntaxTrees: sources.Select(s => CSharpSyntaxTree.ParseText(s, new CSharpParseOptions(LanguageVersion.Preview))),
+             references: new[]
+             {
+                 MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location),
+                 MetadataReference.CreateFromFile(typeof(Dojo.Generators.Abstractions.AutoInterfaceAttribute).GetTypeInfo().Assembly.Location)
+             },
              options: new CSharpCompilationOptions(OutputKind.ConsoleApplication)
          );
 
@@ -42,8 +48,18 @@ namespace Dojo.Generators.Tests
             Compilation comp = CreateCompilation(source);
             var newComp = RunGenerators(comp, additionalFiles, out var _, new T());
 
-            Assert.Equal(2, newComp.SyntaxTrees.Count());
+            Assert.True(newComp.SyntaxTrees.Count() >= 2);
             return newComp.SyntaxTrees.ToList()[1].ToString();
+        }
+
+        public static string GenerateFromSourceAt<T>(string source, int treeIndex, List<AdditionalText> additionalFiles = null) where T: ISourceGenerator, new()
+        {
+            Compilation comp = CreateCompilation(source);
+            var newComp = RunGenerators(comp, additionalFiles, out var _, new T());
+
+            var trees = newComp.SyntaxTrees.ToList();
+            Assert.True(trees.Count > treeIndex, $"Expected at least {treeIndex + 1} syntax trees but got {trees.Count}.");
+            return trees[treeIndex].ToString();
         }
 
         public static void CompareSources(string expected, string actual)
